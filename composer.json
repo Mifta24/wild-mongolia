@@ -9,10 +9,11 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "laravel/framework": "^12.0",
         "laravel/socialite": "^5.24",
         "laravel/tinker": "^2.10.1",
+        "pusher/pusher-php-server": "*",
         "spatie/laravel-permission": "^6.24"
     },
     "require-dev": {
