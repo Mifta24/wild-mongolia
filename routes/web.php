@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use Laravel\Socialite\Socialite;
 use App\Http\Controllers\Auth\GoogleController;
 
@@ -55,6 +56,24 @@ Route::middleware('auth', 'role:user')->group(function () {
     // Support Chat
     Route::get('/support/chat', [SupportChatController::class, 'index'])->name('support.chat');
     Route::post('/support/chat/message', [SupportChatController::class, 'store'])->name('support.chat.message');
+
+    // User Dashboard Routes
+    Route::prefix('user')->name('user.')->group(function () {
+        Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+
+        // My Bookings
+        Route::get('/bookings', [UserDashboardController::class, 'bookings'])->name('bookings');
+        Route::get('/booking/{id}', [UserDashboardController::class, 'showBooking'])->name('booking.show');
+        Route::post('/booking/{id}/cancel', [UserDashboardController::class, 'cancelBooking'])->name('booking.cancel');
+
+        // Points & Coupons
+        Route::get('/points', [UserDashboardController::class, 'points'])->name('points');
+        Route::get('/coupons', [UserDashboardController::class, 'coupons'])->name('coupons');
+
+        // Profile
+        Route::get('/profile', [UserDashboardController::class, 'profile'])->name('profile');
+        Route::post('/profile/update', [UserDashboardController::class, 'updateProfile'])->name('profile.update');
+    });
 });
 
 // Admin Routes
