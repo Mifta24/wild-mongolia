@@ -26,6 +26,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'points',
+        'membership_tier',
     ];
 
     /**
@@ -59,5 +62,75 @@ class User extends Authenticatable
     public function supportMessages(): HasMany
     {
         return $this->hasMany(SupportMessage::class);
+    }
+
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    public function pointLedgers(): HasMany
+    {
+        return $this->hasMany(PointLedger::class);
+    }
+
+    public function coupons()
+    {
+        return $this->belongsToMany(Coupon::class, 'user_coupons')
+            ->withPivot('usage_count', 'last_used_at')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get available coupons for user
+     */
+    public function availableCoupons()
+    {
+        return $this->coupons()
+            ->where('is_active', true)
+            ->where('valid_from', '<=', now())
+            ->where('valid_until', '>=', now())
+            ->whereRaw('(user_coupons.usage_count < coupons.usage_per_user OR coupons.usage_per_user IS NULL)');
+    }
+
+    /**
+     * Add points to user with ledger entry
+     */
+    public function addPoints(int $points, string $source, ?int $bookingId = null, ?string $description = null)
+    {
+        $this->increment('points', $points);
+        $this->refresh();
+
+        return $this->pointLedgers()->create([
+            'type' => 'earned',
+            'points' => $points,
+            'balance_after' => $this->points,
+            'source' => $source,
+            'booking_id' => $bookingId,
+            'description' => $description,
+            'expires_at' => now()->addYear(),
+        ]);
+    }
+
+    /**
+     * Deduct points from user with ledger entry
+     */
+    public function deductPoints(int $points, string $source, ?int $bookingId = null, ?string $description = null)
+    {
+        if ($this->points < $points) {
+            throw new \Exception('Insufficient points');
+        }
+
+        $this->decrement('points', $points);
+        $this->refresh();
+
+        return $this->pointLedgers()->create([
+            'type' => 'used',
+            'points' => -$points,
+            'balance_after' => $this->points,
+            'source' => $source,
+            'booking_id' => $bookingId,
+            'description' => $description,
+        ]);
     }
 }
