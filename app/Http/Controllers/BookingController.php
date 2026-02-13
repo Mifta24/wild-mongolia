@@ -90,17 +90,38 @@ class BookingController extends Controller
     }
 
     /**
-     * Proses Pembayaran (Simulasi)
+     * Proses Pembayaran
      */
-    public function processPayment($id)
+    public function processPayment(Request $request, $id)
     {
         $booking = Booking::findOrFail($id);
 
-        // Simulasi update status
+        // Security check
+        if (Auth::check() && $booking->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        // TODO: Integrate dengan Stripe atau payment gateway lainnya
+        // Untuk sekarang masih simulasi
+
         $booking->update([
             'status' => 'confirmed',
             'payment_status' => 'paid'
         ]);
+
+        // Award points jika user login (2% dari total price)
+        if ($booking->user_id && $booking->user) {
+            $pointsEarned = floor($booking->total_price * 0.02); // 2% earning rate
+
+            if ($pointsEarned > 0) {
+                $booking->user->addPoints(
+                    $pointsEarned,
+                    'booking',
+                    $booking->id,
+                    "Earned from booking {$booking->booking_code}"
+                );
+            }
+        }
 
         return redirect()->route('booking.success', $booking->id);
     }
@@ -111,7 +132,19 @@ class BookingController extends Controller
     public function success($id)
     {
         $booking = Booking::findOrFail($id);
-        return view('bookings.success', compact('booking'));
+
+        // Security check
+        if (Auth::check() && $booking->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        // Calculate points earned
+        $pointsEarned = 0;
+        if ($booking->user_id && $booking->payment_status === 'paid') {
+            $pointsEarned = floor($booking->total_price * 0.02);
+        }
+
+        return view('bookings.success', compact('booking', 'pointsEarned'));
     }
 
     /**
