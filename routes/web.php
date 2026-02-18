@@ -15,7 +15,11 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\PointController as AdminPointController;
+use App\Http\Controllers\Admin\CouponController as AdminCouponController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
+use App\Http\Controllers\PointController;
+use App\Http\Controllers\CouponController;
 use Laravel\Socialite\Socialite;
 use App\Http\Controllers\Auth\GoogleController;
 
@@ -57,6 +61,22 @@ Route::middleware('auth', 'role:user')->group(function () {
     Route::get('/support/chat', [SupportChatController::class, 'index'])->name('support.chat');
     Route::post('/support/chat/message', [SupportChatController::class, 'store'])->name('support.chat.message');
 
+    // Points Routes
+    Route::prefix('points')->name('points.')->group(function () {
+        Route::get('/', [PointController::class, 'index'])->name('index');
+        Route::get('/history', [PointController::class, 'history'])->name('history');
+        Route::get('/balance', [PointController::class, 'balance'])->name('balance');
+        Route::post('/calculate', [PointController::class, 'calculate'])->name('calculate');
+    });
+
+    // Coupons Routes
+    Route::prefix('coupons')->name('coupons.')->group(function () {
+        Route::get('/', [CouponController::class, 'index'])->name('index');
+        Route::get('/history', [CouponController::class, 'history'])->name('history');
+        Route::post('/validate', [CouponController::class, 'validate'])->name('validate');
+        Route::get('/available', [CouponController::class, 'available'])->name('available');
+    });
+
     // User Dashboard Routes
     Route::prefix('user')->name('user.')->group(function () {
         Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
@@ -97,4 +117,17 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::get('/support/chat', [AdminSupportChatController::class, 'index'])->name('support.chat');
     Route::post('/support/chat/message', [AdminSupportChatController::class, 'store'])->name('support.chat.message');
     Route::delete('/support/chat/{conversation}', [AdminSupportChatController::class, 'destroy'])->name('support.chat.destroy');
+
+    // Points Management
+    Route::prefix('points')->name('points.')->group(function () {
+        Route::get('/', [AdminPointController::class, 'index'])->name('index');
+        Route::get('/membership-stats', [AdminPointController::class, 'membershipStats'])->name('membership-stats');
+        Route::get('/user/{user}/adjust', [AdminPointController::class, 'adjustForm'])->name('adjust.form');
+        Route::post('/user/{user}/adjust', [AdminPointController::class, 'adjust'])->name('adjust');
+        Route::post('/expire', [AdminPointController::class, 'expirePoints'])->name('expire');
+    });
+
+    // Coupon Management
+    Route::resource('coupons', AdminCouponController::class)->except(['show']);
+    Route::post('/coupons/{coupon}/toggle-status', [AdminCouponController::class, 'toggleStatus'])->name('coupons.toggle-status');
 });
