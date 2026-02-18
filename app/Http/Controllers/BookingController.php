@@ -24,10 +24,39 @@ class BookingController extends Controller
     public function create(Request $request)
     {
         $serviceType = $request->query('type', 'car');
-        $productName = $request->query('product', 'Standard Sedan');
-        $basePrice   = $request->query('price', 1000);
+        if (!in_array($serviceType, ['car', 'tour'], true)) {
+            $serviceType = 'car';
+        }
 
-        return view('bookings.create', compact('serviceType', 'productName', 'basePrice'));
+        $serviceSubtype = $request->query(
+            'service_subtype',
+            $request->query(
+                'service_type',
+                $serviceType === 'car' ? 'airport_transfer' : 'private_tour'
+            )
+        );
+
+        if ($serviceType === 'car' && !in_array($serviceSubtype, ['airport_transfer', 'city_rental_hourly'], true)) {
+            $serviceSubtype = 'airport_transfer';
+        }
+
+        if ($serviceType === 'tour') {
+            $serviceSubtype = 'private_tour';
+        }
+
+        $destination = $request->query('destination', 'Bangkok');
+        $experienceType = $request->query('experience_type', 'temples');
+        $productName = $request->query('product', $serviceType === 'car' ? 'Standard Sedan' : 'Bangkok Highlights Tour');
+        $basePrice = $request->query('price', $serviceType === 'car' ? 1000 : 2500);
+
+        return view('bookings.create', compact(
+            'serviceType',
+            'serviceSubtype',
+            'destination',
+            'experienceType',
+            'productName',
+            'basePrice'
+        ));
     }
 
     /**
@@ -39,10 +68,16 @@ class BookingController extends Controller
             'guest_name' => 'required|string|max:255',
             'guest_email' => 'required|email',
             'guest_phone' => 'required|string',
+            'service_type' => 'required|in:car,tour',
+            'service_subtype' => 'required|string|max:100',
             'service_date' => 'required|date|after_or_equal:today',
+            'service_time' => 'required',
+            'base_price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:1',
-            // Validasi kondisional (Car vs Tour)
-            'flight_number' => 'nullable|required_if:service_type,car',
+            'flight_number' => 'nullable|required_if:service_subtype,airport_transfer|string|max:50',
+            'destination' => 'nullable|required_if:service_type,tour|string|max:100',
+            'experience_type' => 'nullable|required_if:service_type,tour|string|max:100',
+            'pickup_location' => 'nullable|string|max:255',
             'adult_pax' => 'nullable|integer',
         ]);
 
@@ -55,6 +90,9 @@ class BookingController extends Controller
             'guest_phone' => $request->guest_phone,
 
             'service_type' => $request->service_type,
+            'service_subtype' => $request->service_subtype,
+            'destination' => $request->destination,
+            'experience_type' => $request->experience_type,
             'product_name' => $request->product_name,
             'product_id' => 0, // Placeholder jika belum ada tabel Product
 
