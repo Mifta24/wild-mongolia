@@ -53,18 +53,18 @@
 
                             @role('user')
                             <a href="{{ route('user.dashboard') }}"
-                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium">
+                                class="block px-4 py-2 text-sm font-medium {{ request()->routeIs('user.dashboard') ? 'bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }}">
                                 <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
                                 </svg>
                                 My Dashboard
                             </a>
                             <a href="{{ route('user.bookings') }}"
-                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">My Bookings</a>
-                            <a href="{{ route('user.points') }}"
-                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">My Points</a>
-                            <a href="{{ route('user.coupons') }}"
-                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">My Coupons</a>
+                                class="block px-4 py-2 text-sm {{ request()->routeIs('user.bookings*') ? 'bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }}">My Bookings</a>
+                            <a href="{{ route('points.index') }}"
+                                class="block px-4 py-2 text-sm {{ request()->routeIs('points.*') ? 'bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }}">My Points</a>
+                            <a href="{{ route('coupons.index') }}"
+                                class="block px-4 py-2 text-sm {{ request()->routeIs('coupons.*') ? 'bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }}">My Coupons</a>
 
                             <div class="border-t border-gray-100 dark:border-gray-700 my-1"></div>
                             @endrole
@@ -83,7 +83,7 @@
                             @endrole
 
                             <a href="{{ route('profile.edit') }}"
-                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">Profile Settings</a>
+                                class="block px-4 py-2 text-sm {{ request()->routeIs('profile.*') ? 'bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }}">Profile Settings</a>
 
                             <div class="border-t border-gray-100 dark:border-gray-700 my-1"></div>
 
@@ -158,26 +158,26 @@
                     <div class="border-t border-gray-200 dark:border-gray-700 mt-2 pt-2">
                         @role('user')
                         <a href="{{ route('user.dashboard') }}"
-                            class="block px-3 py-2 rounded-md text-base font-medium text-teal-600 dark:text-teal-400 hover:bg-gray-100 dark:hover:bg-gray-800 font-semibold">
+                            class="block px-3 py-2 rounded-md text-base font-semibold {{ request()->routeIs('user.dashboard') ? 'bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300' : 'text-teal-600 dark:text-teal-400 hover:bg-gray-100 dark:hover:bg-gray-800' }}">
                             My Dashboard
                         </a>
                         <a href="{{ route('user.bookings') }}"
-                            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition">My Bookings</a>
-                        <a href="{{ route('user.points') }}"
-                            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition">My Points</a>
-                        <a href="{{ route('user.coupons') }}"
-                            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition">My Coupons</a>
+                            class="block px-3 py-2 rounded-md text-base font-medium transition {{ request()->routeIs('user.bookings*') ? 'bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800' }}">My Bookings</a>
+                        <a href="{{ route('points.index') }}"
+                            class="block px-3 py-2 rounded-md text-base font-medium transition {{ request()->routeIs('points.*') ? 'bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800' }}">My Points</a>
+                        <a href="{{ route('coupons.index') }}"
+                            class="block px-3 py-2 rounded-md text-base font-medium transition {{ request()->routeIs('coupons.*') ? 'bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800' }}">My Coupons</a>
                         @endrole
 
                         @role('admin')
                         <a href="{{ route('admin.dashboard') }}"
-                            class="block px-3 py-2 rounded-md text-base font-medium text-teal-600 dark:text-teal-400 hover:bg-gray-100 dark:hover:bg-gray-800 font-semibold">
+                            class="block px-3 py-2 rounded-md text-base font-semibold text-teal-600 dark:text-teal-400 hover:bg-gray-100 dark:hover:bg-gray-800">
                             Admin Panel
                         </a>
                         @endrole
 
                         <a href="{{ route('profile.edit') }}"
-                            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition">Profile Settings</a>
+                            class="block px-3 py-2 rounded-md text-base font-medium transition {{ request()->routeIs('profile.*') ? 'bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800' }}">Profile Settings</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <a href="{{ route('logout') }}"
