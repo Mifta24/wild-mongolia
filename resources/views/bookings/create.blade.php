@@ -13,17 +13,39 @@
                 </div>
             </div>
 
+            @if ($errors->any())
+                <div class="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300">
+                    <p class="font-semibold mb-2">Please fix the following:</p>
+                    <ul class="list-disc list-inside space-y-1">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <form action="{{ route('booking.store') }}" method="POST" x-data="{
                 qty: 1,
                 price: {{ $basePrice }},
                 type: '{{ $serviceType }}',
+                serviceSubtype: '{{ old('service_subtype', $serviceSubtype ?? 'airport_transfer') }}',
+                syncSubtype() {
+                    if (this.type === 'tour') {
+                        this.serviceSubtype = 'private_tour';
+                        return;
+                    }
+
+                    if (!['airport_transfer', 'city_rental_hourly'].includes(this.serviceSubtype)) {
+                        this.serviceSubtype = 'airport_transfer';
+                    }
+                },
                 get total() { return this.qty * this.price; }
-            }">
+            }" x-init="syncSubtype()">
                 @csrf
 
-                <input type="hidden" name="service_type" value="{{ $serviceType }}">
                 <input type="hidden" name="product_name" value="{{ $productName }}">
                 <input type="hidden" name="base_price" value="{{ $basePrice }}">
+                <input type="hidden" name="service_subtype" :value="serviceSubtype">
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
@@ -63,6 +85,45 @@
                             <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Service Details</h2>
                             <div class="space-y-4">
 
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
+                                    <select x-model="type" @change="syncSubtype()" name="service_type" class="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700" required>
+                                        <option value="car">Private Car / Transfer</option>
+                                        <option value="tour">Thailand Tours & Activities</option>
+                                    </select>
+                                </div>
+
+                                <div x-show="type === 'car'" class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Service Type</label>
+                                        <select x-model="serviceSubtype" class="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700">
+                                            <option value="airport_transfer">Airport Transfer</option>
+                                            <option value="city_rental_hourly">City Rental (Hourly)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div x-show="type === 'tour'" class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Destination</label>
+                                        <select name="destination" class="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700" :required="type === 'tour'">
+                                            <option value="Bangkok" @selected(($destination ?? old('destination')) === 'Bangkok')>Bangkok</option>
+                                            <option value="Phuket & Krabi" @selected(($destination ?? old('destination')) === 'Phuket & Krabi')>Phuket & Krabi</option>
+                                            <option value="Chiang Mai" @selected(($destination ?? old('destination')) === 'Chiang Mai')>Chiang Mai</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Experience Type</label>
+                                        <select name="experience_type" class="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700" :required="type === 'tour'">
+                                            <option value="temples" @selected(($experienceType ?? old('experience_type')) === 'temples')>Temples</option>
+                                            <option value="food" @selected(($experienceType ?? old('experience_type')) === 'food')>Food</option>
+                                            <option value="elephant_sanctuary" @selected(($experienceType ?? old('experience_type')) === 'elephant_sanctuary')>Elephant Sanctuary</option>
+                                            <option value="island_hopping" @selected(($experienceType ?? old('experience_type')) === 'island_hopping')>Island Hopping</option>
+                                            <option value="night_market" @selected(($experienceType ?? old('experience_type')) === 'night_market')>Night Market</option>
+                                        </select>
+                                    </div>
+                                </div>
+
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <label
@@ -84,9 +145,9 @@
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Flight
                                             Number (Airport Transfer)</label>
-                                        <input type="text" name="flight_number"
+                                        <input type="text" name="flight_number" x-show="serviceSubtype === 'airport_transfer'" :required="type === 'car' && serviceSubtype === 'airport_transfer'"
                                             class="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700"
-                                            placeholder="e.g. TG 678">
+                                            placeholder="e.g. TG 678 (required for airport transfer)">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Pickup

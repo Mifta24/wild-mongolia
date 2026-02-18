@@ -95,7 +95,7 @@
                                     </div>
                                 </div>
 
-                                <a href="{{ route('booking.create', ['type' => 'car', 'product' => $car->name, 'price' => $car->final_price, 'service_type' => $serviceType, 'pickup' => $pickupLocation, 'date' => $serviceDate]) }}"
+                                <a href="{{ route('booking.create', ['type' => 'car', 'service_type' => 'car', 'service_subtype' => $serviceType, 'product' => $car->name, 'price' => $car->final_price, 'pickup' => $pickupLocation, 'date' => $serviceDate]) }}"
                                     class="block w-full bg-primary hover:bg-teal-700 text-white text-center font-bold py-3 rounded-lg transition">
                                     Book Now
                                 </a>
