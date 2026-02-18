@@ -3,7 +3,7 @@
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Edit Product</h1>
     </div>
 
-    <form action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data"
+    <form action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data" x-data="{ type: '{{ old('type', $product->type) }}' }"
         class="space-y-6 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
         @csrf
         @method('PUT')
@@ -20,7 +20,7 @@
 
         <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Type</label>
-            <select name="type"
+            <select name="type" x-model="type"
                 class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-teal-500 focus:border-teal-500"
                 required>
                 <option value="car" @selected(old('type', $product->type) === 'car')>Car</option>
@@ -29,6 +29,72 @@
             @error('type')
                 <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
             @enderror
+        </div>
+
+        <div x-show="type === 'car'" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Car Model</label>
+                <input type="text" name="car_model" value="{{ old('car_model', $product->car_model) }}"
+                    class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-teal-500 focus:border-teal-500"
+                    :required="type === 'car'">
+                @error('car_model')
+                    <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Max Passengers</label>
+                <input type="number" min="1" name="max_passengers" value="{{ old('max_passengers', $product->max_passengers) }}"
+                    class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-teal-500 focus:border-teal-500"
+                    :required="type === 'car'">
+                @error('max_passengers')
+                    <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Max Luggage</label>
+                <input type="number" min="0" name="max_luggage" value="{{ old('max_luggage', $product->max_luggage) }}"
+                    class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-teal-500 focus:border-teal-500"
+                    :required="type === 'car'">
+                @error('max_luggage')
+                    <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+        </div>
+
+        <div x-show="type === 'tour'" class="space-y-4 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Destination</label>
+                    <input type="text" name="destination" value="{{ old('destination', $product->destination) }}"
+                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-teal-500 focus:border-teal-500"
+                        :required="type === 'tour'" placeholder="Bangkok / Phuket / Chiang Mai">
+                    @error('destination')
+                        <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Duration</label>
+                    <input type="text" name="duration" value="{{ old('duration', $product->duration) }}"
+                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-teal-500 focus:border-teal-500"
+                        :required="type === 'tour'" placeholder="Half Day / Full Day / 3D2N">
+                    @error('duration')
+                        <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <label class="inline-flex items-center space-x-3 cursor-pointer">
+                    <input type="checkbox" name="includes_lunch" value="1" @checked(old('includes_lunch', $product->includes_lunch))
+                        class="rounded dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-teal-600 focus:ring-teal-500">
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Includes Lunch</span>
+                </label>
+                <label class="inline-flex items-center space-x-3 cursor-pointer">
+                    <input type="checkbox" name="includes_pickup" value="1" @checked(old('includes_pickup', $product->includes_pickup))
+                        class="rounded dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-teal-600 focus:ring-teal-500">
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Includes Pickup</span>
+                </label>
+            </div>
         </div>
 
         <div>

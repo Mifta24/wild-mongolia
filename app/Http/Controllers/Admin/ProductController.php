@@ -37,6 +37,13 @@ class ProductController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'type' => ['required', 'in:car,tour'],
             'description' => ['nullable', 'string'],
+            'car_model' => ['nullable', 'string', 'max:255', 'required_if:type,car'],
+            'max_passengers' => ['nullable', 'integer', 'min:1', 'required_if:type,car'],
+            'max_luggage' => ['nullable', 'integer', 'min:0', 'required_if:type,car'],
+            'destination' => ['nullable', 'string', 'max:255', 'required_if:type,tour'],
+            'duration' => ['nullable', 'string', 'max:255', 'required_if:type,tour'],
+            'includes_lunch' => ['nullable', 'boolean'],
+            'includes_pickup' => ['nullable', 'boolean'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'],
             'image_url' => ['nullable', 'url'],
             'base_price' => ['required', 'numeric', 'min:0'],
@@ -50,6 +57,21 @@ class ProductController extends Controller
         $validated['currency'] = $validated['currency'] ?? 'THB';
         $validated['is_active'] = (bool) ($validated['is_active'] ?? false);
         $validated['is_featured'] = (bool) ($validated['is_featured'] ?? false);
+        $validated['includes_lunch'] = (bool) ($validated['includes_lunch'] ?? false);
+        $validated['includes_pickup'] = (bool) ($validated['includes_pickup'] ?? false);
+
+        if ($validated['type'] === 'car') {
+            $validated['destination'] = null;
+            $validated['duration'] = null;
+            $validated['includes_lunch'] = false;
+            $validated['includes_pickup'] = false;
+        }
+
+        if ($validated['type'] === 'tour') {
+            $validated['car_model'] = null;
+            $validated['max_passengers'] = null;
+            $validated['max_luggage'] = null;
+        }
 
         // Handle image upload
         if ($request->hasFile('image')) {
@@ -77,6 +99,13 @@ class ProductController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'type' => ['required', 'in:car,tour'],
             'description' => ['nullable', 'string'],
+            'car_model' => ['nullable', 'string', 'max:255', 'required_if:type,car'],
+            'max_passengers' => ['nullable', 'integer', 'min:1', 'required_if:type,car'],
+            'max_luggage' => ['nullable', 'integer', 'min:0', 'required_if:type,car'],
+            'destination' => ['nullable', 'string', 'max:255', 'required_if:type,tour'],
+            'duration' => ['nullable', 'string', 'max:255', 'required_if:type,tour'],
+            'includes_lunch' => ['nullable', 'boolean'],
+            'includes_pickup' => ['nullable', 'boolean'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'],
             'image_url' => ['nullable', 'url'],
             'base_price' => ['required', 'numeric', 'min:0'],
@@ -90,6 +119,21 @@ class ProductController extends Controller
         $validated['currency'] = $validated['currency'] ?? $product->currency ?? 'THB';
         $validated['is_active'] = (bool) ($validated['is_active'] ?? false);
         $validated['is_featured'] = (bool) ($validated['is_featured'] ?? false);
+        $validated['includes_lunch'] = (bool) ($validated['includes_lunch'] ?? false);
+        $validated['includes_pickup'] = (bool) ($validated['includes_pickup'] ?? false);
+
+        if ($validated['type'] === 'car') {
+            $validated['destination'] = null;
+            $validated['duration'] = null;
+            $validated['includes_lunch'] = false;
+            $validated['includes_pickup'] = false;
+        }
+
+        if ($validated['type'] === 'tour') {
+            $validated['car_model'] = null;
+            $validated['max_passengers'] = null;
+            $validated['max_luggage'] = null;
+        }
 
         // Handle image upload
         if ($request->hasFile('image')) {
