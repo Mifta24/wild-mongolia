@@ -28,6 +28,7 @@ class User extends Authenticatable
         'password',
         'phone',
         'points',
+        'lifetime_points',
         'membership_tier',
     ];
 
@@ -51,6 +52,9 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'points' => 'integer',
+            'lifetime_points' => 'integer',
+            'membership_tier' => 'string',
         ];
     }
 
@@ -99,6 +103,12 @@ class User extends Authenticatable
     public function addPoints(int $points, string $source, ?int $bookingId = null, ?string $description = null)
     {
         $this->increment('points', $points);
+
+        // Track lifetime points for earned points
+        if ($source === 'booking' || $source === 'admin_adjustment' || $source === 'refunded') {
+            $this->increment('lifetime_points', $points);
+        }
+
         $this->refresh();
 
         return $this->pointLedgers()->create([
