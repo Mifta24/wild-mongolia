@@ -17,7 +17,9 @@ use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\PointController as AdminPointController;
 use App\Http\Controllers\Admin\CouponController as AdminCouponController;
+use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
+use App\Http\Controllers\User\ReviewController as UserReviewController;
 use App\Http\Controllers\PointController;
 use App\Http\Controllers\CouponController;
 use Laravel\Socialite\Socialite;
@@ -93,6 +95,9 @@ Route::middleware('auth', 'role:user')->group(function () {
         // Profile
         Route::get('/profile', [UserDashboardController::class, 'profile'])->name('profile');
         Route::post('/profile/update', [UserDashboardController::class, 'updateProfile'])->name('profile.update');
+
+        // Reviews & Ratings
+        Route::post('/booking/{id}/review', [UserReviewController::class, 'store'])->name('booking.review.store');
     });
 });
 
@@ -130,4 +135,8 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     // Coupon Management
     Route::resource('coupons', AdminCouponController::class)->except(['show']);
     Route::post('/coupons/{coupon}/toggle-status', [AdminCouponController::class, 'toggleStatus'])->name('coupons.toggle-status');
+
+    // Reviews Moderation
+    Route::get('/reviews', [AdminReviewController::class, 'index'])->name('reviews.index');
+    Route::put('/reviews/{review}/moderate', [AdminReviewController::class, 'moderate'])->name('reviews.moderate');
 });
