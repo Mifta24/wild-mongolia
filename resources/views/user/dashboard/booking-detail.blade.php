@@ -26,6 +26,16 @@
             </div>
             @endif
 
+            @if($errors->any())
+            <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <ul class="list-disc list-inside text-sm">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                 <!-- Main Content -->
@@ -121,6 +131,77 @@
                             </div>
                             @endif
                         </div>
+                    </div>
+
+                    <!-- Review & Rating -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Review & Rating</h2>
+
+                        @if(!$booking->product_id || !$booking->product)
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Review is unavailable because this booking is not linked to a product.</p>
+                        @elseif($booking->status !== 'completed')
+                            <p class="text-sm text-gray-600 dark:text-gray-400">You can submit a review after this booking is marked as completed.</p>
+                        @elseif($booking->review)
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center text-yellow-400">
+                                        @for($i = 0; $i < $booking->review->rating; $i++)
+                                            <span>★</span>
+                                        @endfor
+                                        @for($i = 0; $i < 5 - $booking->review->rating; $i++)
+                                            <span class="text-gray-300 dark:text-gray-600">★</span>
+                                        @endfor
+                                    </div>
+                                    <span class="px-2 py-1 text-xs rounded-full
+                                        @if($booking->review->status === 'approved') bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300
+                                        @elseif($booking->review->status === 'rejected') bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300
+                                        @else bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300 @endif">
+                                        {{ ucfirst($booking->review->status) }}
+                                    </span>
+                                </div>
+
+                                @if($booking->review->comment)
+                                    <p class="text-sm text-gray-700 dark:text-gray-300">{{ $booking->review->comment }}</p>
+                                @endif
+
+                                @if($booking->review->status !== 'approved')
+                                    <form action="{{ route('user.booking.review.store', $booking->id) }}" method="POST" class="space-y-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                                        @csrf
+                                        <div>
+                                            <label for="rating" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Update Rating</label>
+                                            <select id="rating" name="rating" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white" required>
+                                                @for($rate = 5; $rate >= 1; $rate--)
+                                                    <option value="{{ $rate }}" @selected(old('rating', $booking->review->rating) == $rate)>{{ $rate }} Star{{ $rate > 1 ? 's' : '' }}</option>
+                                                @endfor
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label for="comment" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Comment</label>
+                                            <textarea id="comment" name="comment" rows="3" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">{{ old('comment', $booking->review->comment) }}</textarea>
+                                        </div>
+                                        <button type="submit" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-medium">Resubmit for Moderation</button>
+                                    </form>
+                                @endif
+                            </div>
+                        @else
+                            <form action="{{ route('user.booking.review.store', $booking->id) }}" method="POST" class="space-y-4">
+                                @csrf
+                                <div>
+                                    <label for="rating" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Rating</label>
+                                    <select id="rating" name="rating" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white" required>
+                                        <option value="">Select rating</option>
+                                        @for($rate = 5; $rate >= 1; $rate--)
+                                            <option value="{{ $rate }}" @selected(old('rating') == $rate)>{{ $rate }} Star{{ $rate > 1 ? 's' : '' }}</option>
+                                        @endfor
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="comment" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Comment</label>
+                                    <textarea id="comment" name="comment" rows="4" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white" placeholder="Tell us about your experience...">{{ old('comment') }}</textarea>
+                                </div>
+                                <button type="submit" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-medium">Submit Review</button>
+                            </form>
+                        @endif
                     </div>
 
                 </div>
