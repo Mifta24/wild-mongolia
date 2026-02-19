@@ -41,6 +41,7 @@
                     <th class="px-6 py-3 text-left text-xs font-medium">Name</th>
                     <th class="px-6 py-3 text-left text-xs font-medium">Type</th>
                     <th class="px-6 py-3 text-left text-xs font-medium">Price</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium">Rating</th>
                     <th class="px-6 py-3 text-left text-xs font-medium">Active</th>
                     <th class="px-6 py-3 text-left text-xs font-medium">Featured</th>
                     <th class="px-6 py-3 text-right text-xs font-medium">Actions</th>
@@ -53,6 +54,7 @@
                         <td class="px-6 py-3">{{ ucfirst($product->type) }}</td>
                         <td class="px-6 py-3">{{ $product->currency }} {{ number_format($product->final_price, 2) }}
                         </td>
+                        <td class="px-6 py-3">{{ number_format($product->average_rating, 1) }} ({{ number_format($product->total_reviews) }})</td>
                         <td class="px-6 py-3">{{ $product->is_active ? 'Yes' : 'No' }}</td>
                         <td class="px-6 py-3">{{ $product->is_featured ? 'Yes' : 'No' }}</td>
                         <td class="px-6 py-3 text-right space-x-2">
@@ -69,7 +71,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-6 text-center text-gray-500">No products found.</td>
+                        <td colspan="7" class="px-6 py-6 text-center text-gray-500">No products found.</td>
                     </tr>
                 @endforelse
             </tbody>
