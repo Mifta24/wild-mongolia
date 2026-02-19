@@ -89,7 +89,7 @@
                                     </div>
                                 </div>
 
-                                <a href="{{ route('booking.create', ['type' => 'tour', 'service_type' => 'tour', 'service_subtype' => 'private_tour', 'destination' => $destination, 'experience_type' => $experienceType, 'product' => $tour->name, 'price' => $tour->final_price]) }}"
+                                <a href="{{ route('booking.create', ['type' => 'tour', 'service_type' => 'tour', 'service_subtype' => 'private_tour', 'product_id' => $tour->id, 'destination' => $destination, 'experience_type' => $experienceType, 'product' => $tour->name, 'price' => $tour->final_price]) }}"
                                     class="block w-full bg-secondary hover:bg-yellow-600 text-white text-center font-bold py-3 rounded-lg transition">
                                     Book This Tour
                                 </a>
