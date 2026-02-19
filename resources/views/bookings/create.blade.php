@@ -43,6 +43,7 @@
             }" x-init="syncSubtype()">
                 @csrf
 
+                <input type="hidden" name="product_id" value="{{ $productId ?? '' }}">
                 <input type="hidden" name="product_name" value="{{ $productName }}">
                 <input type="hidden" name="base_price" value="{{ $basePrice }}">
                 <input type="hidden" name="service_subtype" :value="serviceSubtype">
