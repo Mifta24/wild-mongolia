@@ -61,7 +61,7 @@ class DashboardController extends Controller
     public function showBooking($id)
     {
         $user = Auth::user();
-        $booking = $user->bookings()->findOrFail($id);
+        $booking = $user->bookings()->with(['product', 'review'])->findOrFail($id);
 
         return view('user.dashboard.booking-detail', compact('booking'));
     }

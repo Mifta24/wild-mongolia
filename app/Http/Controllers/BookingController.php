@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Product;
 use App\Http\Requests\StoreBookingRequest;
 use App\Http\Requests\UpdateBookingRequest;
 use Illuminate\Support\Facades\Auth;
@@ -46,14 +47,24 @@ class BookingController extends Controller
 
         $destination = $request->query('destination', 'Bangkok');
         $experienceType = $request->query('experience_type', 'temples');
+        $productId = $request->query('product_id');
         $productName = $request->query('product', $serviceType === 'car' ? 'Standard Sedan' : 'Bangkok Highlights Tour');
         $basePrice = $request->query('price', $serviceType === 'car' ? 1000 : 2500);
+
+        if ($productId) {
+            $product = Product::query()->find($productId);
+            if ($product) {
+                $productName = $product->name;
+                $basePrice = $product->final_price;
+            }
+        }
 
         return view('bookings.create', compact(
             'serviceType',
             'serviceSubtype',
             'destination',
             'experienceType',
+            'productId',
             'productName',
             'basePrice'
         ));
@@ -79,6 +90,7 @@ class BookingController extends Controller
             'experience_type' => 'nullable|required_if:service_type,tour|string|max:100',
             'pickup_location' => 'nullable|string|max:255',
             'adult_pax' => 'nullable|integer',
+            'product_id' => 'nullable|exists:products,id',
         ]);
 
         $totalPrice = $request->base_price * $request->quantity;
@@ -94,7 +106,7 @@ class BookingController extends Controller
             'destination' => $request->destination,
             'experience_type' => $request->experience_type,
             'product_name' => $request->product_name,
-            'product_id' => 0, // Placeholder jika belum ada tabel Product
+            'product_id' => $request->product_id,
 
             'service_date' => $request->service_date,
             'service_time' => $request->service_time,
