@@ -84,6 +84,14 @@
             Coupons
         </a>
 
+        <a href="{{ route('admin.reviews.index') }}"
+            class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition {{ request()->routeIs('admin.reviews*') ? 'bg-teal-700 text-white dark:bg-teal-700 dark:text-white' : '' }}">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l2.03 6.244a1 1 0 00.95.69h6.567c.969 0 1.371 1.24.588 1.81l-5.313 3.86a1 1 0 00-.364 1.118l2.03 6.244c.3.921-.755 1.688-1.538 1.118l-5.313-3.86a1 1 0 00-1.176 0l-5.313 3.86c-.783.57-1.838-.197-1.538-1.118l2.03-6.244a1 1 0 00-.364-1.118L.98 11.67c-.783-.57-.38-1.81.588-1.81h6.567a1 1 0 00.95-.69l2.03-6.244z"></path>
+            </svg>
+            Reviews
+        </a>
+
         <a href="#"
             class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition">
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
