@@ -22,6 +22,62 @@
                 </div>
             </div>
 
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
+                <form method="GET" action="{{ route('search.cars') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+                    <input type="hidden" name="service_type" value="{{ $serviceType }}">
+                    <input type="hidden" name="pickup_location" value="{{ $pickupLocation }}">
+                    <input type="hidden" name="service_date" value="{{ $serviceDate }}">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Vehicle Type</label>
+                        <select name="vehicle_type" class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white">
+                            <option value="">All</option>
+                            @foreach ($vehicleTypes as $type)
+                                <option value="{{ $type }}" @selected($vehicleType === $type)>{{ ucfirst($type) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Min Price</label>
+                        <input type="number" name="min_price" value="{{ $minPrice }}" min="0"
+                            class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+                            placeholder="0">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Max Price</label>
+                        <input type="number" name="max_price" value="{{ $maxPrice }}" min="0"
+                            class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+                            placeholder="10000">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Distance (km)</label>
+                        <input type="number" name="distance_km" value="{{ $distanceKm ?? 0 }}" min="0" step="0.1"
+                            class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+                            placeholder="0">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sort</label>
+                        <select name="sort_by" class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white">
+                            <option value="featured" @selected($sortBy === 'featured')>Featured</option>
+                            <option value="price_asc" @selected($sortBy === 'price_asc')>Price: Low to High</option>
+                            <option value="price_desc" @selected($sortBy === 'price_desc')>Price: High to Low</option>
+                            <option value="rating" @selected($sortBy === 'rating')>Rating</option>
+                            <option value="popular" @selected($sortBy === 'popular')>Most Reviewed</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-end gap-2">
+                        <button type="submit" class="w-full bg-primary hover:bg-teal-700 text-white font-semibold py-2.5 rounded-lg">Apply</button>
+                        <a href="{{ route('search.cars', ['service_type' => $serviceType, 'pickup_location' => $pickupLocation, 'service_date' => $serviceDate]) }}"
+                            class="w-full text-center bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 font-semibold py-2.5 rounded-lg">Reset</a>
+                    </div>
+                </form>
+            </div>
+
             <!-- Car Options Grid -->
             @if ($cars->isEmpty())
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-12 text-center">
@@ -30,6 +86,9 @@
             @else
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach ($cars as $car)
+                        @php
+                            $displayPrice = $distanceKm > 0 ? $car->calculateDistancePrice($distanceKm) : $car->final_price;
+                        @endphp
                         <div
                             class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition">
                             <div
@@ -63,6 +122,9 @@
                                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
                                     {{ $car->car_model }} • {{ $car->max_passengers }} passengers •
                                     {{ $car->max_luggage }} luggage
+                                    @if ($car->vehicle_type)
+                                        • {{ ucfirst($car->vehicle_type) }}
+                                    @endif
                                 </p>
 
                                 <div class="flex items-center text-yellow-400 text-sm mb-4">
@@ -78,7 +140,11 @@
 
                                 <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mb-4">
                                     <div class="flex justify-between items-center mb-2">
-                                        @if ($car->discounted_price)
+                                        @if (($distanceKm ?? 0) > 0 && $car->distance_price_per_km)
+                                            <span class="text-gray-600 dark:text-gray-400">Estimated for {{ number_format($distanceKm, 1) }} km</span>
+                                            <span class="text-2xl font-bold text-primary dark:text-teal-400">{{ $car->currency }}
+                                                {{ number_format($displayPrice) }}</span>
+                                        @elseif ($car->discounted_price)
                                             <div>
                                                 <span class="text-gray-400 line-through text-sm">{{ $car->currency }}
                                                     {{ number_format($car->base_price) }}</span>
@@ -95,7 +161,7 @@
                                     </div>
                                 </div>
 
-                                <a href="{{ route('booking.create', ['type' => 'car', 'service_type' => 'car', 'service_subtype' => $serviceType, 'product_id' => $car->id, 'product' => $car->name, 'price' => $car->final_price, 'pickup' => $pickupLocation, 'date' => $serviceDate]) }}"
+                                <a href="{{ route('booking.create', ['type' => 'car', 'service_type' => 'car', 'service_subtype' => $serviceType, 'product_id' => $car->id, 'product' => $car->name, 'price' => $displayPrice, 'pickup' => $pickupLocation, 'date' => $serviceDate, 'distance_km' => $distanceKm]) }}"
                                     class="block w-full bg-primary hover:bg-teal-700 text-white text-center font-bold py-3 rounded-lg transition">
                                     Book Now
                                 </a>
