@@ -23,11 +23,46 @@ class HomeController extends Controller
         $serviceType = $request->input('service_type', 'airport_transfer');
         $pickupLocation = $request->input('pickup_location', '');
         $serviceDate = $request->input('service_date', date('Y-m-d'));
+        $distanceKm = max(0, (float) $request->input('distance_km', 0));
 
-        // Get all active cars from database
-        $cars = Product::cars()->orderBy('is_featured', 'desc')->get();
+        // Filter parameters
+        $vehicleType = $request->input('vehicle_type', '');
+        $minPrice = $request->input('min_price', null);
+        $maxPrice = $request->input('max_price', null);
+        $sortBy = $request->input('sort_by', 'featured');
 
-        return view('search.cars', compact('cars', 'serviceType', 'pickupLocation', 'serviceDate'));
+        // Build query
+        $query = Product::cars();
+
+        // Apply filters
+        if ($vehicleType) {
+            $query->byVehicleType($vehicleType);
+        }
+
+        if ($minPrice !== null || $maxPrice !== null) {
+            $query->byPriceRange($minPrice, $maxPrice);
+        }
+
+        // Apply sorting
+        $query->sortBy($sortBy);
+
+        $cars = $query->get();
+
+        // Get available vehicle types for filter dropdown
+        $vehicleTypes = Product::cars()->whereNotNull('vehicle_type')->distinct()->pluck('vehicle_type')->toArray();
+
+        return view('search.cars', compact(
+            'cars',
+            'serviceType',
+            'pickupLocation',
+            'serviceDate',
+            'distanceKm',
+            'vehicleType',
+            'minPrice',
+            'maxPrice',
+            'sortBy',
+            'vehicleTypes'
+        ));
     }
 
     /**
@@ -38,8 +73,16 @@ class HomeController extends Controller
         $destination = $request->input('destination', 'bangkok');
         $experienceType = $request->input('experience_type', '');
 
-        // Get tours from database with optional filtering
-        $query = Product::tours()->orderBy('is_featured', 'desc');
+        // Filter parameters
+        $category = $request->input('category', '');
+        $duration = $request->input('duration', '');
+        $language = $request->input('language', '');
+        $minPrice = $request->input('min_price', null);
+        $maxPrice = $request->input('max_price', null);
+        $sortBy = $request->input('sort_by', 'featured');
+
+        // Build query
+        $query = Product::tours();
 
         if ($destination && $destination !== 'all') {
             $query->where('destination', 'like', '%' . ucfirst(str_replace('_', ' ', $destination)) . '%');
@@ -52,9 +95,53 @@ class HomeController extends Controller
             });
         }
 
+        // Apply filters
+        if ($category) {
+            $query->byCategory($category);
+        }
+
+        if ($duration) {
+            $query->byDuration($duration);
+        }
+
+        if ($language) {
+            $query->byLanguage($language);
+        }
+
+        if ($minPrice !== null || $maxPrice !== null) {
+            $query->byPriceRange($minPrice, $maxPrice);
+        }
+
+        // Apply sorting
+        $query->sortBy($sortBy);
+
         $tours = $query->get();
 
-        return view('search.tours', compact('tours', 'destination', 'experienceType'));
+        // Get available categories, durations, and languages for filter dropdowns
+        $categories = Product::tours()->whereNotNull('category')->distinct()->pluck('category')->toArray();
+        $durations = [
+            '2 Hours' => '2 Hours',
+            '4 Hours' => '4 Hours',
+            '8 Hours' => '8 Hours',
+            'Full Day' => 'Full Day',
+            '2 Days' => '2 Days',
+        ];
+        $languages = Product::tours()->whereNotNull('language')->distinct()->pluck('language')->toArray();
+
+        return view('search.tours', compact(
+            'tours',
+            'destination',
+            'experienceType',
+            'category',
+            'duration',
+            'language',
+            'minPrice',
+            'maxPrice',
+            'sortBy',
+            'categories',
+            'durations',
+            'languages'
+        ));
     }
 
     /**
