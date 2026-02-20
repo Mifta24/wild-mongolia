@@ -18,6 +18,64 @@
                 </div>
             </div>
 
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
+                <form method="GET" action="{{ route('search.tours') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+                    <input type="hidden" name="destination" value="{{ $destination }}">
+                    <input type="hidden" name="experience_type" value="{{ $experienceType }}">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
+                        <select name="category" class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white">
+                            <option value="">All</option>
+                            @foreach ($categories as $item)
+                                <option value="{{ $item }}" @selected(($category ?? '') === $item)>{{ ucfirst($item) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Duration</label>
+                        <select name="duration" class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white">
+                            <option value="">All</option>
+                            @foreach ($durations as $value => $label)
+                                <option value="{{ $value }}" @selected(($duration ?? '') === $value)>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Min Price</label>
+                        <input type="number" name="min_price" value="{{ $minPrice }}" min="0"
+                            class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+                            placeholder="0">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Max Price</label>
+                        <input type="number" name="max_price" value="{{ $maxPrice }}" min="0"
+                            class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+                            placeholder="10000">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sort</label>
+                        <select name="sort_by" class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white">
+                            <option value="featured" @selected($sortBy === 'featured')>Featured</option>
+                            <option value="price_asc" @selected($sortBy === 'price_asc')>Price: Low to High</option>
+                            <option value="price_desc" @selected($sortBy === 'price_desc')>Price: High to Low</option>
+                            <option value="rating" @selected($sortBy === 'rating')>Rating</option>
+                            <option value="popular" @selected($sortBy === 'popular')>Most Reviewed</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-end gap-2">
+                        <button type="submit" class="w-full bg-secondary hover:bg-yellow-600 text-white font-semibold py-2.5 rounded-lg">Apply</button>
+                        <a href="{{ route('search.tours', ['destination' => $destination, 'experience_type' => $experienceType]) }}"
+                            class="w-full text-center bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 font-semibold py-2.5 rounded-lg">Reset</a>
+                    </div>
+                </form>
+            </div>
+
             @if ($tours->isEmpty())
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-12 text-center">
                     <p class="text-gray-600 dark:text-gray-400 text-lg">No tours available for your search criteria.</p>
@@ -63,6 +121,9 @@
                                     @endif
                                     @if ($tour->includes_pickup)
                                         • Pickup Included
+                                    @endif
+                                    @if ($tour->category)
+                                        • {{ ucfirst($tour->category) }}
                                     @endif
                                 </p>
 
