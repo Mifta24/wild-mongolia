@@ -6,8 +6,11 @@ use App\Models\Booking;
 use App\Models\Product;
 use App\Http\Requests\StoreBookingRequest;
 use App\Http\Requests\UpdateBookingRequest;
+use App\Services\StripePaymentService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class BookingController extends Controller
 {
@@ -151,29 +154,28 @@ class BookingController extends Controller
             abort(403);
         }
 
-        // TODO: Integrate dengan Stripe atau payment gateway lainnya
-        // Untuk sekarang masih simulasi
-
-        $booking->update([
-            'status' => 'confirmed',
-            'payment_status' => 'paid'
-        ]);
-
-        // Award points jika user login (2% dari total price)
-        if ($booking->user_id && $booking->user) {
-            $pointsEarned = floor($booking->total_price * 0.02); // 2% earning rate
-
-            if ($pointsEarned > 0) {
-                $booking->user->addPoints(
-                    $pointsEarned,
-                    'booking',
-                    $booking->id,
-                    "Earned from booking {$booking->booking_code}"
-                );
-            }
+        if ($booking->payment_status === 'paid') {
+            return redirect()->route('booking.success', $booking->id);
         }
 
-        return redirect()->route('booking.success', $booking->id);
+        $request->validate([
+            'payment_method' => 'required|in:credit_card',
+        ]);
+
+        try {
+            $stripeService = app(StripePaymentService::class);
+            $session = $stripeService->createCheckoutSession($booking);
+
+            $booking->update([
+                'stripe_checkout_session_id' => $session->id,
+            ]);
+
+            return redirect($session->url);
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return back()->with('error', 'Unable to initiate payment. Please try again.');
+        }
     }
 
     /**
@@ -188,6 +190,37 @@ class BookingController extends Controller
             abort(403);
         }
 
+        $sessionId = request()->query('session_id');
+
+        if ($sessionId && $booking->payment_status !== 'paid') {
+            try {
+                $stripeService = app(StripePaymentService::class);
+                $session = $stripeService->retrieveCheckoutSession($sessionId);
+
+                if (
+                    $session->id === $booking->stripe_checkout_session_id
+                    && $session->payment_status === 'paid'
+                ) {
+                    $booking->update([
+                        'stripe_payment_intent_id' => $session->payment_intent,
+                        'payment_status' => 'paid',
+                        'status' => $booking->status === 'pending' ? 'confirmed' : $booking->status,
+                        'paid_at' => $booking->paid_at ?? now(),
+                    ]);
+                }
+            } catch (\Throwable $exception) {
+                report($exception);
+            }
+        }
+
+        if (blank($booking->invoice_number) && $booking->payment_status === 'paid') {
+            $booking->update([
+                'invoice_number' => 'INV-' . now()->format('Ymd') . '-' . Str::upper(Str::random(6)),
+            ]);
+        }
+
+        $booking->refresh();
+
         // Calculate points earned
         $pointsEarned = 0;
         if ($booking->user_id && $booking->payment_status === 'paid') {
@@ -195,6 +228,32 @@ class BookingController extends Controller
         }
 
         return view('bookings.success', compact('booking', 'pointsEarned'));
+    }
+
+    public function downloadInvoice($id)
+    {
+        $booking = Booking::findOrFail($id);
+
+        if (Auth::check() && $booking->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if (!in_array($booking->payment_status, ['paid', 'refunded'], true)) {
+            return back()->with('error', 'Invoice is available after payment is completed.');
+        }
+
+        if (blank($booking->invoice_number)) {
+            $booking->update([
+                'invoice_number' => 'INV-' . now()->format('Ymd') . '-' . Str::upper(Str::random(6)),
+            ]);
+            $booking->refresh();
+        }
+
+        $pdf = Pdf::loadView('bookings.invoice', [
+            'booking' => $booking,
+        ]);
+
+        return $pdf->download($booking->invoice_number . '.pdf');
     }
 
     /**
