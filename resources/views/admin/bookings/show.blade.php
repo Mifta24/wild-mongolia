@@ -117,6 +117,23 @@
                             <span class="px-2 py-1 text-xs rounded bg-green-100 text-green-800">Payment Status:
                                 {{ $booking->payment_status ?? 'Paid' }}</span>
                         </div>
+
+                        @if($booking->stripe_payment_intent_id)
+                            <div class="mt-3 text-xs text-gray-500 dark:text-gray-400">
+                                Stripe Payment Intent: {{ $booking->stripe_payment_intent_id }}
+                            </div>
+                        @endif
+
+                        @if($booking->payment_status === 'paid')
+                            <form action="{{ route('admin.bookings.refund', $booking->id) }}" method="POST" class="mt-4"
+                                onsubmit="return confirm('Process full refund via Stripe for this booking?')">
+                                @csrf
+                                <button type="submit"
+                                    class="w-full bg-red-600 hover:bg-red-700 text-white text-sm font-medium px-4 py-2 rounded-md transition">
+                                    Refund via Stripe
+                                </button>
+                            </form>
+                        @endif
                     </div>
                 </div>
 
