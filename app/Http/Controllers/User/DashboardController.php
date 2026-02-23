@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Booking;
+use App\Services\StripePaymentService;
 
 class DashboardController extends Controller
 {
@@ -86,15 +87,23 @@ class DashboardController extends Controller
             return back()->with('error', 'Cancellation is only allowed 24 hours before the service date.');
         }
 
+        if ($booking->payment_status === 'paid' && filled($booking->stripe_payment_intent_id)) {
+            try {
+                app(StripePaymentService::class)->refundBooking($booking);
+            } catch (\Throwable $exception) {
+                report($exception);
+
+                return back()->with('error', 'Unable to process Stripe refund right now. Please contact support.');
+            }
+        }
+
         $booking->update([
             'status' => 'cancelled',
+            'payment_status' => $booking->payment_status === 'paid' ? 'refunded' : $booking->payment_status,
+            'refunded_at' => $booking->payment_status === 'paid' ? now() : $booking->refunded_at,
+            'refund_amount' => $booking->payment_status === 'paid' ? $booking->total_price : $booking->refund_amount,
             'admin_notes' => 'Cancelled by user at ' . now()->format('Y-m-d H:i:s')
         ]);
-
-        // Refund points if used
-        if ($booking->payment_status === 'paid') {
-            $booking->update(['payment_status' => 'refunded']);
-        }
 
         return back()->with('success', 'Booking cancelled successfully. Refund will be processed within 3-5 business days.');
     }
