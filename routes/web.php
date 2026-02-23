@@ -24,6 +24,7 @@ use App\Http\Controllers\PointController;
 use App\Http\Controllers\CouponController;
 use Laravel\Socialite\Socialite;
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\StripeWebhookController;
 
 require __DIR__ . '/auth.php';
 
@@ -44,6 +45,9 @@ Route::view('/membership', 'membership')->name('membership');
 Route::get('/search/cars', [HomeController::class, 'searchCars'])->name('search.cars');
 Route::get('/search/tours', [HomeController::class, 'searchTours'])->name('search.tours');
 
+// Stripe Webhook Route
+Route::post('/webhooks/stripe', StripeWebhookController::class)->name('stripe.webhook');
+
 // User Routes
 Route::middleware('auth', 'role:user')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -58,6 +62,7 @@ Route::middleware('auth', 'role:user')->group(function () {
     Route::get('/booking/payment/{id}', [BookingController::class, 'payment'])->name('booking.payment');
     Route::post('/booking/process/{id}', [BookingController::class, 'processPayment'])->name('booking.process');
     Route::get('/booking/success/{id}', [BookingController::class, 'success'])->name('booking.success');
+    Route::get('/booking/invoice/{id}', [BookingController::class, 'downloadInvoice'])->name('booking.invoice');
 
     // Support Chat
     Route::get('/support/chat', [SupportChatController::class, 'index'])->name('support.chat');
@@ -109,6 +114,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::get('/bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
     Route::get('/bookings/{id}', [AdminBookingController::class, 'show'])->name('bookings.show');
     Route::put('/bookings/{id}', [AdminBookingController::class, 'update'])->name('bookings.update');
+    Route::post('/bookings/{id}/refund', [AdminBookingController::class, 'refund'])->name('bookings.refund');
 
     // Products (Cars & Tours)
     Route::resource('products', AdminProductController::class);
