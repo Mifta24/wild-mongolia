@@ -223,6 +223,12 @@
                                     <span class="font-bold text-teal-600 text-lg">THB {{ number_format($booking->total_price) }}</span>
                                 </div>
                             </div>
+                            @if(in_array($booking->payment_status, ['paid', 'refunded'], true))
+                            <a href="{{ route('booking.invoice', $booking->id) }}"
+                               class="block w-full text-center mt-3 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-medium">
+                                Download Invoice (PDF)
+                            </a>
+                            @endif
                         </div>
                     </div>
 
