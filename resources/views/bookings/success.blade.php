@@ -8,9 +8,14 @@
                 </svg>
             </div>
 
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Booking Confirmed!</h1>
-            <p class="text-gray-500 mb-8">Thank you for your order. We have sent the confirmation email to <span
-                    class="font-semibold">{{ $booking->guest_email }}</span>.</p>
+            @if($booking->payment_status === 'paid')
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Booking Confirmed!</h1>
+                <p class="text-gray-500 mb-8">Thank you for your order. We have sent the confirmation email to <span
+                        class="font-semibold">{{ $booking->guest_email }}</span>.</p>
+            @else
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Payment Processing</h1>
+                <p class="text-gray-500 mb-8">Your booking is created. Payment is still being verified, please refresh this page in a moment.</p>
+            @endif
 
             <div
                 class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-500 mb-8">
@@ -19,10 +24,12 @@
             </div>
 
             <div class="space-y-3">
-                <a href="#"
-                    class="block w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-lg transition">
-                    Download Voucher (PDF)
-                </a>
+                @if(in_array($booking->payment_status, ['paid', 'refunded'], true))
+                    <a href="{{ route('booking.invoice', $booking->id) }}"
+                        class="block w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-lg transition">
+                        Download Invoice (PDF)
+                    </a>
+                @endif
                 <a href="/"
                     class="block w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-bold py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                     Back to Home
