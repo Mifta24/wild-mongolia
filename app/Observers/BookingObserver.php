@@ -42,7 +42,7 @@ class BookingObserver
 
         // Refund points when booking is cancelled
         if ($booking->isDirty('status') && $booking->status === 'cancelled') {
-            if ($booking->payment_status === 'paid' && $booking->user) {
+            if (in_array($booking->payment_status, ['paid', 'refunded'], true) && $booking->user) {
                 $this->pointService->refundBookingPoints($booking);
                 $this->pointService->updateMembershipTier($booking->user);
             }
