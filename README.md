@@ -57,3 +57,27 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Stripe Sandbox Setup
+
+1. Set your Stripe sandbox keys in `.env`:
+
+```dotenv
+STRIPE_KEY=pk_test_xxx
+STRIPE_SECRET=sk_test_xxx
+STRIPE_WEBHOOK_SECRET=whsec_xxx
+```
+
+2. Run migration:
+
+```bash
+php artisan migrate
+```
+
+3. Start local webhook forwarding using Stripe CLI:
+
+```bash
+stripe listen --forward-to http://127.0.0.1:8000/webhooks/stripe
+```
+
+4. Copy the webhook signing secret from Stripe CLI output into `STRIPE_WEBHOOK_SECRET`.
