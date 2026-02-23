@@ -36,6 +36,13 @@ class Booking extends Model
         'currency',
         'status',
         'payment_status',
+        'stripe_checkout_session_id',
+        'stripe_payment_intent_id',
+        'stripe_receipt_url',
+        'paid_at',
+        'refunded_at',
+        'refund_amount',
+        'invoice_number',
         'special_request',
         'admin_notes',
     ];
@@ -46,6 +53,9 @@ class Booking extends Model
     protected $casts = [
         'service_date' => 'date',
         'total_price' => 'decimal:2',
+        'refund_amount' => 'decimal:2',
+        'paid_at' => 'datetime',
+        'refunded_at' => 'datetime',
     ];
 
     /**
