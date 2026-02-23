@@ -13,6 +13,18 @@
                 <p class="text-gray-500">Please review your booking details before paying.</p>
             </div>
 
+            @if(session('error'))
+                <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded" role="alert">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            @if(request()->boolean('cancelled'))
+                <div class="mb-6 bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded" role="alert">
+                    Payment was cancelled. You can retry checkout anytime.
+                </div>
+            @endif
+
             <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl overflow-hidden mb-6">
                 <div
                     class="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 flex justify-between">
@@ -58,13 +70,6 @@
                                 class="h-4 w-4 text-teal-600 focus:ring-teal-500">
                             <span class="ml-3 font-medium text-gray-900 dark:text-white">Credit / Debit Card
                                 (Stripe)</span>
-                        </label>
-                        <label
-                            class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
-                            <input type="radio" name="payment_method" value="promptpay"
-                                class="h-4 w-4 text-teal-600 focus:ring-teal-500">
-                            <span class="ml-3 font-medium text-gray-900 dark:text-white">Thai QR Payment
-                                (PromptPay)</span>
                         </label>
                     </div>
 
