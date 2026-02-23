@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Booking;
+use App\Services\StripePaymentService;
 
 class BookingController extends Controller
 {
@@ -91,6 +92,36 @@ class BookingController extends Controller
 
         return redirect()->route('admin.bookings.show', $id)
             ->with('success', 'Booking status updated successfully.');
+    }
+
+    public function refund(string $id)
+    {
+        $booking = Booking::findOrFail($id);
+
+        if ($booking->payment_status !== 'paid') {
+            return back()->with('error', 'Only paid bookings can be refunded.');
+        }
+
+        if (blank($booking->stripe_payment_intent_id)) {
+            return back()->with('error', 'Stripe payment reference is missing for this booking.');
+        }
+
+        try {
+            app(StripePaymentService::class)->refundBooking($booking);
+
+            $booking->update([
+                'payment_status' => 'refunded',
+                'refunded_at' => now(),
+                'refund_amount' => $booking->total_price,
+                'admin_notes' => trim(($booking->admin_notes ? $booking->admin_notes . PHP_EOL : '') . 'Refunded by admin at ' . now()->format('Y-m-d H:i:s')),
+            ]);
+
+            return back()->with('success', 'Stripe refund has been initiated successfully.');
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return back()->with('error', 'Failed to process Stripe refund. Please try again.');
+        }
     }
 
     /**
