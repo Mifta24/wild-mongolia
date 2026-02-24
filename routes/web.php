@@ -44,6 +44,7 @@ Route::view('/membership', 'membership')->name('membership');
 // Search Routes (Public)
 Route::get('/search/cars', [HomeController::class, 'searchCars'])->name('search.cars');
 Route::get('/search/tours', [HomeController::class, 'searchTours'])->name('search.tours');
+Route::get('/products/{product:slug}', [HomeController::class, 'show'])->name('products.show');
 
 // Stripe Webhook Route
 Route::post('/webhooks/stripe', StripeWebhookController::class)->name('stripe.webhook');
@@ -115,6 +116,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::get('/bookings/{id}', [AdminBookingController::class, 'show'])->name('bookings.show');
     Route::put('/bookings/{id}', [AdminBookingController::class, 'update'])->name('bookings.update');
     Route::post('/bookings/{id}/refund', [AdminBookingController::class, 'refund'])->name('bookings.refund');
+    Route::post('/bookings/{id}/resend-confirmation', [AdminBookingController::class, 'resendConfirmationEmail'])->name('bookings.resend-confirmation');
 
     // Products (Cars & Tours)
     Route::resource('products', AdminProductController::class);
