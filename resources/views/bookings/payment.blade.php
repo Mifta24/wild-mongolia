@@ -50,6 +50,37 @@
 
                     <div class="border-t border-gray-100 dark:border-gray-700 my-4"></div>
 
+                    @if (($booking->add_ons_total ?? 0) > 0)
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Service Total</span>
+                            <span class="font-medium text-gray-900 dark:text-white">THB {{ number_format($booking->total_price - $booking->add_ons_total, 2) }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Add-ons</span>
+                            <span class="font-medium text-gray-900 dark:text-white">THB {{ number_format($booking->add_ons_total, 2) }}</span>
+                        </div>
+                    @endif
+
+                    @if(!empty($booking->selected_add_ons))
+                        <div class="pt-2">
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Selected Add-ons</p>
+                            <ul class="space-y-1 text-sm text-gray-700 dark:text-gray-300">
+                                @foreach($booking->selected_add_ons as $option)
+                                    <li>• {{ $option['name'] ?? '-' }} (THB {{ number_format((float) ($option['price'] ?? 0), 2) }})</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    @if($booking->service_type === 'tour')
+                        <div class="pt-2">
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Meeting Point Confirmed</p>
+                            <p class="text-sm font-medium {{ $booking->meeting_point_confirmed ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
+                                {{ $booking->meeting_point_confirmed ? 'Yes' : 'No' }}
+                            </p>
+                        </div>
+                    @endif
+
                     <div class="flex justify-between items-center">
                         <span class="text-lg font-bold text-gray-900 dark:text-white">Total Amount</span>
                         <span class="text-2xl font-bold text-teal-600">THB

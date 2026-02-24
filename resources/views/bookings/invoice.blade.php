@@ -59,6 +59,11 @@
             font-size: 15px;
             font-weight: bold;
         }
+
+        .list {
+            margin: 6px 0 0 18px;
+            padding: 0;
+        }
     </style>
 </head>
 
@@ -81,6 +86,10 @@
         Booking Code: {{ $booking->booking_code }}<br>
         Service: {{ $booking->product_name }}<br>
         Service Date: {{ $booking->service_date->format('d M Y') }} {{ \Carbon\Carbon::parse($booking->service_time)->format('H:i') }}
+        @if($booking->service_type === 'tour')
+            <br>
+            Meeting Point Confirmed: {{ $booking->meeting_point_confirmed ? 'Yes' : 'No' }}
+        @endif
     </div>
 
     <table>
@@ -93,10 +102,17 @@
         </thead>
         <tbody>
             <tr>
-                <td>{{ $booking->product_name }} (Booking {{ $booking->booking_code }})</td>
+                <td>{{ $booking->product_name }} (Booking {{ $booking->booking_code }}) - Service Total</td>
                 <td class="text-right">{{ $booking->quantity }}</td>
-                <td class="text-right">{{ $booking->currency }} {{ number_format($booking->total_price, 2) }}</td>
+                <td class="text-right">{{ $booking->currency }} {{ number_format($booking->total_price - ($booking->add_ons_total ?? 0), 2) }}</td>
             </tr>
+            @if(($booking->add_ons_total ?? 0) > 0)
+                <tr>
+                    <td>Add-ons</td>
+                    <td class="text-right">-</td>
+                    <td class="text-right">{{ $booking->currency }} {{ number_format($booking->add_ons_total, 2) }}</td>
+                </tr>
+            @endif
             <tr>
                 <td colspan="2" class="text-right total">Total</td>
                 <td class="text-right total">{{ $booking->currency }} {{ number_format($booking->total_price, 2) }}</td>
@@ -109,6 +125,17 @@
             @endif
         </tbody>
     </table>
+
+    @if(!empty($booking->selected_add_ons))
+        <div class="section">
+            <strong>Selected Add-ons</strong>
+            <ul class="list">
+                @foreach($booking->selected_add_ons as $option)
+                    <li>{{ $option['name'] ?? '-' }} ({{ $booking->currency }} {{ number_format((float) ($option['price'] ?? 0), 2) }})</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
     <p class="muted" style="margin-top: 12px;">
         Payment Status: {{ strtoupper($booking->payment_status) }}

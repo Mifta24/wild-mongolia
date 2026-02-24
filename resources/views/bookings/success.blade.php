@@ -23,6 +23,27 @@
                 <p class="text-2xl font-mono font-bold text-gray-900 dark:text-white">{{ $booking->booking_code }}</p>
             </div>
 
+            <div class="text-left bg-gray-50 dark:bg-gray-700/40 border border-gray-200 dark:border-gray-600 rounded-lg p-4 mb-6">
+                <p class="text-sm font-semibold text-gray-900 dark:text-white mb-2">Booking Summary</p>
+                <p class="text-sm text-gray-700 dark:text-gray-300">Service: {{ $booking->product_name }}</p>
+                @if(($booking->add_ons_total ?? 0) > 0)
+                    <p class="text-sm text-gray-700 dark:text-gray-300 mt-1">Add-ons Total: THB {{ number_format($booking->add_ons_total, 2) }}</p>
+                    @if(!empty($booking->selected_add_ons))
+                        <ul class="mt-2 space-y-1 text-xs text-gray-600 dark:text-gray-400 list-disc list-inside">
+                            @foreach($booking->selected_add_ons as $option)
+                                <li>{{ $option['name'] ?? '-' }} (THB {{ number_format((float) ($option['price'] ?? 0), 2) }})</li>
+                            @endforeach
+                        </ul>
+                    @endif
+                @endif
+
+                @if($booking->service_type === 'tour')
+                    <p class="text-sm mt-2 {{ $booking->meeting_point_confirmed ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
+                        Meeting Point Confirmed: {{ $booking->meeting_point_confirmed ? 'Yes' : 'No' }}
+                    </p>
+                @endif
+            </div>
+
             <div class="space-y-3">
                 @if(in_array($booking->payment_status, ['paid', 'refunded'], true))
                     <a href="{{ route('booking.invoice', $booking->id) }}"
