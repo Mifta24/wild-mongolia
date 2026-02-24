@@ -163,9 +163,19 @@ class HomeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Product $product)
     {
-        //
+        if (!$product->is_active) {
+            abort(404);
+        }
+
+        $product->load([
+            'reviews' => function ($query) {
+                $query->where('status', 'approved')->latest()->take(8);
+            },
+        ]);
+
+        return view('products.show', compact('product'));
     }
 
     /**
