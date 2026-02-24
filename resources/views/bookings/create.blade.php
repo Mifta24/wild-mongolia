@@ -27,6 +27,8 @@
             <form action="{{ route('booking.store') }}" method="POST" x-data="{
                 qty: 1,
                 price: {{ $basePrice }},
+                addOns: {{ Js::from($product?->add_ons ?? []) }},
+                selectedAddOns: {{ Js::from(old('selected_add_ons', [])) }},
                 type: '{{ $serviceType }}',
                 serviceSubtype: '{{ old('service_subtype', $serviceSubtype ?? 'airport_transfer') }}',
                 syncSubtype() {
@@ -39,7 +41,12 @@
                         this.serviceSubtype = 'airport_transfer';
                     }
                 },
-                get total() { return this.qty * this.price; }
+                get addOnsTotal() {
+                    return this.addOns.reduce((sum, option, index) => {
+                        return this.selectedAddOns.includes(index.toString()) ? sum + Number(option.price || 0) : sum;
+                    }, 0);
+                },
+                get total() { return (this.qty * this.price) + this.addOnsTotal; }
             }" x-init="syncSubtype()">
                 @csrf
 
@@ -123,6 +130,20 @@
                                             <option value="night_market" @selected(($experienceType ?? old('experience_type')) === 'night_market')>Night Market</option>
                                         </select>
                                     </div>
+
+                                    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 p-4">
+                                        <label class="inline-flex items-start gap-3 cursor-pointer">
+                                            <input type="checkbox" name="meeting_point_confirmed" value="1"
+                                                @checked(old('meeting_point_confirmed'))
+                                                class="mt-1 rounded border-gray-300 dark:border-gray-600 text-teal-600 focus:ring-teal-500">
+                                            <span class="text-sm text-gray-700 dark:text-gray-300">
+                                                I confirm that I have reviewed and understood the meeting point details for this tour.
+                                            </span>
+                                        </label>
+                                        @error('meeting_point_confirmed')
+                                            <p class="text-red-600 dark:text-red-400 text-sm mt-2">{{ $message }}</p>
+                                        @enderror
+                                    </div>
                                 </div>
 
                                 <div class="grid grid-cols-2 gap-4">
@@ -167,6 +188,30 @@
                                         required>
                                 </div>
 
+                                @if (!empty($product?->add_ons))
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Add-ons / Options</label>
+                                        <div class="space-y-2">
+                                            @foreach ($product->add_ons as $index => $option)
+                                                <label class="flex items-start justify-between gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer">
+                                                    <div class="flex items-start gap-3">
+                                                        <input type="checkbox" name="selected_add_ons[]" value="{{ $index }}"
+                                                            x-model="selectedAddOns"
+                                                            class="mt-1 rounded border-gray-300 dark:border-gray-600 text-teal-600 focus:ring-teal-500">
+                                                        <div>
+                                                            <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $option['name'] ?? '-' }}</p>
+                                                            @if (!empty($option['description']))
+                                                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ $option['description'] }}</p>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    <p class="text-sm font-semibold text-teal-600">THB {{ number_format((float) ($option['price'] ?? 0), 2) }}</p>
+                                                </label>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Special
                                         Request (Optional)</label>
@@ -194,6 +239,11 @@
                             <div class="flex justify-between mb-4 text-sm">
                                 <span class="text-gray-600 dark:text-gray-400">Quantity</span>
                                 <span class="text-gray-900 dark:text-white">x <span x-text="qty"></span></span>
+                            </div>
+
+                            <div class="flex justify-between mb-4 text-sm" x-show="addOnsTotal > 0">
+                                <span class="text-gray-600 dark:text-gray-400">Add-ons</span>
+                                <span class="text-gray-900 dark:text-white">THB <span x-text="addOnsTotal.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })"></span></span>
                             </div>
 
                             <div
