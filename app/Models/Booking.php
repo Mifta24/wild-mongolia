@@ -22,6 +22,8 @@ class Booking extends Model
         'service_subtype',
         'destination',
         'experience_type',
+        'meeting_point_confirmed',
+        'selected_add_ons',
         'product_id',
         'product_name',
         'service_date',
@@ -33,6 +35,7 @@ class Booking extends Model
         'adult_pax',
         'child_pax',
         'total_price',
+        'add_ons_total',
         'currency',
         'status',
         'payment_status',
@@ -40,6 +43,7 @@ class Booking extends Model
         'stripe_payment_intent_id',
         'stripe_receipt_url',
         'paid_at',
+        'booking_confirmation_emailed_at',
         'refunded_at',
         'refund_amount',
         'invoice_number',
@@ -53,9 +57,13 @@ class Booking extends Model
     protected $casts = [
         'service_date' => 'date',
         'total_price' => 'decimal:2',
+        'add_ons_total' => 'decimal:2',
+        'selected_add_ons' => 'array',
         'refund_amount' => 'decimal:2',
         'paid_at' => 'datetime',
+        'booking_confirmation_emailed_at' => 'datetime',
         'refunded_at' => 'datetime',
+        'meeting_point_confirmed' => 'boolean',
     ];
 
     /**
