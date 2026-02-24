@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\Product;
 use App\Http\Requests\StoreBookingRequest;
 use App\Http\Requests\UpdateBookingRequest;
+use App\Services\BookingEmailService;
 use App\Services\StripePaymentService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
@@ -27,6 +28,8 @@ class BookingController extends Controller
      */
     public function create(Request $request)
     {
+        $product = null;
+
         $serviceType = $request->query('type', 'car');
         if (!in_array($serviceType, ['car', 'tour'], true)) {
             $serviceType = 'car';
@@ -68,6 +71,7 @@ class BookingController extends Controller
             'destination',
             'experienceType',
             'productId',
+            'product',
             'productName',
             'basePrice'
         ));
@@ -94,9 +98,52 @@ class BookingController extends Controller
             'pickup_location' => 'nullable|string|max:255',
             'adult_pax' => 'nullable|integer',
             'product_id' => 'nullable|exists:products,id',
+            'meeting_point_confirmed' => 'nullable|boolean',
+            'selected_add_ons' => 'nullable|array',
+            'selected_add_ons.*' => 'integer|min:0',
         ]);
 
-        $totalPrice = $request->base_price * $request->quantity;
+        if ($request->service_type === 'tour') {
+            $request->validate([
+                'meeting_point_confirmed' => 'accepted',
+            ], [
+                'meeting_point_confirmed.accepted' => 'Please confirm the meeting point before continuing.',
+            ]);
+        }
+
+        $product = null;
+        $selectedAddOns = [];
+        $addOnsTotal = 0;
+
+        if ($request->filled('product_id')) {
+            $product = Product::query()->find($request->product_id);
+        }
+
+        $selectedAddOnIndexes = collect($request->input('selected_add_ons', []))
+            ->map(fn ($index) => (int) $index)
+            ->unique()
+            ->values();
+
+        if ($product && is_array($product->add_ons)) {
+            foreach ($selectedAddOnIndexes as $index) {
+                $option = $product->add_ons[$index] ?? null;
+                if (!is_array($option) || empty($option['name'])) {
+                    continue;
+                }
+
+                $price = max(0, (float) ($option['price'] ?? 0));
+
+                $selectedAddOns[] = [
+                    'name' => (string) $option['name'],
+                    'price' => round($price, 2),
+                    'description' => $option['description'] ?? null,
+                ];
+
+                $addOnsTotal += $price;
+            }
+        }
+
+        $totalPrice = ($request->base_price * $request->quantity) + $addOnsTotal;
 
         $booking = Booking::create([
             'user_id' => Auth::id(), // Null jika Guest
@@ -108,6 +155,8 @@ class BookingController extends Controller
             'service_subtype' => $request->service_subtype,
             'destination' => $request->destination,
             'experience_type' => $request->experience_type,
+            'meeting_point_confirmed' => $request->boolean('meeting_point_confirmed'),
+            'selected_add_ons' => $selectedAddOns,
             'product_name' => $request->product_name,
             'product_id' => $request->product_id,
 
@@ -118,6 +167,7 @@ class BookingController extends Controller
 
             'quantity' => $request->quantity,
             'total_price' => $totalPrice,
+            'add_ons_total' => $addOnsTotal,
 
             'status' => 'pending',
             'payment_status' => 'unpaid',
@@ -220,6 +270,12 @@ class BookingController extends Controller
         }
 
         $booking->refresh();
+
+        try {
+            app(BookingEmailService::class)->sendConfirmationIfNeeded($booking);
+        } catch (\Throwable $exception) {
+            report($exception);
+        }
 
         // Calculate points earned
         $pointsEarned = 0;
