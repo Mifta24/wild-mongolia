@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Services\BookingEmailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Stripe\Exception\SignatureVerificationException;
@@ -67,6 +68,12 @@ class StripeWebhookController extends Controller
             'paid_at' => $booking->paid_at ?? now(),
             'stripe_receipt_url' => data_get($session, 'receipt_url'),
         ]);
+
+        try {
+            app(BookingEmailService::class)->sendConfirmationIfNeeded($booking->refresh());
+        } catch (\Throwable $exception) {
+            report($exception);
+        }
     }
 
     private function handleChargeRefunded(object $charge): void
