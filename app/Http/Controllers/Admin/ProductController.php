@@ -37,6 +37,17 @@ class ProductController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'type' => ['required', 'in:car,tour'],
             'description' => ['nullable', 'string'],
+            'itinerary' => ['nullable', 'string'],
+            'cancellation_policy' => ['nullable', 'string'],
+            'meeting_point_name' => ['nullable', 'string', 'max:255'],
+            'meeting_point_address' => ['nullable', 'string', 'max:1000'],
+            'meeting_point_lat' => ['nullable', 'numeric', 'between:-90,90'],
+            'meeting_point_lng' => ['nullable', 'numeric', 'between:-180,180'],
+            'meeting_point_embed_url' => ['nullable', 'url'],
+            'gallery_image_urls' => ['nullable', 'string'],
+            'gallery_images_upload' => ['nullable', 'array'],
+            'gallery_images_upload.*' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'],
+            'add_ons_input' => ['nullable', 'string'],
             'car_model' => ['nullable', 'string', 'max:255', 'required_if:type,car'],
             'max_passengers' => ['nullable', 'integer', 'min:1', 'required_if:type,car'],
             'max_luggage' => ['nullable', 'integer', 'min:0', 'required_if:type,car'],
@@ -45,7 +56,7 @@ class ProductController extends Controller
             'includes_lunch' => ['nullable', 'boolean'],
             'includes_pickup' => ['nullable', 'boolean'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'],
-            'image_url' => ['nullable', 'url'],
+            'image_url' => ['nullable', 'string', 'max:2048'],
             'base_price' => ['required', 'numeric', 'min:0'],
             'discounted_price' => ['nullable', 'numeric', 'min:0'],
             'currency' => ['nullable', 'string', 'max:3'],
@@ -73,6 +84,9 @@ class ProductController extends Controller
             $validated['max_luggage'] = null;
         }
 
+        $validated['add_ons'] = $this->parseAddOns($request->input('add_ons_input'));
+        $validated['gallery_images'] = $this->collectGalleryImages($request);
+
         // Handle image upload
         if ($request->hasFile('image')) {
             $validated['image_url'] = $request->file('image')->store('products', 'public');
@@ -99,6 +113,17 @@ class ProductController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'type' => ['required', 'in:car,tour'],
             'description' => ['nullable', 'string'],
+            'itinerary' => ['nullable', 'string'],
+            'cancellation_policy' => ['nullable', 'string'],
+            'meeting_point_name' => ['nullable', 'string', 'max:255'],
+            'meeting_point_address' => ['nullable', 'string', 'max:1000'],
+            'meeting_point_lat' => ['nullable', 'numeric', 'between:-90,90'],
+            'meeting_point_lng' => ['nullable', 'numeric', 'between:-180,180'],
+            'meeting_point_embed_url' => ['nullable', 'url'],
+            'gallery_image_urls' => ['nullable', 'string'],
+            'gallery_images_upload' => ['nullable', 'array'],
+            'gallery_images_upload.*' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'],
+            'add_ons_input' => ['nullable', 'string'],
             'car_model' => ['nullable', 'string', 'max:255', 'required_if:type,car'],
             'max_passengers' => ['nullable', 'integer', 'min:1', 'required_if:type,car'],
             'max_luggage' => ['nullable', 'integer', 'min:0', 'required_if:type,car'],
@@ -107,7 +132,7 @@ class ProductController extends Controller
             'includes_lunch' => ['nullable', 'boolean'],
             'includes_pickup' => ['nullable', 'boolean'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'],
-            'image_url' => ['nullable', 'url'],
+            'image_url' => ['nullable', 'string', 'max:2048'],
             'base_price' => ['required', 'numeric', 'min:0'],
             'discounted_price' => ['nullable', 'numeric', 'min:0'],
             'currency' => ['nullable', 'string', 'max:3'],
@@ -135,6 +160,9 @@ class ProductController extends Controller
             $validated['max_luggage'] = null;
         }
 
+        $validated['add_ons'] = $this->parseAddOns($request->input('add_ons_input'));
+        $validated['gallery_images'] = $this->collectGalleryImages($request);
+
         // Handle image upload
         if ($request->hasFile('image')) {
             // Delete old image if exists
@@ -153,5 +181,62 @@ class ProductController extends Controller
     {
         $product->delete();
         return redirect()->route('admin.products.index')->with('status', 'Product deleted');
+    }
+
+    private function collectGalleryImages(Request $request): array
+    {
+        $images = [];
+
+        $urlLines = preg_split('/\r\n|\r|\n/', (string) $request->input('gallery_image_urls', ''));
+        foreach ($urlLines as $line) {
+            $line = trim((string) $line);
+            if ($line !== '') {
+                $images[] = $line;
+            }
+        }
+
+        foreach ($request->file('gallery_images_upload', []) as $file) {
+            if ($file) {
+                $images[] = $file->store('products/gallery', 'public');
+            }
+        }
+
+        return array_values(array_unique($images));
+    }
+
+    private function parseAddOns(?string $rawInput): array
+    {
+        if (!$rawInput) {
+            return [];
+        }
+
+        $lines = preg_split('/\r\n|\r|\n/', $rawInput);
+        $addOns = [];
+
+        foreach ($lines as $line) {
+            $line = trim((string) $line);
+            if ($line === '') {
+                continue;
+            }
+
+            $parts = array_map('trim', explode('|', $line));
+
+            if (count($parts) === 1) {
+                $addOns[] = [
+                    'name' => $parts[0],
+                    'price' => 0,
+                    'description' => null,
+                ];
+                continue;
+            }
+
+            $addOns[] = [
+                'name' => $parts[0],
+                'price' => is_numeric($parts[1] ?? null) ? (float) $parts[1] : 0,
+                'description' => $parts[2] ?? null,
+            ];
+        }
+
+        return $addOns;
     }
 }
