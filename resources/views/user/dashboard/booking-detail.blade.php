@@ -109,6 +109,26 @@
                                 <p class="font-medium text-gray-900 dark:text-white">{{ $booking->special_request }}</p>
                             </div>
                             @endif
+
+                            @if(!empty($booking->selected_add_ons))
+                            <div>
+                                <label class="text-sm text-gray-600 dark:text-gray-400">Selected Add-ons</label>
+                                <ul class="mt-1 space-y-1 text-sm text-gray-900 dark:text-white">
+                                    @foreach($booking->selected_add_ons as $option)
+                                        <li>• {{ $option['name'] ?? '-' }} (THB {{ number_format((float) ($option['price'] ?? 0), 2) }})</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                            @endif
+
+                            @if($booking->service_type === 'tour')
+                            <div>
+                                <label class="text-sm text-gray-600 dark:text-gray-400">Meeting Point Confirmed</label>
+                                <p class="font-medium {{ $booking->meeting_point_confirmed ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
+                                    {{ $booking->meeting_point_confirmed ? 'Yes' : 'No' }}
+                                </p>
+                            </div>
+                            @endif
                         </div>
                     </div>
 
@@ -218,6 +238,12 @@
                                 <span class="font-medium text-gray-900 dark:text-white">{{ $booking->quantity }}</span>
                             </div>
                             <div class="border-t border-gray-200 dark:border-gray-700 pt-3">
+                                @if(($booking->add_ons_total ?? 0) > 0)
+                                <div class="flex justify-between text-sm mb-2">
+                                    <span class="text-gray-600 dark:text-gray-400">Add-ons</span>
+                                    <span class="font-medium text-gray-900 dark:text-white">THB {{ number_format($booking->add_ons_total, 2) }}</span>
+                                </div>
+                                @endif
                                 <div class="flex justify-between">
                                     <span class="font-semibold text-gray-900 dark:text-white">Total</span>
                                     <span class="font-bold text-teal-600 text-lg">THB {{ number_format($booking->total_price) }}</span>
