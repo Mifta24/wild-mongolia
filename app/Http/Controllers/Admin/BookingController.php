@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Booking;
+use App\Services\BookingEmailService;
 use App\Services\StripePaymentService;
 
 class BookingController extends Controller
@@ -30,6 +31,11 @@ class BookingController extends Controller
                         $u->where('name', 'like', "%{$search}%");
                     });
             });
+        }
+
+        if ($request->has('meeting_point') && in_array($request->meeting_point, ['yes', 'no'], true)) {
+            $query->where('service_type', 'tour')
+                ->where('meeting_point_confirmed', $request->meeting_point === 'yes');
         }
 
         // Ambil data terbaru dulu, paginate 10 per halaman
@@ -121,6 +127,29 @@ class BookingController extends Controller
             report($exception);
 
             return back()->with('error', 'Failed to process Stripe refund. Please try again.');
+        }
+    }
+
+    public function resendConfirmationEmail(string $id)
+    {
+        $booking = Booking::findOrFail($id);
+
+        if ($booking->payment_status !== 'paid') {
+            return back()->with('error', 'Confirmation email can only be resent for paid bookings.');
+        }
+
+        if (blank($booking->guest_email)) {
+            return back()->with('error', 'Guest email is empty for this booking.');
+        }
+
+        try {
+            app(BookingEmailService::class)->resendConfirmation($booking);
+
+            return back()->with('success', 'Confirmation email has been resent successfully.');
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return back()->with('error', 'Failed to resend confirmation email. Please try again.');
         }
     }
 
