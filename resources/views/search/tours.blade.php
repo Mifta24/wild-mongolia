@@ -150,10 +150,16 @@
                                     </div>
                                 </div>
 
-                                <a href="{{ route('booking.create', ['type' => 'tour', 'service_type' => 'tour', 'service_subtype' => 'private_tour', 'product_id' => $tour->id, 'destination' => $destination, 'experience_type' => $experienceType, 'product' => $tour->name, 'price' => $tour->final_price]) }}"
-                                    class="block w-full bg-secondary hover:bg-yellow-600 text-white text-center font-bold py-3 rounded-lg transition">
-                                    Book This Tour
-                                </a>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <a href="{{ route('products.show', $tour->slug) }}"
+                                        class="block w-full border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 text-center font-semibold py-3 rounded-lg transition hover:bg-gray-100 dark:hover:bg-gray-700">
+                                        Details
+                                    </a>
+                                    <a href="{{ route('booking.create', ['type' => 'tour', 'service_type' => 'tour', 'service_subtype' => 'private_tour', 'product_id' => $tour->id, 'destination' => $destination, 'experience_type' => $experienceType, 'product' => $tour->name, 'price' => $tour->final_price]) }}"
+                                        class="block w-full bg-secondary hover:bg-yellow-600 text-white text-center font-bold py-3 rounded-lg transition">
+                                        Book This Tour
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     @endforeach

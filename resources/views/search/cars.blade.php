@@ -161,10 +161,16 @@
                                     </div>
                                 </div>
 
-                                <a href="{{ route('booking.create', ['type' => 'car', 'service_type' => 'car', 'service_subtype' => $serviceType, 'product_id' => $car->id, 'product' => $car->name, 'price' => $displayPrice, 'pickup' => $pickupLocation, 'date' => $serviceDate, 'distance_km' => $distanceKm]) }}"
-                                    class="block w-full bg-primary hover:bg-teal-700 text-white text-center font-bold py-3 rounded-lg transition">
-                                    Book Now
-                                </a>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <a href="{{ route('products.show', $car->slug) }}"
+                                        class="block w-full border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 text-center font-semibold py-3 rounded-lg transition hover:bg-gray-100 dark:hover:bg-gray-700">
+                                        Details
+                                    </a>
+                                    <a href="{{ route('booking.create', ['type' => 'car', 'service_type' => 'car', 'service_subtype' => $serviceType, 'product_id' => $car->id, 'product' => $car->name, 'price' => $displayPrice, 'pickup' => $pickupLocation, 'date' => $serviceDate, 'distance_km' => $distanceKm]) }}"
+                                        class="block w-full bg-primary hover:bg-teal-700 text-white text-center font-bold py-3 rounded-lg transition">
+                                        Book Now
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     @endforeach
