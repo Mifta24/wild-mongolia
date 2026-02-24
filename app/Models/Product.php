@@ -16,6 +16,15 @@ class Product extends Model
         'type',
         'description',
         'image_url',
+        'gallery_images',
+        'itinerary',
+        'add_ons',
+        'cancellation_policy',
+        'meeting_point_name',
+        'meeting_point_address',
+        'meeting_point_lat',
+        'meeting_point_lng',
+        'meeting_point_embed_url',
         'car_model',
         'vehicle_type',
         'transmission',
@@ -46,6 +55,10 @@ class Product extends Model
         'distance_price_per_km' => 'decimal:2',
         'minimum_distance_price' => 'decimal:2',
         'average_rating' => 'decimal:2',
+        'meeting_point_lat' => 'decimal:7',
+        'meeting_point_lng' => 'decimal:7',
+        'gallery_images' => 'array',
+        'add_ons' => 'array',
         'is_active' => 'boolean',
         'is_featured' => 'boolean',
         'includes_lunch' => 'boolean',
@@ -181,5 +194,41 @@ class Product extends Model
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+
+    public function getPrimaryImageUrlAttribute(): ?string
+    {
+        return $this->image_url
+            ?? ($this->gallery_images[0] ?? null);
+    }
+
+    public function getAllImageUrlsAttribute(): array
+    {
+        $images = [];
+
+        if ($this->image_url) {
+            $images[] = $this->image_url;
+        }
+
+        foreach ($this->gallery_images ?? [] as $image) {
+            if ($image && !in_array($image, $images, true)) {
+                $images[] = $image;
+            }
+        }
+
+        return $images;
+    }
+
+    public function getMeetingPointMapEmbedUrlAttribute(): ?string
+    {
+        if (!empty($this->meeting_point_embed_url)) {
+            return $this->meeting_point_embed_url;
+        }
+
+        if (!is_null($this->meeting_point_lat) && !is_null($this->meeting_point_lng)) {
+            return sprintf('https://maps.google.com/maps?q=%s,%s&z=15&output=embed', $this->meeting_point_lat, $this->meeting_point_lng);
+        }
+
+        return null;
     }
 }
