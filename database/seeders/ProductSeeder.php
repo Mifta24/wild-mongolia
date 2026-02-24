@@ -192,6 +192,45 @@ class ProductSeeder extends Seeder
             ],
         ];
 
+        $cars = array_map(function (array $car) {
+            return array_merge([
+                'gallery_images' => [
+                    $car['image_url'] ?? null,
+                    'https://images.unsplash.com/photo-1485291571150-772bcfc10da5?q=80&w=1470&auto=format&fit=crop',
+                ],
+                'itinerary' => "Pickup at requested point\nMeet & greet with driver\nTransfer to destination\nDrop-off support",
+                'add_ons' => [
+                    ['name' => 'Child Seat', 'price' => 200, 'description' => 'Per seat, subject to availability'],
+                    ['name' => 'Extended Waiting (30 min)', 'price' => 300, 'description' => 'For airport pickup delay'],
+                    ['name' => 'Extra Stop', 'price' => 250, 'description' => 'One stop on route'],
+                ],
+                'cancellation_policy' => "Free cancellation up to 24 hours before pickup.\n50% charge for cancellation within 24 hours.\nNo-show: 100% charge.",
+                'meeting_point_name' => 'Main Arrival Hall Exit',
+                'meeting_point_address' => 'Suvarnabhumi Airport, Level 2, Exit Gate 3',
+                'meeting_point_lat' => 13.6900000,
+                'meeting_point_lng' => 100.7501120,
+            ], $car);
+        }, $cars);
+
+        $tours = array_map(function (array $tour) {
+            return array_merge([
+                'gallery_images' => [
+                    $tour['image_url'] ?? null,
+                    'https://images.unsplash.com/photo-1526481280695-3c46980e1b66?q=80&w=1470&auto=format&fit=crop',
+                ],
+                'itinerary' => "Meet at designated point\nGuided activity start\nMain highlights visit\nFree time & wrap-up",
+                'add_ons' => [
+                    ['name' => 'Hotel Pickup Upgrade', 'price' => 350, 'description' => 'Round-trip transfer from central area'],
+                    ['name' => 'Professional Photo Set', 'price' => 500, 'description' => '10 edited photos'],
+                ],
+                'cancellation_policy' => "Free cancellation up to 48 hours before start time.\n50% charge for cancellation within 48 hours.\nNo-show: 100% charge.",
+                'meeting_point_name' => 'Tour Meeting Point',
+                'meeting_point_address' => 'Please arrive 15 minutes before start time.',
+                'meeting_point_lat' => 13.7563000,
+                'meeting_point_lng' => 100.5018000,
+            ], $tour);
+        }, $tours);
+
         foreach ($cars as $car) {
             Product::updateOrCreate(
                 ['slug' => $car['slug']],
