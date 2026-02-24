@@ -105,6 +105,88 @@
             @enderror
         </div>
 
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Detailed Itinerary</label>
+            <textarea name="itinerary" rows="5"
+                class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-teal-500 focus:border-teal-500"
+                placeholder="One activity per line, e.g.&#10;08:00 Pickup at hotel&#10;09:30 Grand Palace&#10;12:00 Lunch">{{ old('itinerary') }}</textarea>
+            @error('itinerary')
+                <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Add-ons / Options</label>
+            <textarea name="add_ons_input" rows="4"
+                class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-teal-500 focus:border-teal-500"
+                placeholder="Format: Name|Price|Description&#10;Child Seat|200|Per seat&#10;Extended Waiting 30m|300|Airport pickup only">{{ old('add_ons_input') }}</textarea>
+            @error('add_ons_input')
+                <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cancellation Policy</label>
+            <textarea name="cancellation_policy" rows="4"
+                class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-teal-500 focus:border-teal-500"
+                placeholder="Example: Free cancellation up to 24h before service. 50% charge after that.">{{ old('cancellation_policy') }}</textarea>
+            @error('cancellation_policy')
+                <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Meeting Point Name</label>
+                <input type="text" name="meeting_point_name" value="{{ old('meeting_point_name') }}"
+                    class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-teal-500 focus:border-teal-500"
+                    placeholder="Suvarnabhumi Airport Gate 3">
+                @error('meeting_point_name')
+                    <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Meeting Point Embed URL (Optional)</label>
+                <input type="url" name="meeting_point_embed_url" value="{{ old('meeting_point_embed_url') }}"
+                    class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-teal-500 focus:border-teal-500"
+                    placeholder="https://maps.google.com/...">
+                @error('meeting_point_embed_url')
+                    <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Meeting Point Address</label>
+            <textarea name="meeting_point_address" rows="2"
+                class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-teal-500 focus:border-teal-500"
+                placeholder="Full address or meetup instruction">{{ old('meeting_point_address') }}</textarea>
+            @error('meeting_point_address')
+                <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Meeting Point Latitude</label>
+                <input type="number" step="0.0000001" name="meeting_point_lat" value="{{ old('meeting_point_lat') }}"
+                    class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-teal-500 focus:border-teal-500"
+                    placeholder="13.6900000">
+                @error('meeting_point_lat')
+                    <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Meeting Point Longitude</label>
+                <input type="number" step="0.0000001" name="meeting_point_lng" value="{{ old('meeting_point_lng') }}"
+                    class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-teal-500 focus:border-teal-500"
+                    placeholder="100.7501120">
+                @error('meeting_point_lng')
+                    <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Base Price</label>
@@ -148,11 +230,34 @@
 
         <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Or Image URL</label>
-            <input type="url" name="image_url" value="{{ old('image_url') }}" id="imageUrl"
+            <input type="text" name="image_url" value="{{ old('image_url') }}" id="imageUrl"
                 class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-teal-500 focus:border-teal-500">
             <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Leave empty if uploading image file</p>
             <div id="urlPreview" class="mt-3"></div>
             @error('image_url')
+                <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Photo Gallery (Multiple Upload)</label>
+            <input type="file" name="gallery_images_upload[]" accept="image/*" multiple
+                class="w-full rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-teal-500 focus:border-teal-500 p-2">
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">You can select multiple files.</p>
+            @error('gallery_images_upload')
+                <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
+            @enderror
+            @error('gallery_images_upload.*')
+                <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Photo Gallery URLs (Optional)</label>
+            <textarea name="gallery_image_urls" rows="4"
+                class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-teal-500 focus:border-teal-500"
+                placeholder="One URL/path per line">{{ old('gallery_image_urls') }}</textarea>
+            @error('gallery_image_urls')
                 <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
             @enderror
         </div>
