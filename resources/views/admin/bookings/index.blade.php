@@ -40,6 +40,16 @@
                         </div>
                     </div>
 
+                    <div class="w-full md:w-1/4">
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Meeting Point (Tour)</label>
+                        <select name="meeting_point" onchange="this.form.submit()"
+                            class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-teal-500 focus:border-teal-500 text-sm">
+                            <option value="">All</option>
+                            <option value="yes" {{ request('meeting_point') == 'yes' ? 'selected' : '' }}>Confirmed</option>
+                            <option value="no" {{ request('meeting_point') == 'no' ? 'selected' : '' }}>Not Confirmed</option>
+                        </select>
+                    </div>
+
                     <div class="w-full md:w-auto flex items-end">
                         <a href="{{ route('admin.bookings.index') }}"
                             class="px-4 py-2 text-sm text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 transition">Reset</a>
@@ -55,6 +65,7 @@
                                 <th class="px-6 py-3">Booking Code</th>
                                 <th class="px-6 py-3">Customer Info</th>
                                 <th class="px-6 py-3">Service</th>
+                                <th class="px-6 py-3">Meeting Point</th>
                                 <th class="px-6 py-3">Total</th>
                                 <th class="px-6 py-3">Date</th>
                                 <th class="px-6 py-3">Status</th>
@@ -96,6 +107,18 @@
                                         </div>
                                     </td>
 
+                                    <td class="px-6 py-4">
+                                        @if ($booking->service_type === 'tour')
+                                            @if ($booking->meeting_point_confirmed)
+                                                <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300 border border-green-200">Yes</span>
+                                            @else
+                                                <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300 border border-red-200">No</span>
+                                            @endif
+                                        @else
+                                            <span class="text-xs text-gray-400">-</span>
+                                        @endif
+                                    </td>
+
                                     <td class="px-6 py-4 font-mono">
                                         THB {{ number_format($booking->total_price) }}
                                     </td>
@@ -127,7 +150,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                                    <td colspan="8" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                                         <div class="flex flex-col items-center">
                                             <svg class="w-12 h-12 text-gray-300 mb-3" fill="none"
                                                 stroke="currentColor" viewBox="0 0 24 24">

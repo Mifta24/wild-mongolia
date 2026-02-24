@@ -73,6 +73,14 @@
                                 <span
                                     class="text-base font-medium text-gray-900 dark:text-white">{{ $booking->service_time ?? '09:00 AM' }}</span>
                             </div>
+                            @if ($booking->service_type === 'tour')
+                                <div>
+                                    <span class="block text-xs text-gray-500 uppercase">Meeting Point Confirmed</span>
+                                    <span class="text-base font-medium {{ $booking->meeting_point_confirmed ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
+                                        {{ $booking->meeting_point_confirmed ? 'Yes' : 'No' }}
+                                    </span>
+                                </div>
+                            @endif
                         </div>
 
                         @if ($booking->flight_number || $booking->pickup_location)
@@ -94,6 +102,17 @@
                                 </ul>
                             </div>
                         @endif
+
+                        @if (!empty($booking->selected_add_ons))
+                            <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                <h4 class="text-sm font-semibold mb-3">Selected Add-ons</h4>
+                                <ul class="text-sm space-y-2 text-gray-700 dark:text-gray-300">
+                                    @foreach ($booking->selected_add_ons as $option)
+                                        <li><span class="font-medium">{{ $option['name'] ?? '-' }}</span> - THB {{ number_format((float) ($option['price'] ?? 0), 2) }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
                     </div>
 
                     <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
@@ -102,10 +121,17 @@
                             Payment Summary</h3>
 
                         <div class="flex justify-between items-center mb-2">
-                            <span class="text-gray-600 dark:text-gray-400">Subtotal</span>
+                            <span class="text-gray-600 dark:text-gray-400">Service Total</span>
                             <span class="text-gray-900 dark:text-white">THB
-                                {{ number_format($booking->total_price) }}</span>
+                                {{ number_format($booking->total_price - ($booking->add_ons_total ?? 0), 2) }}</span>
                         </div>
+                        @if(($booking->add_ons_total ?? 0) > 0)
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-gray-600 dark:text-gray-400">Add-ons</span>
+                                <span class="text-gray-900 dark:text-white">THB
+                                    {{ number_format($booking->add_ons_total, 2) }}</span>
+                            </div>
+                        @endif
                         <div
                             class="flex justify-between items-center mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
                             <span class="text-lg font-bold text-gray-900 dark:text-white">Total Paid</span>
@@ -175,6 +201,21 @@
                             class="block text-center mt-3 w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 rounded">
                             Chat on WhatsApp
                         </a>
+
+                        <form action="{{ route('admin.bookings.resend-confirmation', $booking->id) }}" method="POST" class="mt-3"
+                            onsubmit="return confirm('Resend booking confirmation email to {{ $booking->guest_email }}?')">
+                            @csrf
+                            <button type="submit"
+                                class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-md transition"
+                                {{ $booking->payment_status !== 'paid' || blank($booking->guest_email) ? 'disabled' : '' }}>
+                                Resend Confirmation Email
+                            </button>
+                        </form>
+
+                        <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                            Last sent:
+                            {{ $booking->booking_confirmation_emailed_at ? $booking->booking_confirmation_emailed_at->format('d M Y H:i') : 'Not sent yet' }}
+                        </p>
                     </div>
                 </div>
 
