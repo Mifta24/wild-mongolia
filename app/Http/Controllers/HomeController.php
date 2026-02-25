@@ -175,7 +175,21 @@ class HomeController extends Controller
             },
         ]);
 
-        return view('products.show', compact('product'));
+        $availableSlots = $product->availableInventorySlots(now(), now()->addDays(30));
+
+        $availabilityCalendar = $availableSlots
+            ->groupBy(fn ($slot) => $slot->slot_date->toDateString())
+            ->map(fn ($group) => [
+                'remaining' => $group->sum('remaining_capacity'),
+                'slots' => $group->map(fn ($slot) => [
+                    'id' => $slot->id,
+                    'time' => substr((string) $slot->start_time, 0, 5),
+                    'remaining_capacity' => $slot->remaining_capacity,
+                    'cutoff_at' => $slot->cutoff_date_time->format('Y-m-d H:i'),
+                ])->values(),
+            ]);
+
+        return view('products.show', compact('product', 'availabilityCalendar'));
     }
 
     /**
