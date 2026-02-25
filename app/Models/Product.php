@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class Product extends Model
 {
@@ -194,6 +195,26 @@ class Product extends Model
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+
+    public function inventorySlots()
+    {
+        return $this->hasMany(\App\Models\InventorySlot::class);
+    }
+
+    public function availableInventorySlots(?Carbon $fromDate = null, ?Carbon $toDate = null)
+    {
+        $fromDate ??= now()->startOfDay();
+        $toDate ??= now()->addDays(60)->endOfDay();
+
+        return $this->inventorySlots()
+            ->where('is_active', true)
+            ->whereBetween('slot_date', [$fromDate->toDateString(), $toDate->toDateString()])
+            ->orderBy('slot_date')
+            ->orderBy('start_time')
+            ->get()
+                ->filter(fn (\App\Models\InventorySlot $slot) => $slot->remaining_capacity > 0 && !$slot->isPastCutoff())
+            ->values();
     }
 
     public function getPrimaryImageUrlAttribute(): ?string
