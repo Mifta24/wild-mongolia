@@ -3,15 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\InventorySlot;
 use App\Models\Product;
 use App\Http\Requests\StoreBookingRequest;
 use App\Http\Requests\UpdateBookingRequest;
 use App\Services\BookingEmailService;
 use App\Services\StripePaymentService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class BookingController extends Controller
 {
@@ -65,6 +68,29 @@ class BookingController extends Controller
             }
         }
 
+        $availableSlots = collect();
+        $slotsByDate = [];
+        $availabilityCalendar = [];
+
+        if ($product) {
+            $availableSlots = $product->availableInventorySlots(now(), now()->addDays(45));
+
+            $slotsByDate = $availableSlots
+                ->groupBy(fn (InventorySlot $slot) => $slot->slot_date->toDateString())
+                ->map(fn ($group) => $group->map(fn (InventorySlot $slot) => [
+                    'id' => $slot->id,
+                    'time' => substr((string) $slot->start_time, 0, 5),
+                    'remaining_capacity' => $slot->remaining_capacity,
+                    'cutoff_at' => $slot->cutoff_date_time->format('d M Y H:i'),
+                ])->values()->all())
+                ->all();
+
+            $availabilityCalendar = $availableSlots
+                ->groupBy(fn (InventorySlot $slot) => $slot->slot_date->toDateString())
+                ->map(fn ($group) => $group->sum('remaining_capacity'))
+                ->all();
+        }
+
         return view('bookings.create', compact(
             'serviceType',
             'serviceSubtype',
@@ -73,7 +99,9 @@ class BookingController extends Controller
             'productId',
             'product',
             'productName',
-            'basePrice'
+            'basePrice',
+            'slotsByDate',
+            'availabilityCalendar'
         ));
     }
 
@@ -92,6 +120,7 @@ class BookingController extends Controller
             'service_time' => 'required',
             'base_price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:1',
+            'inventory_slot_id' => 'nullable|exists:inventory_slots,id',
             'flight_number' => 'nullable|required_if:service_subtype,airport_transfer|string|max:50',
             'destination' => 'nullable|required_if:service_type,tour|string|max:100',
             'experience_type' => 'nullable|required_if:service_type,tour|string|max:100',
@@ -117,6 +146,33 @@ class BookingController extends Controller
 
         if ($request->filled('product_id')) {
             $product = Product::query()->find($request->product_id);
+        }
+
+        $inventorySlot = null;
+        if ($request->filled('inventory_slot_id')) {
+            $inventorySlot = InventorySlot::query()
+                ->with('product')
+                ->find($request->integer('inventory_slot_id'));
+        }
+
+        if ($product && $product->inventorySlots()->where('is_active', true)->exists() && !$inventorySlot) {
+            throw ValidationException::withMessages([
+                'inventory_slot_id' => 'Please select an available slot before continuing.',
+            ]);
+        }
+
+        if ($inventorySlot) {
+            if (!$product || $inventorySlot->product_id !== $product->id) {
+                throw ValidationException::withMessages([
+                    'inventory_slot_id' => 'Selected slot does not match the chosen product.',
+                ]);
+            }
+
+            if (!$inventorySlot->is_active) {
+                throw ValidationException::withMessages([
+                    'inventory_slot_id' => 'Selected slot is no longer active.',
+                ]);
+            }
         }
 
         $selectedAddOnIndexes = collect($request->input('selected_add_ons', []))
@@ -145,34 +201,60 @@ class BookingController extends Controller
 
         $totalPrice = ($request->base_price * $request->quantity) + $addOnsTotal;
 
-        $booking = Booking::create([
-            'user_id' => Auth::id(), // Null jika Guest
+        $serviceDate = $request->service_date;
+        $serviceTime = $request->service_time;
+
+        $bookingPayload = [
+            'user_id' => Auth::id(),
             'guest_name' => $request->guest_name,
             'guest_email' => $request->guest_email,
             'guest_phone' => $request->guest_phone,
-
             'service_type' => $request->service_type,
             'service_subtype' => $request->service_subtype,
             'destination' => $request->destination,
             'experience_type' => $request->experience_type,
             'meeting_point_confirmed' => $request->boolean('meeting_point_confirmed'),
             'selected_add_ons' => $selectedAddOns,
+            'inventory_slot_id' => $inventorySlot?->id,
             'product_name' => $request->product_name,
             'product_id' => $request->product_id,
-
-            'service_date' => $request->service_date,
-            'service_time' => $request->service_time,
             'pickup_location' => $request->pickup_location,
             'flight_number' => $request->flight_number,
-
             'quantity' => $request->quantity,
             'total_price' => $totalPrice,
             'add_ons_total' => $addOnsTotal,
-
             'status' => 'pending',
             'payment_status' => 'unpaid',
             'special_request' => $request->special_request,
-        ]);
+        ];
+
+        $booking = DB::transaction(function () use ($inventorySlot, $request, $serviceDate, $serviceTime, $bookingPayload) {
+            if ($inventorySlot) {
+                $lockedSlot = InventorySlot::query()->lockForUpdate()->findOrFail($inventorySlot->id);
+
+                if (!$lockedSlot->is_active || $lockedSlot->isPastCutoff()) {
+                    throw ValidationException::withMessages([
+                        'inventory_slot_id' => 'The selected slot is already past cutoff time.',
+                    ]);
+                }
+
+                if ($lockedSlot->remaining_capacity < (int) $request->quantity) {
+                    throw ValidationException::withMessages([
+                        'quantity' => 'Requested quantity exceeds remaining slot capacity.',
+                    ]);
+                }
+
+                $lockedSlot->increment('booked_quantity', (int) $request->quantity);
+
+                $bookingPayload['service_date'] = $lockedSlot->slot_date->toDateString();
+                $bookingPayload['service_time'] = substr((string) $lockedSlot->start_time, 0, 5);
+            } else {
+                $bookingPayload['service_date'] = $serviceDate;
+                $bookingPayload['service_time'] = $serviceTime;
+            }
+
+            return Booking::create($bookingPayload);
+        });
 
         return redirect()->route('booking.payment', $booking->id);
     }
