@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\PointController as AdminPointController;
 use App\Http\Controllers\Admin\CouponController as AdminCouponController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
+use App\Http\Controllers\Admin\InventorySlotController as AdminInventorySlotController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\User\ReviewController as UserReviewController;
 use App\Http\Controllers\PointController;
@@ -120,6 +121,12 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
 
     // Products (Cars & Tours)
     Route::resource('products', AdminProductController::class);
+
+    // Inventory Slots
+    Route::get('/inventory-slots', [AdminInventorySlotController::class, 'index'])->name('inventory-slots.index');
+    Route::post('/inventory-slots', [AdminInventorySlotController::class, 'store'])->name('inventory-slots.store');
+    Route::put('/inventory-slots/{inventorySlot}', [AdminInventorySlotController::class, 'update'])->name('inventory-slots.update');
+    Route::delete('/inventory-slots/{inventorySlot}', [AdminInventorySlotController::class, 'destroy'])->name('inventory-slots.destroy');
 
     // Customers
     Route::resource('customers', AdminCustomerController::class)->parameters([
