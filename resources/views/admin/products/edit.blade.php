@@ -16,6 +16,9 @@
 
     <div class="mb-6">
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Edit Product</h1>
+        <a href="{{ route('admin.inventory-slots.index', ['product_id' => $product->id]) }}" class="inline-block mt-2 text-sm text-teal-600 hover:text-teal-700">
+            Manage inventory slots for this product →
+        </a>
     </div>
 
     <form action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data" x-data="{ type: '{{ old('type', $product->type) }}' }"
