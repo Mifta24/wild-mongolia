@@ -8,6 +8,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\UserSeeder;
 use Database\Seeders\BookingSeeder;
 use Database\Seeders\RolePermissionSeeder;
+use Database\Seeders\InventorySlotSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -30,6 +31,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ProductSeeder::class,
             BookingSeeder::class,
+            InventorySlotSeeder::class,
         ]);
     }
 }
