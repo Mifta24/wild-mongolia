@@ -24,6 +24,7 @@ class Booking extends Model
         'experience_type',
         'meeting_point_confirmed',
         'selected_add_ons',
+        'inventory_slot_id',
         'product_id',
         'product_name',
         'service_date',
@@ -85,6 +86,11 @@ class Booking extends Model
     public function review()
     {
         return $this->hasOne(Review::class);
+    }
+
+    public function inventorySlot()
+    {
+        return $this->belongsTo(\App\Models\InventorySlot::class);
     }
 
     // Jika nanti ada tabel Products terpisah (Polymorphic relationship opsional)
