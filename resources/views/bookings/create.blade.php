@@ -29,6 +29,11 @@
                 price: {{ $basePrice }},
                 addOns: {{ Js::from($product?->add_ons ?? []) }},
                 selectedAddOns: {{ Js::from(old('selected_add_ons', [])) }},
+                slotsByDate: {{ Js::from($slotsByDate ?? []) }},
+                availabilityCalendar: {{ Js::from($availabilityCalendar ?? []) }},
+                selectedSlotId: '{{ old('inventory_slot_id', request('inventory_slot_id')) }}',
+                slotDate: '{{ old('service_date', request('date')) }}',
+                slotTime: '{{ old('service_time', request('time')) }}',
                 type: '{{ $serviceType }}',
                 serviceSubtype: '{{ old('service_subtype', $serviceSubtype ?? 'airport_transfer') }}',
                 syncSubtype() {
@@ -40,6 +45,17 @@
                     if (!['airport_transfer', 'city_rental_hourly'].includes(this.serviceSubtype)) {
                         this.serviceSubtype = 'airport_transfer';
                     }
+                },
+                get hasSlotManagement() {
+                    return Object.keys(this.slotsByDate).length > 0;
+                },
+                get slotsForSelectedDate() {
+                    return this.slotsByDate[this.slotDate] || [];
+                },
+                selectSlot(slot) {
+                    this.selectedSlotId = String(slot.id);
+                    this.slotDate = this.slotDate || '';
+                    this.slotTime = slot.time;
                 },
                 get addOnsTotal() {
                     return this.addOns.reduce((sum, option, index) => {
@@ -54,6 +70,7 @@
                 <input type="hidden" name="product_name" value="{{ $productName }}">
                 <input type="hidden" name="base_price" value="{{ $basePrice }}">
                 <input type="hidden" name="service_subtype" :value="serviceSubtype">
+                <input type="hidden" name="inventory_slot_id" :value="selectedSlotId">
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
@@ -146,21 +163,63 @@
                                     </div>
                                 </div>
 
-                                <div class="grid grid-cols-2 gap-4">
+                                <div class="grid grid-cols-2 gap-4" x-show="!hasSlotManagement">
                                     <div>
                                         <label
                                             class="block text-sm font-medium text-gray-700 dark:text-gray-300">Date</label>
-                                        <input type="date" name="service_date"
+                                        <input type="date" name="service_date" x-model="slotDate"
                                             class="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700"
                                             required>
                                     </div>
                                     <div>
                                         <label
                                             class="block text-sm font-medium text-gray-700 dark:text-gray-300">Time</label>
-                                        <input type="time" name="service_time"
+                                        <input type="time" name="service_time" x-model="slotTime"
                                             class="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700"
                                             required>
                                     </div>
+                                </div>
+
+                                <div x-show="hasSlotManagement" class="space-y-4">
+                                    <div class="rounded-lg border border-teal-200 dark:border-teal-700 bg-teal-50 dark:bg-teal-900/20 p-4">
+                                        <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">Availability Calendar</h3>
+                                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                            <template x-for="(remaining, date) in availabilityCalendar" :key="date">
+                                                <button type="button"
+                                                    @click="slotDate = date; selectedSlotId = ''; slotTime = ''"
+                                                    class="text-left rounded-md border p-2"
+                                                    :class="slotDate === date ? 'border-teal-500 bg-white dark:bg-gray-800' : 'border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/50'">
+                                                    <p class="text-xs text-gray-500" x-text="date"></p>
+                                                    <p class="font-semibold" :class="remaining > 0 ? 'text-teal-600' : 'text-red-500'" x-text="remaining + (type === 'car' ? ' cars' : ' seats')"></p>
+                                                </button>
+                                            </template>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select Time Slot</label>
+                                        <div class="space-y-2" x-show="slotsForSelectedDate.length > 0">
+                                            <template x-for="slot in slotsForSelectedDate" :key="slot.id">
+                                                <button type="button" @click="selectSlot(slot)"
+                                                    class="w-full text-left rounded-lg border px-3 py-2"
+                                                    :class="selectedSlotId === String(slot.id) ? 'border-teal-500 bg-teal-50 dark:bg-teal-900/20' : 'border-gray-200 dark:border-gray-700'">
+                                                    <div class="flex items-center justify-between">
+                                                        <span class="font-medium text-gray-900 dark:text-white" x-text="slot.time"></span>
+                                                        <span class="text-sm text-teal-600" x-text="slot.remaining_capacity + (type === 'car' ? ' cars available' : ' seats available')"></span>
+                                                    </div>
+                                                    <p class="text-xs text-gray-500 mt-1" x-text="'Cutoff: ' + slot.cutoff_at"></p>
+                                                </button>
+                                            </template>
+                                        </div>
+                                        <p class="text-sm text-gray-500" x-show="slotDate && slotsForSelectedDate.length === 0">No available slots on selected date.</p>
+                                        <p class="text-sm text-gray-500" x-show="!slotDate">Select a date from calendar first.</p>
+                                        @error('inventory_slot_id')
+                                            <p class="text-red-600 dark:text-red-400 text-sm mt-2">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <input type="hidden" name="service_date" :value="slotDate">
+                                    <input type="hidden" name="service_time" :value="slotTime">
                                 </div>
 
                                 <div x-show="type === 'car'" class="space-y-4">
