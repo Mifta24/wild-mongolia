@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Booking;
+use App\Models\InventorySlot;
 use App\Services\PointService;
 use App\Services\CouponService;
 
@@ -46,6 +47,10 @@ class BookingObserver
                 $this->pointService->refundBookingPoints($booking);
                 $this->pointService->updateMembershipTier($booking->user);
             }
+
+            if ($booking->inventory_slot_id) {
+                $this->releaseInventoryCapacity($booking->inventory_slot_id, (int) $booking->quantity);
+            }
         }
     }
 
@@ -54,7 +59,9 @@ class BookingObserver
      */
     public function deleted(Booking $booking): void
     {
-        //
+        if ($booking->inventory_slot_id && $booking->status !== 'cancelled') {
+            $this->releaseInventoryCapacity($booking->inventory_slot_id, (int) $booking->quantity);
+        }
     }
 
     /**
@@ -71,5 +78,22 @@ class BookingObserver
     public function forceDeleted(Booking $booking): void
     {
         //
+    }
+
+    private function releaseInventoryCapacity(int $slotId, int $quantity): void
+    {
+        if ($quantity <= 0) {
+            return;
+        }
+
+        $slot = InventorySlot::query()->find($slotId);
+
+        if (!$slot) {
+            return;
+        }
+
+        $slot->update([
+            'booked_quantity' => max(0, (int) $slot->booked_quantity - $quantity),
+        ]);
     }
 }
