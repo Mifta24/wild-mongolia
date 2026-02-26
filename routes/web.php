@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\PointController as AdminPointController;
 use App\Http\Controllers\Admin\CouponController as AdminCouponController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\Admin\InventorySlotController as AdminInventorySlotController;
+use App\Http\Controllers\Admin\BookingSettingsController as AdminBookingSettingsController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\User\ReviewController as UserReviewController;
 use App\Http\Controllers\PointController;
@@ -65,6 +66,8 @@ Route::middleware('auth', 'role:user')->group(function () {
     Route::post('/booking/process/{id}', [BookingController::class, 'processPayment'])->name('booking.process');
     Route::get('/booking/success/{id}', [BookingController::class, 'success'])->name('booking.success');
     Route::get('/booking/invoice/{id}', [BookingController::class, 'downloadInvoice'])->name('booking.invoice');
+    Route::get('/booking/voucher/{id}', [BookingController::class, 'voucher'])->name('booking.voucher');
+    Route::get('/booking/voucher/{id}/download', [BookingController::class, 'downloadVoucher'])->name('booking.voucher.download');
 
     // Support Chat
     Route::get('/support/chat', [SupportChatController::class, 'index'])->name('support.chat');
@@ -118,6 +121,13 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::put('/bookings/{id}', [AdminBookingController::class, 'update'])->name('bookings.update');
     Route::post('/bookings/{id}/refund', [AdminBookingController::class, 'refund'])->name('bookings.refund');
     Route::post('/bookings/{id}/resend-confirmation', [AdminBookingController::class, 'resendConfirmationEmail'])->name('bookings.resend-confirmation');
+    Route::get('/bookings/check-in/{token}', [AdminBookingController::class, 'showCheckInByToken'])->middleware('signed')->name('bookings.checkin.show');
+    Route::post('/bookings/check-in/{token}', [AdminBookingController::class, 'processCheckInByToken'])->name('bookings.checkin.process');
+
+    // Booking Settings
+    Route::get('/settings/checkin-window', [AdminBookingSettingsController::class, 'editCheckInWindow'])->name('settings.checkin-window.edit');
+    Route::put('/settings/checkin-window', [AdminBookingSettingsController::class, 'updateCheckInWindow'])->name('settings.checkin-window.update');
+    Route::delete('/settings/checkin-window', [AdminBookingSettingsController::class, 'resetCheckInWindow'])->name('settings.checkin-window.reset');
 
     // Products (Cars & Tours)
     Route::resource('products', AdminProductController::class);
