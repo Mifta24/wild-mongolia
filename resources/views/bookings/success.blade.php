@@ -44,11 +44,29 @@
                 @endif
             </div>
 
+            @if($booking->payment_status === 'paid')
+                <div class="bg-white dark:bg-gray-700/40 border border-gray-200 dark:border-gray-600 rounded-lg p-4 mb-6">
+                    <p class="text-sm font-semibold text-gray-900 dark:text-white mb-3">Voucher QR</p>
+                    <img src="{{ $qrImageUrl }}" alt="Voucher QR Code" class="mx-auto w-40 h-40 border border-gray-200 rounded-lg p-2 bg-white">
+                    <p class="mt-2 text-xs text-gray-500 dark:text-gray-400 break-all">{{ $booking->voucher_token }}</p>
+                </div>
+            @endif
+
             <div class="space-y-3">
                 @if(in_array($booking->payment_status, ['paid', 'refunded'], true))
                     <a href="{{ route('booking.invoice', $booking->id) }}"
                         class="block w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-lg transition">
                         Download Invoice (PDF)
+                    </a>
+                @endif
+                @if($booking->payment_status === 'paid')
+                    <a href="{{ route('booking.voucher', $booking->id) }}"
+                        class="block w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg transition">
+                        View Voucher
+                    </a>
+                    <a href="{{ route('booking.voucher.download', $booking->id) }}"
+                        class="block w-full bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-200 font-bold py-3 rounded-lg transition">
+                        Download Voucher (PDF)
                     </a>
                 @endif
                 <a href="/"

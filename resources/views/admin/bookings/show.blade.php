@@ -191,6 +191,21 @@
                         <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Assign a driver or vendor for this
                             booking.</p>
 
+                        <div class="mb-4 p-3 rounded border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/40 text-xs text-gray-700 dark:text-gray-300">
+                            <div class="font-semibold mb-1">Voucher Check-In</div>
+                            @if($booking->checked_in_at)
+                                <div class="text-green-600 dark:text-green-400">Checked in at {{ $booking->checked_in_at->format('d M Y H:i') }}</div>
+                            @elseif(blank($booking->voucher_token))
+                                <div class="text-yellow-600 dark:text-yellow-400">Voucher token is not generated yet.</div>
+                            @else
+                                <div class="text-gray-600 dark:text-gray-300">Ready for QR check-in.</div>
+                                <a href="{{ route('admin.bookings.checkin.show', $booking->voucher_token) }}"
+                                    class="inline-block mt-2 text-teal-600 hover:text-teal-700 font-medium">
+                                    Open Check-In Screen
+                                </a>
+                            @endif
+                        </div>
+
                         <button
                             class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 text-gray-700 dark:text-gray-300 font-medium py-2 rounded border border-gray-300 dark:border-gray-600">
                             Assign Driver (Coming Soon)
