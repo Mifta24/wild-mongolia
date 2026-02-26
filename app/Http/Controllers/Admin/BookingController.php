@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Services\BookingEmailService;
 use App\Services\StripePaymentService;
+use Carbon\CarbonInterface;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class BookingController extends Controller
 {
@@ -151,6 +154,91 @@ class BookingController extends Controller
 
             return back()->with('error', 'Failed to resend confirmation email. Please try again.');
         }
+    }
+
+    public function showCheckInByToken(string $token)
+    {
+        $booking = Booking::query()
+            ->with(['user', 'checkedInBy'])
+            ->where('voucher_token', $token)
+            ->first();
+
+        if (!$booking) {
+            return redirect()->route('admin.bookings.index')
+                ->with('error', 'Invalid or expired voucher token.');
+        }
+
+        return view('admin.bookings.checkin', [
+            'booking' => $booking,
+            'isEligible' => $this->isCheckInEligible($booking),
+        ]);
+    }
+
+    public function processCheckInByToken(string $token)
+    {
+        $booking = Booking::query()
+            ->where('voucher_token', $token)
+            ->first();
+
+        if (!$booking) {
+            return back()->with('error', 'Invalid or expired voucher token.');
+        }
+
+        if (!$this->isCheckInEligible($booking)) {
+            return back()->with('error', 'This voucher is not eligible for check-in.');
+        }
+
+        if ($booking->checked_in_at) {
+            return back()->with('success', 'Voucher has already been checked in.');
+        }
+
+        $booking->update([
+            'checked_in_at' => now(),
+            'checked_in_by' => Auth::id(),
+            'status' => $booking->status === 'pending' ? 'confirmed' : $booking->status,
+            'admin_notes' => trim(($booking->admin_notes ? $booking->admin_notes . PHP_EOL : '') . 'Checked-in via QR by user ID ' . Auth::id() . ' at ' . now()->format('Y-m-d H:i:s')),
+        ]);
+
+        return back()->with('success', 'QR check-in completed successfully.');
+    }
+
+    private function isCheckInEligible(Booking $booking): bool
+    {
+        if ($booking->payment_status !== 'paid') {
+            return false;
+        }
+
+        if ($booking->status === 'cancelled') {
+            return false;
+        }
+
+        if (!$this->isWithinCheckInWindow($booking->service_date)) {
+            return false;
+        }
+
+        return !blank($booking->voucher_token);
+    }
+
+    private function isWithinCheckInWindow(?CarbonInterface $serviceDate): bool
+    {
+        if (!$serviceDate) {
+            return false;
+        }
+
+        $daysBefore = max(0, (int) Cache::get(
+            'booking.check_in_window.days_before',
+            config('booking.check_in_window.days_before', 1)
+        ));
+        $daysAfter = max(0, (int) Cache::get(
+            'booking.check_in_window.days_after',
+            config('booking.check_in_window.days_after', 1)
+        ));
+
+        $today = now()->startOfDay();
+        $windowStart = $today->copy()->subDays($daysBefore);
+        $windowEnd = $today->copy()->addDays($daysAfter);
+
+        return $serviceDate->copy()->startOfDay()->betweenIncluded($windowStart, $windowEnd);
     }
 
     /**
