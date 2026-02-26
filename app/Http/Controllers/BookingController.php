@@ -12,6 +12,7 @@ use App\Services\StripePaymentService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -351,6 +352,12 @@ class BookingController extends Controller
             ]);
         }
 
+        if (blank($booking->voucher_token) && $booking->payment_status === 'paid') {
+            $booking->update([
+                'voucher_token' => Str::upper(Str::random(32)),
+            ]);
+        }
+
         $booking->refresh();
 
         try {
@@ -365,7 +372,11 @@ class BookingController extends Controller
             $pointsEarned = floor($booking->total_price * 0.02);
         }
 
-        return view('bookings.success', compact('booking', 'pointsEarned'));
+        return view('bookings.success', [
+            'booking' => $booking,
+            'pointsEarned' => $pointsEarned,
+            ...$this->prepareVoucherData($booking),
+        ]);
     }
 
     public function downloadInvoice($id)
@@ -392,6 +403,72 @@ class BookingController extends Controller
         ]);
 
         return $pdf->download($booking->invoice_number . '.pdf');
+    }
+
+    public function voucher($id)
+    {
+        $booking = Booking::findOrFail($id);
+
+        if (Auth::check() && $booking->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if ($booking->payment_status !== 'paid') {
+            return back()->with('error', 'Voucher is available after payment is completed.');
+        }
+
+        if (blank($booking->voucher_token)) {
+            $booking->update([
+                'voucher_token' => Str::upper(Str::random(32)),
+            ]);
+            $booking->refresh();
+        }
+
+        return view('bookings.voucher', [
+            'booking' => $booking,
+            ...$this->prepareVoucherData($booking),
+        ]);
+    }
+
+    public function downloadVoucher($id)
+    {
+        $booking = Booking::findOrFail($id);
+
+        if (Auth::check() && $booking->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if ($booking->payment_status !== 'paid') {
+            return back()->with('error', 'Voucher is available after payment is completed.');
+        }
+
+        if (blank($booking->voucher_token)) {
+            $booking->update([
+                'voucher_token' => Str::upper(Str::random(32)),
+            ]);
+            $booking->refresh();
+        }
+
+        $pdf = Pdf::loadView('bookings.voucher-pdf', [
+            'booking' => $booking,
+            ...$this->prepareVoucherData($booking),
+        ]);
+
+        return $pdf->download('VOUCHER-' . $booking->booking_code . '.pdf');
+    }
+
+    private function prepareVoucherData(Booking $booking): array
+    {
+        $checkInUrl = URL::temporarySignedRoute(
+            'admin.bookings.checkin.show',
+            now()->addDays(30),
+            ['token' => $booking->voucher_token]
+        );
+
+        return [
+            'checkInUrl' => $checkInUrl,
+            'qrImageUrl' => 'https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=' . urlencode($checkInUrl),
+        ];
     }
 
     /**
