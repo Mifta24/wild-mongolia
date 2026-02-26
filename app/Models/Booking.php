@@ -14,6 +14,7 @@ class Booking extends Model
 
     protected $fillable = [
         'booking_code',
+        'voucher_token',
         'user_id',
         'guest_name',
         'guest_email',
@@ -44,6 +45,8 @@ class Booking extends Model
         'stripe_payment_intent_id',
         'stripe_receipt_url',
         'paid_at',
+        'checked_in_at',
+        'checked_in_by',
         'booking_confirmation_emailed_at',
         'refunded_at',
         'refund_amount',
@@ -62,6 +65,7 @@ class Booking extends Model
         'selected_add_ons' => 'array',
         'refund_amount' => 'decimal:2',
         'paid_at' => 'datetime',
+        'checked_in_at' => 'datetime',
         'booking_confirmation_emailed_at' => 'datetime',
         'refunded_at' => 'datetime',
         'meeting_point_confirmed' => 'boolean',
@@ -91,6 +95,11 @@ class Booking extends Model
     public function inventorySlot()
     {
         return $this->belongsTo(\App\Models\InventorySlot::class);
+    }
+
+    public function checkedInBy()
+    {
+        return $this->belongsTo(User::class, 'checked_in_by');
     }
 
     // Jika nanti ada tabel Products terpisah (Polymorphic relationship opsional)
