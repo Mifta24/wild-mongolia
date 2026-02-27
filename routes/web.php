@@ -20,6 +20,8 @@ use App\Http\Controllers\Admin\CouponController as AdminCouponController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\Admin\InventorySlotController as AdminInventorySlotController;
 use App\Http\Controllers\Admin\BookingSettingsController as AdminBookingSettingsController;
+use App\Http\Controllers\Admin\VendorController as AdminVendorController;
+use App\Http\Controllers\Admin\DispatchAssignmentController as AdminDispatchAssignmentController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\User\ReviewController as UserReviewController;
 use App\Http\Controllers\PointController;
@@ -142,6 +144,14 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::resource('customers', AdminCustomerController::class)->parameters([
         'customers' => 'user'
     ]);
+
+    // Vendors
+    Route::resource('vendors', AdminVendorController::class)->except(['show']);
+
+    // Dispatch Assignments
+    Route::get('/dispatch-assignments', [AdminDispatchAssignmentController::class, 'index'])->name('dispatch-assignments.index');
+    Route::post('/dispatch-assignments', [AdminDispatchAssignmentController::class, 'store'])->name('dispatch-assignments.store');
+    Route::put('/dispatch-assignments/{dispatchAssignment}', [AdminDispatchAssignmentController::class, 'update'])->name('dispatch-assignments.update');
 
     // Support Chat
     Route::get('/support/chat', [AdminSupportChatController::class, 'index'])->name('support.chat');
