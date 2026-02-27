@@ -188,8 +188,7 @@
 
                     <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 border-l-4 border-yellow-400">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Operations</h3>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Assign a driver or vendor for this
-                            booking.</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Assign vendor/driver and track commission & settlement.</p>
 
                         <div class="mb-4 p-3 rounded border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/40 text-xs text-gray-700 dark:text-gray-300">
                             <div class="font-semibold mb-1">Voucher Check-In</div>
@@ -206,10 +205,120 @@
                             @endif
                         </div>
 
-                        <button
-                            class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 text-gray-700 dark:text-gray-300 font-medium py-2 rounded border border-gray-300 dark:border-gray-600">
-                            Assign Driver (Coming Soon)
-                        </button>
+                        @php($assignment = $booking->dispatchAssignment)
+
+                        <form
+                            action="{{ $assignment ? route('admin.dispatch-assignments.update', $assignment) : route('admin.dispatch-assignments.store') }}"
+                            method="POST"
+                            class="space-y-3 mb-4 p-3 rounded border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/30">
+                            @csrf
+                            @if ($assignment)
+                                @method('PUT')
+                            @else
+                                <input type="hidden" name="booking_id" value="{{ $booking->id }}">
+                            @endif
+
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Vendor</label>
+                                <select name="vendor_id" id="vendor_id"
+                                    class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm"
+                                    required>
+                                    <option value="">- Select Vendor -</option>
+                                    @foreach ($vendors as $vendor)
+                                        <option value="{{ $vendor->id }}"
+                                            data-commission-rate="{{ $vendor->default_commission_rate ?? '' }}"
+                                            {{ (string) old('vendor_id', $assignment?->vendor_id) === (string) $vendor->id ? 'selected' : '' }}>
+                                            {{ $vendor->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Driver Name</label>
+                                    <input type="text" name="driver_name" value="{{ old('driver_name', $assignment?->driver_name) }}"
+                                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm"
+                                        required>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Driver Phone</label>
+                                    <input type="text" name="driver_phone" value="{{ old('driver_phone', $assignment?->driver_phone) }}"
+                                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Vehicle Plate</label>
+                                    <input type="text" name="vehicle_plate" value="{{ old('vehicle_plate', $assignment?->vehicle_plate) }}"
+                                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Dispatch Status</label>
+                                    <select name="dispatch_status"
+                                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm">
+                                        @foreach (['pending', 'assigned', 'on_route', 'completed', 'cancelled'] as $status)
+                                            <option value="{{ $status }}" {{ old('dispatch_status', $assignment?->dispatch_status ?? 'assigned') === $status ? 'selected' : '' }}>{{ ucfirst(str_replace('_', ' ', $status)) }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Commission Type</label>
+                                    <select name="commission_type" id="commission_type"
+                                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm">
+                                        <option value="percentage" {{ old('commission_type', $assignment?->commission_type ?? 'percentage') === 'percentage' ? 'selected' : '' }}>Percentage</option>
+                                        <option value="fixed" {{ old('commission_type', $assignment?->commission_type) === 'fixed' ? 'selected' : '' }}>Fixed</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Commission Rate (%)</label>
+                                    <input type="number" step="0.01" min="0" max="100" name="commission_rate" id="commission_rate"
+                                        value="{{ old('commission_rate', $assignment?->commission_rate) }}"
+                                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Fixed Amount (THB)</label>
+                                    <input type="number" step="0.01" min="0" name="commission_flat_amount" id="commission_flat_amount"
+                                        value="{{ old('commission_flat_amount', $assignment?->commission_flat_amount) }}"
+                                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Settlement Status</label>
+                                    <select name="settlement_status"
+                                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm">
+                                        @foreach (['unpaid', 'partially_paid', 'paid'] as $status)
+                                            <option value="{{ $status }}" {{ old('settlement_status', $assignment?->settlement_status ?? 'unpaid') === $status ? 'selected' : '' }}>{{ ucfirst(str_replace('_', ' ', $status)) }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Dispatch Notes</label>
+                                    <input type="text" name="dispatch_notes" value="{{ old('dispatch_notes', $assignment?->dispatch_notes) }}"
+                                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Settlement Notes</label>
+                                <input type="text" name="settlement_notes" value="{{ old('settlement_notes', $assignment?->settlement_notes) }}"
+                                    class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm">
+                            </div>
+
+                            @if ($assignment)
+                                <div class="text-xs text-gray-500">
+                                    Current commission: THB {{ number_format((float) $assignment->commission_amount, 2) }} | Vendor payout: THB {{ number_format((float) $assignment->vendor_payout_amount, 2) }}
+                                </div>
+                            @endif
+
+                            <button type="submit"
+                                class="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-2 rounded">
+                                {{ $assignment ? 'Update Assignment' : 'Assign Vendor & Driver' }}
+                            </button>
+                        </form>
 
                         <a href="https://wa.me/?text=Hello%20{{ $booking->user->name ?? '' }},%20regarding%20booking%20{{ $booking->booking_code }}"
                             target="_blank"
@@ -231,6 +340,39 @@
                             Last sent:
                             {{ $booking->booking_confirmation_emailed_at ? $booking->booking_confirmation_emailed_at->format('d M Y H:i') : 'Not sent yet' }}
                         </p>
+
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const vendorSelect = document.getElementById('vendor_id');
+                                const commissionType = document.getElementById('commission_type');
+                                const commissionRate = document.getElementById('commission_rate');
+                                const commissionFlatAmount = document.getElementById('commission_flat_amount');
+
+                                if (!vendorSelect || !commissionType || !commissionRate || !commissionFlatAmount) {
+                                    return;
+                                }
+
+                                function toggleCommissionFields() {
+                                    const isPercentage = commissionType.value === 'percentage';
+                                    commissionRate.disabled = !isPercentage;
+                                    commissionFlatAmount.disabled = isPercentage;
+                                }
+
+                                function applyDefaultCommission() {
+                                    const selected = vendorSelect.options[vendorSelect.selectedIndex];
+                                    const defaultRate = selected ? selected.getAttribute('data-commission-rate') : '';
+                                    if (commissionType.value === 'percentage' && defaultRate && !commissionRate.value) {
+                                        commissionRate.value = defaultRate;
+                                    }
+                                }
+
+                                commissionType.addEventListener('change', toggleCommissionFields);
+                                vendorSelect.addEventListener('change', applyDefaultCommission);
+
+                                toggleCommissionFields();
+                                applyDefaultCommission();
+                            });
+                        </script>
                     </div>
                 </div>
 
