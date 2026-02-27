@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Booking;
+use App\Models\Vendor;
 use App\Services\BookingEmailService;
 use App\Services\StripePaymentService;
 use Carbon\CarbonInterface;
@@ -68,8 +69,10 @@ class BookingController extends Controller
      */
     public function show(string $id)
     {
-        $booking = Booking::with(['user'])->findOrFail($id);
-        return view('admin.bookings.show', compact('booking'));
+        $booking = Booking::with(['user', 'dispatchAssignment.vendor'])->findOrFail($id);
+        $vendors = Vendor::query()->where('is_active', true)->orderBy('name')->get(['id', 'name', 'default_commission_rate']);
+
+        return view('admin.bookings.show', compact('booking', 'vendors'));
     }
 
     /**
@@ -91,6 +94,11 @@ class BookingController extends Controller
         ]);
 
         $booking = Booking::findOrFail($id);
+
+        if ($request->status === 'completed' && $booking->payment_status !== 'paid') {
+            return redirect()->route('admin.bookings.show', $id)
+                ->with('error', 'Booking can only be completed after payment status is paid.');
+        }
 
         $booking->update([
             'status' => $request->status,
