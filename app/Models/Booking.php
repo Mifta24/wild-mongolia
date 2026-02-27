@@ -102,6 +102,11 @@ class Booking extends Model
         return $this->belongsTo(User::class, 'checked_in_by');
     }
 
+    public function dispatchAssignment()
+    {
+        return $this->hasOne(DispatchAssignment::class);
+    }
+
     // Jika nanti ada tabel Products terpisah (Polymorphic relationship opsional)
     // public function product() { ... }
 
