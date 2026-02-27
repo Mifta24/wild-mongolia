@@ -66,6 +66,22 @@
             Customers
         </a>
 
+        <a href="{{ route('admin.vendors.index') }}"
+            class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition {{ request()->routeIs('admin.vendors*') ? 'bg-teal-700 text-white dark:bg-teal-700 dark:text-white' : '' }}">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5V4H2v16h5m10 0v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4m10 0H7"></path>
+            </svg>
+            Vendors
+        </a>
+
+        <a href="{{ route('admin.dispatch-assignments.index') }}"
+            class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition {{ request()->routeIs('admin.dispatch-assignments*') ? 'bg-teal-700 text-white dark:bg-teal-700 dark:text-white' : '' }}">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V9m-7-4h4m0 0v4m0-4L10 14"></path>
+            </svg>
+            Dispatch
+        </a>
+
         <a href="{{ route('admin.support.chat') }}"
             class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition {{ request()->routeIs('admin.support.chat*') ? 'bg-teal-700 text-white dark:bg-teal-700 dark:text-white' : '' }}">
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
