@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             BookingSeeder::class,
             InventorySlotSeeder::class,
+            VendorOperationsSeeder::class,
         ]);
     }
 }
