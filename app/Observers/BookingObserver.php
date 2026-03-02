@@ -6,16 +6,23 @@ use App\Models\Booking;
 use App\Models\InventorySlot;
 use App\Services\PointService;
 use App\Services\CouponService;
+use App\Services\BookingNotificationService;
 
 class BookingObserver
 {
     protected $pointService;
     protected $couponService;
+    protected $bookingNotificationService;
 
-    public function __construct(PointService $pointService, CouponService $couponService)
+    public function __construct(
+        PointService $pointService,
+        CouponService $couponService,
+        BookingNotificationService $bookingNotificationService
+    )
     {
         $this->pointService = $pointService;
         $this->couponService = $couponService;
+        $this->bookingNotificationService = $bookingNotificationService;
     }
 
     /**
@@ -23,7 +30,7 @@ class BookingObserver
      */
     public function created(Booking $booking): void
     {
-        // Points will be awarded when payment is confirmed
+        $this->bookingNotificationService->notifyBookingCreated($booking);
     }
 
     /**
@@ -32,17 +39,23 @@ class BookingObserver
     public function updated(Booking $booking): void
     {
         // Award points when booking is paid
-        if ($booking->isDirty('payment_status') && $booking->payment_status === 'paid') {
+        if ($booking->wasChanged('payment_status') && $booking->payment_status === 'paid') {
             $this->pointService->awardBookingPoints($booking);
 
             // Update membership tier
             if ($booking->user) {
                 $this->pointService->updateMembershipTier($booking->user);
             }
+
+            $this->bookingNotificationService->notifyBookingPaid($booking);
+        }
+
+        if ($booking->wasChanged('payment_status') && $booking->payment_status === 'refunded') {
+            $this->bookingNotificationService->notifyPaymentRefunded($booking);
         }
 
         // Refund points when booking is cancelled
-        if ($booking->isDirty('status') && $booking->status === 'cancelled') {
+        if ($booking->wasChanged('status') && $booking->status === 'cancelled') {
             if (in_array($booking->payment_status, ['paid', 'refunded'], true) && $booking->user) {
                 $this->pointService->refundBookingPoints($booking);
                 $this->pointService->updateMembershipTier($booking->user);
@@ -51,6 +64,16 @@ class BookingObserver
             if ($booking->inventory_slot_id) {
                 $this->releaseInventoryCapacity($booking->inventory_slot_id, (int) $booking->quantity);
             }
+
+            $this->bookingNotificationService->notifyBookingCancelled($booking);
+        }
+
+        if (
+            $booking->wasChanged('status')
+            && in_array($booking->status, ['confirmed', 'completed'], true)
+            && !($booking->status === 'confirmed' && $booking->wasChanged('payment_status') && $booking->payment_status === 'paid')
+        ) {
+            $this->bookingNotificationService->notifyStatusUpdated($booking, $booking->status);
         }
     }
 
