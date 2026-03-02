@@ -5,7 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Booking;
+use App\Models\User;
 use App\Services\StripePaymentService;
 
 class DashboardController extends Controller
@@ -15,6 +15,7 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        /** @var User $user */
         $user = Auth::user();
 
         $stats = [
@@ -34,7 +35,47 @@ class DashboardController extends Controller
             ->limit(3)
             ->get();
 
-        return view('user.dashboard.index', compact('user', 'stats', 'upcomingBookings'));
+        $recentNotifications = $user->notifications()
+            ->latest()
+            ->limit(5)
+            ->get();
+
+        $unreadNotificationsCount = $user->unreadNotifications()->count();
+
+        return view('user.dashboard.index', compact(
+            'user',
+            'stats',
+            'upcomingBookings',
+            'recentNotifications',
+            'unreadNotificationsCount'
+        ));
+    }
+
+    public function markNotificationRead(string $notificationId)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        $notification = $user
+            ->notifications()
+            ->whereKey($notificationId)
+            ->firstOrFail();
+
+        if (is_null($notification->read_at)) {
+            $notification->markAsRead();
+        }
+
+        return back();
+    }
+
+    public function markAllNotificationsRead()
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        $user->unreadNotifications->markAsRead();
+
+        return back();
     }
 
     /**
@@ -42,6 +83,7 @@ class DashboardController extends Controller
      */
     public function bookings(Request $request)
     {
+        /** @var User $user */
         $user = Auth::user();
         $status = $request->get('status', 'all');
 
@@ -61,6 +103,7 @@ class DashboardController extends Controller
      */
     public function showBooking($id)
     {
+        /** @var User $user */
         $user = Auth::user();
         $booking = $user->bookings()->with(['product', 'review'])->findOrFail($id);
 
@@ -72,6 +115,7 @@ class DashboardController extends Controller
      */
     public function cancelBooking(Request $request, $id)
     {
+        /** @var User $user */
         $user = Auth::user();
         $booking = $user->bookings()->findOrFail($id);
 
@@ -113,6 +157,7 @@ class DashboardController extends Controller
      */
     public function points()
     {
+        /** @var User $user */
         $user = Auth::user();
 
         $pointHistory = $user->pointLedgers()
@@ -133,6 +178,7 @@ class DashboardController extends Controller
      */
     public function coupons()
     {
+        /** @var User $user */
         $user = Auth::user();
 
         $availableCoupons = $user->availableCoupons()->get();
@@ -150,6 +196,7 @@ class DashboardController extends Controller
      */
     public function profile()
     {
+        /** @var User $user */
         $user = Auth::user();
         return view('user.dashboard.profile', compact('user'));
     }
@@ -159,6 +206,7 @@ class DashboardController extends Controller
      */
     public function updateProfile(Request $request)
     {
+        /** @var User $user */
         $user = Auth::user();
 
         $request->validate([
