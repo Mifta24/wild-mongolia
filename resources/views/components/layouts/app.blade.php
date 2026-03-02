@@ -2,6 +2,8 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
 
 <x-layouts.head />
+<!-- Styles (Tailwind atau CSS biasa) -->
+@vite(['resources/css/app.css', 'resources/js/app.js'])
 
 <body
     class="font-sans antialiased text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-900 transition-colors duration-300"
