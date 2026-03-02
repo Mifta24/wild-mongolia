@@ -94,6 +94,8 @@ Route::middleware('auth', 'role:user')->group(function () {
     // User Dashboard Routes
     Route::prefix('user')->name('user.')->group(function () {
         Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+        Route::post('/notifications/read-all', [UserDashboardController::class, 'markAllNotificationsRead'])->name('notifications.read-all');
+        Route::post('/notifications/{notificationId}/read', [UserDashboardController::class, 'markNotificationRead'])->name('notifications.read');
 
         // My Bookings
         Route::get('/bookings', [UserDashboardController::class, 'bookings'])->name('bookings');
