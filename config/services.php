@@ -47,5 +47,15 @@ return [
         'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
     ],
 
+    'whatsapp' => [
+        'webhook_url' => env('WHATSAPP_WEBHOOK_URL'),
+        'business_number' => env('WHATSAPP_BUSINESS_NUMBER'),
+    ],
+
+    'line' => [
+        'webhook_url' => env('LINE_WEBHOOK_URL'),
+        'official_account_id' => env('LINE_OFFICIAL_ACCOUNT_ID'),
+    ],
+
 
 ];
