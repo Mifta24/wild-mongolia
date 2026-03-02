@@ -7,7 +7,6 @@ use App\Models\InventorySlot;
 use App\Models\Product;
 use App\Http\Requests\StoreBookingRequest;
 use App\Http\Requests\UpdateBookingRequest;
-use App\Services\BookingEmailService;
 use App\Services\StripePaymentService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
@@ -359,12 +358,6 @@ class BookingController extends Controller
         }
 
         $booking->refresh();
-
-        try {
-            app(BookingEmailService::class)->sendConfirmationIfNeeded($booking);
-        } catch (\Throwable $exception) {
-            report($exception);
-        }
 
         // Calculate points earned
         $pointsEarned = 0;
