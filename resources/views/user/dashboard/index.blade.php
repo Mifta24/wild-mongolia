@@ -8,6 +8,54 @@
                 <p class="text-gray-600 dark:text-gray-400 mt-1">Welcome back, {{ $user->name }}!</p>
             </div>
 
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow mb-8">
+                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white">Push Notifications</h2>
+                    <div class="flex items-center gap-3">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Unread: {{ $unreadNotificationsCount }}</span>
+                        @if($unreadNotificationsCount > 0)
+                            <form method="POST" action="{{ route('user.notifications.read-all') }}">
+                                @csrf
+                                <button type="submit" class="text-sm font-medium text-teal-600 hover:text-teal-700">Mark all as read</button>
+                            </form>
+                        @endif
+                    </div>
+                </div>
+
+                @if($recentNotifications->isEmpty())
+                    <div class="px-6 py-8 text-sm text-gray-600 dark:text-gray-400">
+                        No notifications yet.
+                    </div>
+                @else
+                    <div class="divide-y divide-gray-200 dark:divide-gray-700">
+                        @foreach($recentNotifications as $notification)
+                            @php
+                                $data = $notification->data;
+                                $actionUrl = $data['action_url'] ?? null;
+                            @endphp
+                            <div class="px-6 py-4 flex items-start justify-between gap-4 {{ is_null($notification->read_at) ? 'bg-teal-50/40 dark:bg-teal-900/10' : '' }}">
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $data['title'] ?? 'Notification' }}</p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">{{ $data['message'] ?? '-' }}</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">{{ $notification->created_at->diffForHumans() }}</p>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    @if($actionUrl)
+                                        <a href="{{ $actionUrl }}" class="text-sm font-medium text-teal-600 hover:text-teal-700">View</a>
+                                    @endif
+                                    @if(is_null($notification->read_at))
+                                        <form method="POST" action="{{ route('user.notifications.read', $notification->id) }}">
+                                            @csrf
+                                            <button type="submit" class="text-sm font-medium text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white">Mark read</button>
+                                        </form>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+
             <!-- Stats Grid -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
