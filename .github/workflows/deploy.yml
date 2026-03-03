@@ -1,54 +1,54 @@
-name: Auto Deploy Thai Travel 🚀
+# name: Auto Deploy Thai Travel 🚀
 
-on:
-  push:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: 🚚 Get latest code
-        uses: actions/checkout@v4
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: 🚚 Get latest code
+#         uses: actions/checkout@v4
 
-      # LANGKAH TAMBAHAN: Biar GitHub kenal server kakak & gak error Handshake
-      - name: 🔓 Add Server to Known Hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+#       # LANGKAH TAMBAHAN: Biar GitHub kenal server kakak & gak error Handshake
+#       - name: 🔓 Add Server to Known Hosts
+#         run: |
+#           mkdir -p ~/.ssh
+#           ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
-      - name: 🚀 Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script_stop: true # Berhenti kalau ada error di tengah jalan
-          script: |
-            # 1. Masuk ke folder project
-            cd /var/www/vhosts/fts.biz.id/thai-travel.fts.biz.id
+#       - name: 🚀 Deploy via SSH
+#         uses: appleboy/ssh-action@v1.0.3
+#         with:
+#           host: ${{ secrets.SSH_HOST }}
+#           username: ${{ secrets.SSH_USER }}
+#           key: ${{ secrets.SSH_PRIVATE_KEY }}
+#           port: 22
+#           script_stop: true # Berhenti kalau ada error di tengah jalan
+#           script: |
+#             # 1. Masuk ke folder project
+#             cd /var/www/vhosts/fts.biz.id/thai-travel.fts.biz.id
 
-            # 2. Tarik kode terbaru
-            git pull origin main
+#             # 2. Tarik kode terbaru
+#             git pull origin main
 
-            # 3. Install Dependencies PHP (Pakai PHP 8.3)
-            /opt/plesk/php/8.3/bin/php /usr/lib64/plesk-9.0/composer.phar install --no-interaction --prefer-dist --optimize-autoloader
+#             # 3. Install Dependencies PHP (Pakai PHP 8.3)
+#             /opt/plesk/php/8.3/bin/php /usr/lib64/plesk-9.0/composer.phar install --no-interaction --prefer-dist --optimize-autoloader
 
-            # 4. Install & Build Frontend (Pakai Node 24)
-            /opt/plesk/node/24/bin/npm install
-            /opt/plesk/node/24/bin/npm run build
+#             # 4. Install & Build Frontend (Pakai Node 24)
+#             /opt/plesk/node/24/bin/npm install
+#             /opt/plesk/node/24/bin/npm run build
 
-            # 5. Database & Cache Cleaning
-            # /opt/plesk/php/8.3/bin/php artisan migrate --force
+#             # 5. Database & Cache Cleaning
+#             # /opt/plesk/php/8.3/bin/php artisan migrate --force
 
-            /opt/plesk/php/8.3/bin/php artisan optimize:clear
-            /opt/plesk/php/8.3/bin/php artisan config:cache
-            /opt/plesk/php/8.3/bin/php artisan route:cache
-            /opt/plesk/php/8.3/bin/php artisan view:cache
+#             /opt/plesk/php/8.3/bin/php artisan optimize:clear
+#             /opt/plesk/php/8.3/bin/php artisan config:cache
+#             /opt/plesk/php/8.3/bin/php artisan route:cache
+#             /opt/plesk/php/8.3/bin/php artisan view:cache
 
-            # 6. Fix Permission (Jaga-jaga)
-            chmod -R 775 storage bootstrap/cache
+#             # 6. Fix Permission (Jaga-jaga)
+#             chmod -R 775 storage bootstrap/cache
 
-            echo "✅ DEPLOYMENT SUKSES! KYAAA~! 🎉"
+#             echo "✅ DEPLOYMENT SUKSES! KYAAA~! 🎉"
