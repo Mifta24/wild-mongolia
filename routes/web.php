@@ -29,6 +29,8 @@ use App\Http\Controllers\CouponController;
 use Laravel\Socialite\Socialite;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\StripeWebhookController;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 require __DIR__ . '/auth.php';
 
@@ -53,65 +55,82 @@ Route::get('/products/{product:slug}', [HomeController::class, 'show'])->name('p
 // Stripe Webhook Route
 Route::post('/webhooks/stripe', StripeWebhookController::class)->name('stripe.webhook');
 
+Route::middleware('auth')->get('/dashboard', function () {
+    $user = Auth::user();
+
+    if ($user instanceof User && $user->hasRole('admin')) {
+        return redirect()->route('admin.dashboard');
+    }
+
+    if ($user instanceof User && $user->hasRole('user')) {
+        return redirect()->route('user.dashboard');
+    }
+
+    return redirect()->route('profile.edit');
+})->name('dashboard');
+
 // User Routes
-Route::middleware('auth', 'role:user')->group(function () {
+Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Booking Routes
-    Route::get('/booking/book', [BookingController::class, 'create'])->name('booking.create');
-    Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');
+    Route::middleware('role:user')->group(function () {
 
-    // Payment Flow
-    Route::get('/booking/payment/{id}', [BookingController::class, 'payment'])->name('booking.payment');
-    Route::post('/booking/process/{id}', [BookingController::class, 'processPayment'])->name('booking.process');
-    Route::get('/booking/success/{id}', [BookingController::class, 'success'])->name('booking.success');
-    Route::get('/booking/invoice/{id}', [BookingController::class, 'downloadInvoice'])->name('booking.invoice');
-    Route::get('/booking/voucher/{id}', [BookingController::class, 'voucher'])->name('booking.voucher');
-    Route::get('/booking/voucher/{id}/download', [BookingController::class, 'downloadVoucher'])->name('booking.voucher.download');
+        // Booking Routes
+        Route::get('/booking/book', [BookingController::class, 'create'])->name('booking.create');
+        Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');
 
-    // Support Chat
-    Route::get('/support/chat', [SupportChatController::class, 'index'])->name('support.chat');
-    Route::post('/support/chat/message', [SupportChatController::class, 'store'])->name('support.chat.message');
+        // Payment Flow
+        Route::get('/booking/payment/{id}', [BookingController::class, 'payment'])->name('booking.payment');
+        Route::post('/booking/process/{id}', [BookingController::class, 'processPayment'])->name('booking.process');
+        Route::get('/booking/success/{id}', [BookingController::class, 'success'])->name('booking.success');
+        Route::get('/booking/invoice/{id}', [BookingController::class, 'downloadInvoice'])->name('booking.invoice');
+        Route::get('/booking/voucher/{id}', [BookingController::class, 'voucher'])->name('booking.voucher');
+        Route::get('/booking/voucher/{id}/download', [BookingController::class, 'downloadVoucher'])->name('booking.voucher.download');
 
-    // Points Routes
-    Route::prefix('points')->name('points.')->group(function () {
-        Route::get('/', [PointController::class, 'index'])->name('index');
-        Route::get('/history', [PointController::class, 'history'])->name('history');
-        Route::get('/balance', [PointController::class, 'balance'])->name('balance');
-        Route::post('/calculate', [PointController::class, 'calculate'])->name('calculate');
-    });
+        // Support Chat
+        Route::get('/support/chat', [SupportChatController::class, 'index'])->name('support.chat');
+        Route::post('/support/chat/message', [SupportChatController::class, 'store'])->name('support.chat.message');
 
-    // Coupons Routes
-    Route::prefix('coupons')->name('coupons.')->group(function () {
-        Route::get('/', [CouponController::class, 'index'])->name('index');
-        Route::get('/history', [CouponController::class, 'history'])->name('history');
-        Route::post('/validate', [CouponController::class, 'validate'])->name('validate');
-        Route::get('/available', [CouponController::class, 'available'])->name('available');
-    });
+        // Points Routes
+        Route::prefix('points')->name('points.')->group(function () {
+            Route::get('/', [PointController::class, 'index'])->name('index');
+            Route::get('/history', [PointController::class, 'history'])->name('history');
+            Route::get('/balance', [PointController::class, 'balance'])->name('balance');
+            Route::post('/calculate', [PointController::class, 'calculate'])->name('calculate');
+        });
 
-    // User Dashboard Routes
-    Route::prefix('user')->name('user.')->group(function () {
-        Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
-        Route::post('/notifications/read-all', [UserDashboardController::class, 'markAllNotificationsRead'])->name('notifications.read-all');
-        Route::post('/notifications/{notificationId}/read', [UserDashboardController::class, 'markNotificationRead'])->name('notifications.read');
+        // Coupons Routes
+        Route::prefix('coupons')->name('coupons.')->group(function () {
+            Route::get('/', [CouponController::class, 'index'])->name('index');
+            Route::get('/history', [CouponController::class, 'history'])->name('history');
+            Route::post('/validate', [CouponController::class, 'validate'])->name('validate');
+            Route::get('/available', [CouponController::class, 'available'])->name('available');
+        });
 
-        // My Bookings
-        Route::get('/bookings', [UserDashboardController::class, 'bookings'])->name('bookings');
-        Route::get('/booking/{id}', [UserDashboardController::class, 'showBooking'])->name('booking.show');
-        Route::post('/booking/{id}/cancel', [UserDashboardController::class, 'cancelBooking'])->name('booking.cancel');
+        // User Dashboard Routes
+        Route::prefix('user')->name('user.')->group(function () {
+            Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+            Route::post('/notifications/read-all', [UserDashboardController::class, 'markAllNotificationsRead'])->name('notifications.read-all');
+            Route::post('/notifications/{notificationId}/read', [UserDashboardController::class, 'markNotificationRead'])->name('notifications.read');
 
-        // Points & Coupons
-        Route::get('/points', [UserDashboardController::class, 'points'])->name('points');
-        Route::get('/coupons', [UserDashboardController::class, 'coupons'])->name('coupons');
+            // My Bookings
+            Route::get('/bookings', [UserDashboardController::class, 'bookings'])->name('bookings');
+            Route::get('/booking/{id}', [UserDashboardController::class, 'showBooking'])->name('booking.show');
+            Route::post('/booking/{id}/cancel', [UserDashboardController::class, 'cancelBooking'])->name('booking.cancel');
 
-        // Profile
-        Route::get('/profile', [UserDashboardController::class, 'profile'])->name('profile');
-        Route::post('/profile/update', [UserDashboardController::class, 'updateProfile'])->name('profile.update');
+            // Points & Coupons
+            Route::get('/points', [UserDashboardController::class, 'points'])->name('points');
+            Route::get('/coupons', [UserDashboardController::class, 'coupons'])->name('coupons');
 
-        // Reviews & Ratings
-        Route::post('/booking/{id}/review', [UserReviewController::class, 'store'])->name('booking.review.store');
+            // Profile
+            Route::get('/profile', [UserDashboardController::class, 'profile'])->name('profile');
+            Route::post('/profile/update', [UserDashboardController::class, 'updateProfile'])->name('profile.update');
+
+            // Reviews & Ratings
+            Route::post('/booking/{id}/review', [UserReviewController::class, 'store'])->name('booking.review.store');
+        });
     });
 });
 

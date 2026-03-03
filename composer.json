@@ -58,6 +58,9 @@
         ],
         "test": [
             "@php artisan config:clear --ansi",
+            "@php artisan route:clear --ansi",
+            "@php artisan view:clear --ansi",
+            "@php artisan event:clear --ansi",
             "@php artisan test"
         ],
         "post-autoload-dump": [
