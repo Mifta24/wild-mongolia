@@ -258,8 +258,8 @@
         </div>
     </section>
 
-    <div class="fixed bottom-6 right-6 z-50" x-data="floatingSupportChat()">
-        @auth
+    @auth
+        <div class="fixed bottom-6 right-6 z-50" x-data="floatingSupportChat()">
             <button @click="toggle"
                 class="h-14 w-14 rounded-full bg-primary text-white shadow-xl flex items-center justify-center hover:bg-teal-700 transition">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -317,7 +317,9 @@
                     </form>
                 </div>
             </div>
-        @else
+        </div>
+    @else
+        <div class="fixed bottom-6 right-6 z-50">
             <a href="{{ route('login') }}"
                 class="h-14 w-14 rounded-full bg-primary text-white shadow-xl flex items-center justify-center hover:bg-teal-700 transition">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -326,8 +328,8 @@
                     </path>
                 </svg>
             </a>
-        @endauth
-    </div>
+        </div>
+    @endauth
 
     @auth
         <script>
