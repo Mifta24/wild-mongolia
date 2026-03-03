@@ -24,7 +24,7 @@
                     <svg x-show="darkMode" x-cloak class="w-5 h-5 text-indigo-300" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M20.354 24.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
+                            d="M17.293 14.707A8 8 0 019.293 6.707 8.001 8.001 0 1017.293 14.707z">
                         </path>
                     </svg>
                 </button>
@@ -117,7 +117,7 @@
                     <svg x-show="darkMode" x-cloak class="w-5 h-5 text-indigo-300" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M20.354 24.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
+                            d="M17.293 14.707A8 8 0 019.293 6.707 8.001 8.001 0 1017.293 14.707z">
                         </path>
                     </svg>
                 </button>
