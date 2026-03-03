@@ -20,20 +20,6 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#0F766E', // Teal 700
-                        secondary: '#F59E0B', // Amber 500
-                    }
-                }
-            }
-        }
-    </script>
     <style>
         [x-cloak] {
             display: none !important;
