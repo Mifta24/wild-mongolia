@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Coupon;
 use App\Services\CouponService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,7 +25,8 @@ class CouponController extends Controller
         $coupons = $this->couponService->getAvailableCoupons(
             $user,
             $request->input('amount', 0),
-            $request->input('service_type')
+            $request->input('service_type'),
+            $request->input('source')
         );
 
         return view('coupons.index', compact('coupons'));
@@ -61,12 +61,14 @@ class CouponController extends Controller
         $request->validate([
             'amount' => 'nullable|numeric|min:0',
             'service_type' => 'nullable|in:car,tour',
+            'source' => 'nullable|in:all,welcome,membership,general',
         ]);
 
         $coupons = $this->couponService->getAvailableCoupons(
             Auth::user(),
             $request->input('amount', 0),
-            $request->input('service_type')
+            $request->input('service_type'),
+            $request->input('source')
         );
 
         return response()->json([
