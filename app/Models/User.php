@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\MembershipTier;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\SupportConversation;
 use App\Models\SupportMessage;
@@ -33,6 +34,8 @@ class User extends Authenticatable
         'points',
         'lifetime_points',
         'membership_tier',
+        'membership_started_at',
+        'membership_expires_at',
     ];
 
     /**
@@ -58,7 +61,63 @@ class User extends Authenticatable
             'points' => 'integer',
             'lifetime_points' => 'integer',
             'membership_tier' => 'string',
+            'membership_started_at' => 'datetime',
+            'membership_expires_at' => 'datetime',
         ];
+    }
+
+    public function membershipTier(): MembershipTier
+    {
+        return MembershipTier::from($this->membership_tier ?? MembershipTier::SILVER->value);
+    }
+
+    public function hasActiveMembership(): bool
+    {
+        $tier = $this->membershipTier();
+
+        if (!$tier->isPaidPlan()) {
+            return true;
+        }
+
+        if (is_null($this->membership_expires_at)) {
+            return false;
+        }
+
+        return $this->membership_expires_at->isFuture();
+    }
+
+    public function syncMembershipStatus(): void
+    {
+        $tier = $this->membershipTier();
+
+        if (!$tier->isPaidPlan()) {
+            return;
+        }
+
+        if ($this->hasActiveMembership()) {
+            return;
+        }
+
+        $this->forceFill([
+            'membership_tier' => MembershipTier::SILVER->value,
+            'membership_started_at' => null,
+            'membership_expires_at' => null,
+        ])->save();
+    }
+
+    public function activateMembership(MembershipTier $tier, ?Carbon $startsAt = null): void
+    {
+        $startsAt ??= now(config('app.timezone'));
+
+        $expiresAt = $tier->isPaidPlan()
+            ? $startsAt->copy()->addYear()->endOfDay()
+            : null;
+
+        $this->forceFill([
+            'membership_tier' => $tier->value,
+            'membership_started_at' => $tier->isPaidPlan() ? $startsAt : null,
+            'membership_expires_at' => $expiresAt,
+        ])->save();
     }
 
     public function supportConversation(): HasOne
