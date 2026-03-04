@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\User;
 use App\Models\Vendor;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class VendorOperationsSeeder extends Seeder
 {
@@ -133,8 +134,10 @@ class VendorOperationsSeeder extends Seeder
 
         foreach ($products as $index => $product) {
             $baseTotal = (float) ($product->final_price ?? $product->base_price ?? 1000);
+            $bookingCode = 'TRV-' . now()->format('Ymd') . '-' . strtoupper(Str::random(4));
 
             $bookings->push(Booking::query()->create([
+                'booking_code' => $bookingCode,
                 'user_id' => $userId,
                 'guest_name' => 'Demo Customer ' . ($index + 1),
                 'guest_email' => 'demo.customer' . ($index + 1) . '@example.com',
