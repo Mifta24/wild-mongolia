@@ -23,6 +23,28 @@
                 </ul>
             </div>
 
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-6">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs text-gray-500 mr-1">Filter source:</span>
+                    <a href="{{ route('user.coupons', ['source' => 'all']) }}"
+                       class="px-3 py-1.5 rounded-full text-sm {{ ($source ?? 'all') === 'all' ? 'bg-teal-600 text-white' : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300' }}">
+                        All
+                    </a>
+                    <a href="{{ route('user.coupons', ['source' => 'welcome']) }}"
+                       class="px-3 py-1.5 rounded-full text-sm {{ ($source ?? 'all') === 'welcome' ? 'bg-teal-600 text-white' : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300' }}">
+                        Welcome Bonus
+                    </a>
+                    <a href="{{ route('user.coupons', ['source' => 'membership']) }}"
+                       class="px-3 py-1.5 rounded-full text-sm {{ ($source ?? 'all') === 'membership' ? 'bg-teal-600 text-white' : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300' }}">
+                        Membership Bonus
+                    </a>
+                    <a href="{{ route('user.coupons', ['source' => 'general']) }}"
+                       class="px-3 py-1.5 rounded-full text-sm {{ ($source ?? 'all') === 'general' ? 'bg-teal-600 text-white' : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300' }}">
+                        General Coupon
+                    </a>
+                </div>
+            </div>
+
             <!-- Available Coupons -->
             <div class="mb-8">
                 <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Available Coupons</h2>
@@ -41,6 +63,18 @@
                             <div class="flex items-start justify-between mb-4">
                                 <div class="flex-1">
                                     <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">{{ $coupon->name }}</h3>
+                                    @php
+                                        $codeUpper = strtoupper((string) $coupon->code);
+                                        $sourceLabel = match (true) {
+                                            str_starts_with($codeUpper, 'WELCOME-') => 'Welcome Bonus',
+                                            str_starts_with($codeUpper, 'GOLDNEW-') => 'Gold Activation',
+                                            str_starts_with($codeUpper, 'GOLDRNW-') => 'Gold Renewal',
+                                            str_starts_with($codeUpper, 'PLATINUM_NEW-') => 'Platinum Activation',
+                                            str_starts_with($codeUpper, 'PLATINUM_RNW-') => 'Platinum Renewal',
+                                            default => 'General Coupon',
+                                        };
+                                    @endphp
+                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300 mb-2">{{ $sourceLabel }}</span>
                                     @if($coupon->description)
                                     <p class="text-sm text-gray-600 dark:text-gray-400">{{ $coupon->description }}</p>
                                     @endif
@@ -137,6 +171,20 @@
                             <div class="flex-1">
                                 <div class="flex items-center space-x-3 mb-2">
                                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $coupon->name }}</h3>
+                                    @php
+                                        $usedCodeUpper = strtoupper((string) $coupon->code);
+                                        $usedSourceLabel = match (true) {
+                                            str_starts_with($usedCodeUpper, 'WELCOME-') => 'Welcome Bonus',
+                                            str_starts_with($usedCodeUpper, 'GOLDNEW-') => 'Gold Activation',
+                                            str_starts_with($usedCodeUpper, 'GOLDRNW-') => 'Gold Renewal',
+                                            str_starts_with($usedCodeUpper, 'PLATINUM_NEW-') => 'Platinum Activation',
+                                            str_starts_with($usedCodeUpper, 'PLATINUM_RNW-') => 'Platinum Renewal',
+                                            default => 'General Coupon',
+                                        };
+                                    @endphp
+                                    <span class="px-2 py-1 text-xs font-medium bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 rounded">
+                                        {{ $usedSourceLabel }}
+                                    </span>
                                     <span class="px-2 py-1 text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded">
                                         USED
                                     </span>
