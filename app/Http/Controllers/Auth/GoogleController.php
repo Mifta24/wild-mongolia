@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\CouponService;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\InvalidStateException;
@@ -46,6 +47,8 @@ class GoogleController extends Controller
                     null,
                     'Welcome bonus for new member registration'
                 );
+
+                app(CouponService::class)->issueWelcomeSignupCoupon($user);
             } else {
                 $user->forceFill([
                     'google_id' => $user->google_id ?: $googleUser->getId(),
