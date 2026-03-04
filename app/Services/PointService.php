@@ -20,7 +20,8 @@ class PointService
         $basePoints = (int) floor($booking->total_price / 100);
 
         if ($booking->user) {
-            $tier = MembershipTier::from($booking->user->membership_tier ?? 'silver');
+            $booking->user->syncMembershipStatus();
+            $tier = $booking->user->membershipTier();
             $basePoints = (int) floor($basePoints * $tier->getPointMultiplier());
         }
 
@@ -40,14 +41,38 @@ class PointService
             return null; // Only paid bookings earn points
         }
 
-        $points = $this->calculateBookingPoints($booking);
+        return DB::transaction(function () use ($booking) {
+            $existingLedger = PointLedger::where('user_id', $booking->user_id)
+                ->where('booking_id', $booking->id)
+                ->where('type', 'earned')
+                ->where('source', 'booking')
+                ->first();
 
-        return $booking->user->addPoints(
-            $points,
-            'booking',
-            $booking->id,
-            "Points from booking #{$booking->booking_code}"
-        );
+            if ($existingLedger) {
+                return $existingLedger;
+            }
+
+            $lockedUser = User::query()
+                ->whereKey($booking->user_id)
+                ->lockForUpdate()
+                ->first();
+
+            if (!$lockedUser) {
+                return null;
+            }
+
+            $lockedUser->syncMembershipStatus();
+
+            $basePoints = (int) floor($booking->total_price / 100);
+            $points = max(1, (int) floor($basePoints * $lockedUser->membershipTier()->getPointMultiplier()));
+
+            return $lockedUser->addPoints(
+                $points,
+                'booking',
+                $booking->id,
+                "Points from booking #{$booking->booking_code}"
+            );
+        });
     }
 
     /**
@@ -55,6 +80,8 @@ class PointService
      */
     public function redeemPoints(User $user, int $points): float
     {
+        $user->syncMembershipStatus();
+
         if ($user->points < $points) {
             throw new \Exception('Insufficient points');
         }
@@ -63,7 +90,7 @@ class PointService
         $discount = $points;
 
         // Apply tier bonus
-        $tier = MembershipTier::from($user->membership_tier ?? 'silver');
+        $tier = $user->membershipTier();
         $bonusMultiplier = match($tier) {
             MembershipTier::GOLD => 1.10,
             MembershipTier::PLATINUM => 1.20,
@@ -120,16 +147,7 @@ class PointService
      */
     public function updateMembershipTier(User $user): void
     {
-        // Calculate total lifetime points (all earned points)
-        $lifetimePoints = PointLedger::where('user_id', $user->id)
-            ->whereIn('type', ['earned', 'refunded'])
-            ->sum('points');
-
-        $newTier = MembershipTier::fromLifetimePoints($lifetimePoints);
-
-        if ($user->membership_tier !== $newTier->value) {
-            $user->update(['membership_tier' => $newTier->value]);
-        }
+        $user->syncMembershipStatus();
     }
 
     /**
@@ -184,7 +202,8 @@ class PointService
      */
     public function getUserPointSummary(User $user): array
     {
-        $tier = MembershipTier::from($user->membership_tier ?? 'silver');
+        $user->syncMembershipStatus();
+        $tier = $user->membershipTier();
 
         $lifetimeEarned = PointLedger::where('user_id', $user->id)
             ->whereIn('type', ['earned', 'refunded'])
@@ -212,30 +231,31 @@ class PointService
             'membership_tier' => $tier->value,
             'tier_label' => $tier->label(),
             'tier_benefits' => $tier->getBenefits(),
-            'next_tier' => $this->getNextTierInfo($lifetimeEarned),
+            'next_tier' => $this->getNextTierInfo($tier),
         ];
     }
 
     /**
      * Get information about the next membership tier
      */
-    private function getNextTierInfo(int $lifetimePoints): ?array
+    private function getNextTierInfo(MembershipTier $currentTier): ?array
     {
-        if ($lifetimePoints >= MembershipTier::PLATINUM->getMinimumPoints()) {
-            return null; // Already at max tier
+        $nextTier = match ($currentTier) {
+            MembershipTier::SILVER => MembershipTier::GOLD,
+            MembershipTier::GOLD => MembershipTier::PLATINUM,
+            MembershipTier::PLATINUM => null,
+        };
+
+        if (!$nextTier) {
+            return null;
         }
-
-        $nextTier = $lifetimePoints >= MembershipTier::GOLD->getMinimumPoints()
-            ? MembershipTier::PLATINUM
-            : MembershipTier::GOLD;
-
-        $pointsNeeded = $nextTier->getMinimumPoints() - $lifetimePoints;
 
         return [
             'tier' => $nextTier->value,
             'label' => $nextTier->label(),
-            'points_needed' => $pointsNeeded,
-            'minimum_points' => $nextTier->getMinimumPoints(),
+            'points_needed' => 0,
+            'minimum_points' => 0,
+            'note' => 'Upgrade requires subscription activation.',
         ];
     }
 }
