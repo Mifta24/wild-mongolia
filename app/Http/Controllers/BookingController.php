@@ -8,6 +8,8 @@ use App\Models\Product;
 use App\Http\Requests\StoreBookingRequest;
 use App\Http\Requests\UpdateBookingRequest;
 use App\Services\StripePaymentService;
+use BaconQrCode\Renderer\GDLibRenderer;
+use BaconQrCode\Writer;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -458,9 +460,15 @@ class BookingController extends Controller
             ['token' => $booking->voucher_token]
         );
 
+        $renderer = new GDLibRenderer(320);
+
+        $writer = new Writer($renderer);
+        $qrPngBinary = $writer->writeString($checkInUrl);
+        $qrImageDataUri = 'data:image/png;base64,' . base64_encode($qrPngBinary);
+
         return [
             'checkInUrl' => $checkInUrl,
-            'qrImageUrl' => 'https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=' . urlencode($checkInUrl),
+            'qrImageUrl' => $qrImageDataUri,
         ];
     }
 

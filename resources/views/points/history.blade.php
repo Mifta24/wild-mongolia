@@ -4,7 +4,7 @@
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Points History</h1>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Riwayat semua transaksi points.</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">History of all points transactions.</p>
                 </div>
                 <a href="{{ route('points.index') }}" class="text-sm text-teal-600 hover:text-teal-700">← Back to Dashboard</a>
             </div>
@@ -61,7 +61,7 @@
                                     <td class="px-4 py-3 text-right">{{ number_format($trx->balance_after) }}</td>
                                 </tr>
                             @empty
-                                <tr><td colspan="7" class="px-4 py-8 text-center text-gray-500">Data tidak ditemukan.</td></tr>
+                                <tr><td colspan="7" class="px-4 py-8 text-center text-gray-500">No data found.</td></tr>
                             @endforelse
                         </tbody>
                     </table>

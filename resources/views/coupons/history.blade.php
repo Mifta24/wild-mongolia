@@ -4,7 +4,7 @@
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Coupon Usage History</h1>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Riwayat penggunaan coupon kamu.</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Your coupon usage history.</p>
                 </div>
                 <a href="{{ route('coupons.index') }}" class="text-sm text-teal-600 hover:text-teal-700">← Back to Coupons</a>
             </div>
@@ -29,7 +29,7 @@
                                     <td class="px-4 py-3">{{ $row->last_used_at ? \Carbon\Carbon::parse($row->last_used_at)->format('d M Y H:i') : '-' }}</td>
                                 </tr>
                             @empty
-                                <tr><td colspan="4" class="px-4 py-8 text-center text-gray-500">Belum ada riwayat penggunaan coupon.</td></tr>
+                                <tr><td colspan="4" class="px-4 py-8 text-center text-gray-500">No coupon usage history yet.</td></tr>
                             @endforelse
                         </tbody>
                     </table>

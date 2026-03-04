@@ -42,7 +42,7 @@
                                 <div class="inline-flex items-baseline bg-teal-100 dark:bg-teal-900 px-4 py-2 rounded-lg">
                                     <span class="text-3xl font-bold text-teal-600 dark:text-teal-400">
                                         @if($coupon->type === 'fixed')
-                                            ฿{{ number_format($coupon->value) }}
+                                            THB {{ number_format($coupon->value) }}
                                         @else
                                             {{ $coupon->value }}%
                                         @endif

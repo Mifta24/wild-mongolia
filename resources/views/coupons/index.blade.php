@@ -4,7 +4,7 @@
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Available Coupons</h1>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Daftar kupon yang bisa digunakan.</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">List of coupons you can use.</p>
                 </div>
                 <a href="{{ route('user.dashboard') }}" class="text-sm text-teal-600 hover:text-teal-700">← Back</a>
             </div>
@@ -41,17 +41,17 @@
                         <p class="text-sm text-gray-600 dark:text-gray-300 mb-3">{{ $coupon['description'] ?: '-' }}</p>
                         <div class="space-y-1 text-sm mb-3">
                             <p><span class="text-gray-500">Code:</span> <span class="font-mono font-semibold">{{ $coupon['code'] }}</span></p>
-                            <p><span class="text-gray-500">Value:</span> {{ $coupon['type'] === 'fixed' ? '฿'.number_format($coupon['value'],2) : rtrim(rtrim(number_format($coupon['value'],2), '0'), '.').'%' }}</p>
-                            <p><span class="text-gray-500">Min purchase:</span> {{ $coupon['min_purchase'] ? '฿'.number_format($coupon['min_purchase'],2) : '-' }}</p>
+                            <p><span class="text-gray-500">Value:</span> {{ $coupon['type'] === 'fixed' ? 'THB '.number_format($coupon['value'],2) : rtrim(rtrim(number_format($coupon['value'],2), '0'), '.').'%' }}</p>
+                            <p><span class="text-gray-500">Min purchase:</span> {{ $coupon['min_purchase'] ? 'THB '.number_format($coupon['min_purchase'],2) : '-' }}</p>
                             <p><span class="text-gray-500">Valid until:</span> {{ $coupon['valid_until'] }}</p>
                             @if(!empty($coupon['discount_preview']))
-                                <p class="text-green-600"><span class="text-gray-500">Discount preview:</span> ฿{{ number_format($coupon['discount_preview'],2) }}</p>
+                                <p class="text-green-600"><span class="text-gray-500">Discount preview:</span> THB {{ number_format($coupon['discount_preview'],2) }}</p>
                             @endif
                         </div>
                     </div>
                 @empty
                     <div class="col-span-full bg-white dark:bg-gray-800 rounded-lg shadow p-8 text-center text-gray-500">
-                        Tidak ada coupon yang cocok dengan filter.
+                        No coupons match the selected filter.
                     </div>
                 @endforelse
             </div>

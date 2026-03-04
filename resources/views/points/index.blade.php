@@ -4,7 +4,7 @@
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Points Dashboard</h1>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Balance, tier, dan transaksi terbaru.</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Balance, tier, and latest transactions.</p>
                 </div>
                 <a href="{{ route('user.dashboard') }}" class="text-sm text-teal-600 hover:text-teal-700">← Back</a>
             </div>
@@ -31,7 +31,7 @@
             @if(!empty($summary['next_tier']))
                 <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
                     <p class="text-sm text-blue-700 dark:text-blue-300">
-                        Menuju <strong>{{ $summary['next_tier']['label'] }}</strong>: butuh {{ number_format($summary['next_tier']['points_needed']) }} points lagi.
+                        Next tier <strong>{{ $summary['next_tier']['label'] }}</strong>: {{ number_format($summary['next_tier']['points_needed']) }} more points needed.
                     </p>
                 </div>
             @endif
@@ -66,7 +66,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-4 py-8 text-center text-gray-500">Belum ada transaksi points.</td>
+                                    <td colspan="5" class="px-4 py-8 text-center text-gray-500">No points transactions yet.</td>
                                 </tr>
                             @endforelse
                         </tbody>
