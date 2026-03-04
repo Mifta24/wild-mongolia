@@ -19,7 +19,7 @@
                     <div>
                         <p class="text-teal-100 text-sm font-medium mb-2">Available Points</p>
                         <p class="text-5xl font-bold">{{ number_format(Auth::user()->points) }}</p>
-                        <p class="text-teal-100 text-sm mt-2">Worth ~THB {{ number_format(Auth::user()->points * 0.1) }}</p>
+                        <p class="text-teal-100 text-sm mt-2">Worth ~THB {{ number_format(Auth::user()->points) }} (1 point = THB 1)</p>
                     </div>
                     <div class="h-24 w-24 bg-white/20 rounded-full flex items-center justify-center">
                         <svg class="h-12 w-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -37,9 +37,13 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                     </svg>
                     <div>
+                        @php
+                            $daysUntilYearEnd = now()->startOfDay()->diffInDays(now()->copy()->endOfYear()->startOfDay(), false);
+                        @endphp
                         <h4 class="text-sm font-semibold text-yellow-800 dark:text-yellow-400">Points Expiring Soon</h4>
                         <p class="text-xs text-yellow-700 dark:text-yellow-500 mt-1">
-                            You have {{ number_format($expiringPoints) }} points expiring in the next 3 months. Use them before they expire!
+                            You have {{ number_format($expiringPoints) }} points expiring before the year changes.
+                            {{ $daysUntilYearEnd >= 0 ? $daysUntilYearEnd . ' day' . ($daysUntilYearEnd === 1 ? '' : 's') . ' left until 31 Dec.' : 'Year-end expiry is in progress.' }}
                         </p>
                     </div>
                 </div>
@@ -54,25 +58,25 @@
                         <svg class="h-5 w-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                         </svg>
-                        <span>Earn 1-3% points on every booking</span>
+                        <span>Earn points from every paid booking (base: 1 point per THB 100, tier multiplier applies)</span>
                     </li>
                     <li class="flex items-start">
                         <svg class="h-5 w-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                         </svg>
-                        <span>Redeem points for discounts on future bookings</span>
+                        <span>Redeem points directly as discount at checkout</span>
                     </li>
                     <li class="flex items-start">
                         <svg class="h-5 w-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                         </svg>
-                        <span>Points expire after 12 months from earning date</span>
+                        <span>All earned points expire at year-end (31 Dec, 23:59 Thailand time)</span>
                     </li>
                     <li class="flex items-start">
                         <svg class="h-5 w-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                         </svg>
-                        <span>100 points = 10 THB discount</span>
+                        <span>1 point = THB 1 discount (tier bonus may increase redemption value)</span>
                     </li>
                 </ul>
             </div>
@@ -115,7 +119,15 @@
                                 <div class="ml-11 text-xs text-gray-500 dark:text-gray-400">
                                     {{ $transaction->created_at->format('d M Y, H:i') }}
                                     @if($transaction->expires_at)
+                                    @php
+                                        $daysLeft = now()->startOfDay()->diffInDays($transaction->expires_at->copy()->startOfDay(), false);
+                                    @endphp
                                     · Expires: {{ $transaction->expires_at->format('d M Y') }}
+                                    @if($daysLeft >= 0)
+                                        ({{ $daysLeft }} day{{ $daysLeft === 1 ? '' : 's' }} left)
+                                    @else
+                                        (expired)
+                                    @endif
                                     @endif
                                 </div>
                             </div>

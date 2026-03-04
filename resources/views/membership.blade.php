@@ -84,4 +84,30 @@
             </div>
         </div>
     </section>
+
+    <section class="bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">Points & Coupon Rules</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="p-5 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
+                    <p class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Points usage</p>
+                    <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-1">
+                        <li>• 1 point = THB 1 discount.</li>
+                        <li>• New members receive 300 welcome points after registration.</li>
+                        <li>• Points can be used at checkout for the next booking payment.</li>
+                        <li>• All earned points expire at year-end (31 Dec, Thailand time).</li>
+                    </ul>
+                </div>
+                <div class="p-5 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
+                    <p class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Coupon usage</p>
+                    <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-1">
+                        <li>• Enter coupon code during checkout before payment confirmation.</li>
+                        <li>• Coupon is valid only within its date range and usage limits.</li>
+                        <li>• Some coupons require minimum purchase or specific service type.</li>
+                        <li>• The system shows remaining days before coupon expiry.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
 </x-layouts.app>

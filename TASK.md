@@ -423,7 +423,7 @@ Based on my analysis of your codebase, here's the current implementation status 
 - ❌ Blog/Articles (optional)
 
 
-### Auth Google ngacooo
+### Auth Google ngacooo ✅
 ### Service Date booking masak bisa pesen saat jamnya 7 padahal sekarang jam 11
 ### coupons blom jelas penggunaannya
 ### membership dan point juga blom jelas penggunaanya

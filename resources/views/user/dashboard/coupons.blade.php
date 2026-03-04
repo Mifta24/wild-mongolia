@@ -13,6 +13,16 @@
                 </a>
             </div>
 
+            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-5 mb-8">
+                <h3 class="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-2">How to use coupons</h3>
+                <ul class="text-xs text-blue-800 dark:text-blue-200 space-y-1">
+                    <li>• Apply coupon code at checkout/payment before confirming the booking.</li>
+                    <li>• Coupon must be active, within validity date, and match service type/minimum purchase.</li>
+                    <li>• Each coupon has usage limits (per user and/or global usage).</li>
+                    <li>• "Days left" shows remaining validity until the coupon expires.</li>
+                </ul>
+            </div>
+
             <!-- Available Coupons -->
             <div class="mb-8">
                 <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Available Coupons</h2>
@@ -66,6 +76,9 @@
 
                             <!-- Details -->
                             <div class="space-y-1 text-xs text-gray-600 dark:text-gray-400">
+                                @php
+                                    $couponDaysLeft = now()->startOfDay()->diffInDays($coupon->valid_until->copy()->startOfDay(), false);
+                                @endphp
                                 @if($coupon->min_purchase)
                                 <p>• Min. purchase: THB {{ number_format($coupon->min_purchase) }}</p>
                                 @endif
@@ -76,6 +89,17 @@
                                 <p>• Applicable to: {{ ucfirst($coupon->applicable_to) }} services only</p>
                                 @endif
                                 <p>• Valid until: {{ $coupon->valid_until->format('d M Y') }}</p>
+                                <p>• Expires in:
+                                    @if($couponDaysLeft > 1)
+                                        {{ $couponDaysLeft }} days
+                                    @elseif($couponDaysLeft === 1)
+                                        1 day
+                                    @elseif($couponDaysLeft === 0)
+                                        today
+                                    @else
+                                        expired
+                                    @endif
+                                </p>
                                 @php
                                     $userCoupon = $coupon->users->find(Auth::id());
                                     $remaining = $coupon->usage_per_user - ($userCoupon ? $userCoupon->pivot->usage_count : 0);

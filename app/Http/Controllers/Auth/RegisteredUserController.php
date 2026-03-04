@@ -45,6 +45,13 @@ class RegisteredUserController extends Controller
         Role::findOrCreate('user');
         $user->assignRole('user');
 
+        $user->addPoints(
+            300,
+            'welcome_bonus',
+            null,
+            'Welcome bonus for new member registration'
+        );
+
         event(new Registered($user));
 
         Auth::login($user);

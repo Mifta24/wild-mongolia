@@ -9,6 +9,16 @@
                 <a href="{{ route('points.index') }}" class="text-sm text-teal-600 hover:text-teal-700">← Back to Dashboard</a>
             </div>
 
+            @php
+                $daysUntilYearEnd = now()->startOfDay()->diffInDays(now()->copy()->endOfYear()->startOfDay(), false);
+            @endphp
+            <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-4">
+                <p class="text-sm text-yellow-800 dark:text-yellow-300">
+                    Year-end points expiry countdown:
+                    {{ $daysUntilYearEnd >= 0 ? $daysUntilYearEnd . ' day' . ($daysUntilYearEnd === 1 ? '' : 's') . ' left until 31 Dec.' : 'Year-end expiry is in progress.' }}
+                </p>
+            </div>
+
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-4">
                 <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-3">
                     <div>
@@ -56,7 +66,19 @@
                                     <td class="px-4 py-3">{{ ucfirst($trx->type) }}</td>
                                     <td class="px-4 py-3">{{ $trx->source ?? '-' }}</td>
                                     <td class="px-4 py-3">{{ $trx->description ?? '-' }}</td>
-                                    <td class="px-4 py-3">{{ $trx->expires_at ? $trx->expires_at->format('d M Y') : '-' }}</td>
+                                    <td class="px-4 py-3">
+                                        @if($trx->expires_at)
+                                            {{ $trx->expires_at->format('d M Y') }}
+                                            @php
+                                                $daysLeft = now()->startOfDay()->diffInDays($trx->expires_at->copy()->startOfDay(), false);
+                                            @endphp
+                                            <span class="text-xs text-gray-500 dark:text-gray-400">
+                                                ({{ $daysLeft >= 0 ? $daysLeft . ' day' . ($daysLeft === 1 ? '' : 's') . ' left' : 'expired' }})
+                                            </span>
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
                                     <td class="px-4 py-3 text-right font-semibold {{ $trx->points >= 0 ? 'text-green-600' : 'text-red-600' }}">{{ $trx->points > 0 ? '+' : '' }}{{ number_format($trx->points) }}</td>
                                     <td class="px-4 py-3 text-right">{{ number_format($trx->balance_after) }}</td>
                                 </tr>

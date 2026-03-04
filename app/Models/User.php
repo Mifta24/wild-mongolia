@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\SupportConversation;
 use App\Models\SupportMessage;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -26,6 +27,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'google_id',
+        'email_verified_at',
         'phone',
         'points',
         'lifetime_points',
@@ -123,7 +126,7 @@ class User extends Authenticatable
             'source' => $source,
             'booking_id' => $bookingId,
             'description' => $description,
-            'expires_at' => now()->addYear(),
+            'expires_at' => Carbon::now(config('app.timezone'))->endOfYear()->toDateString(),
         ]);
     }
 

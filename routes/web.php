@@ -26,7 +26,6 @@ use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\User\ReviewController as UserReviewController;
 use App\Http\Controllers\PointController;
 use App\Http\Controllers\CouponController;
-use Laravel\Socialite\Socialite;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\StripeWebhookController;
 use App\Models\User;
@@ -35,8 +34,8 @@ use Illuminate\Support\Facades\Auth;
 require __DIR__ . '/auth.php';
 
 // Google OAuth Routes
-Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
-Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google.redirect');
+Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');

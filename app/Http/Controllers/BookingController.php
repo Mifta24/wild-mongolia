@@ -11,6 +11,7 @@ use App\Services\StripePaymentService;
 use BaconQrCode\Renderer\GDLibRenderer;
 use BaconQrCode\Writer;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
@@ -253,6 +254,17 @@ class BookingController extends Controller
             } else {
                 $bookingPayload['service_date'] = $serviceDate;
                 $bookingPayload['service_time'] = $serviceTime;
+            }
+
+            $serviceDateTime = Carbon::parse(
+                $bookingPayload['service_date'] . ' ' . $bookingPayload['service_time'],
+                config('app.timezone')
+            );
+
+            if ($serviceDateTime->lessThanOrEqualTo(now(config('app.timezone')))) {
+                throw ValidationException::withMessages([
+                    'service_time' => 'Selected service time must be in the future.',
+                ]);
             }
 
             return Booking::create($bookingPayload);

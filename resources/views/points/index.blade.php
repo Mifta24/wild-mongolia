@@ -28,6 +28,16 @@
                 </div>
             </div>
 
+            @php
+                $daysUntilYearEnd = now()->startOfDay()->diffInDays(now()->copy()->endOfYear()->startOfDay(), false);
+            @endphp
+            <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-6">
+                <p class="text-sm text-yellow-800 dark:text-yellow-300">
+                    Points expire at year-end (31 Dec, Thailand time).
+                    {{ $daysUntilYearEnd >= 0 ? $daysUntilYearEnd . ' day' . ($daysUntilYearEnd === 1 ? '' : 's') . ' left.' : 'Year-end expiry is in progress.' }}
+                </p>
+            </div>
+
             @if(!empty($summary['next_tier']))
                 <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
                     <p class="text-sm text-blue-700 dark:text-blue-300">
