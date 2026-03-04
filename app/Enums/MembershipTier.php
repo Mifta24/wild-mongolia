@@ -21,6 +21,29 @@ enum MembershipTier: string
     }
 
     /**
+     * Whether this tier is a paid subscription plan.
+     */
+    public function isPaidPlan(): bool
+    {
+        return match($this) {
+            self::SILVER => false,
+            self::GOLD, self::PLATINUM => true,
+        };
+    }
+
+    /**
+     * Yearly subscription price in THB. Null means custom pricing.
+     */
+    public function getYearlyPriceThb(): ?int
+    {
+        return match($this) {
+            self::SILVER => 0,
+            self::GOLD => 1500,
+            self::PLATINUM => null,
+        };
+    }
+
+    /**
      * Get minimum points required for this tier
      */
     public function getMinimumPoints(): int
