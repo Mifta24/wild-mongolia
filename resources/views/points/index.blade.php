@@ -41,7 +41,7 @@
             @if(!empty($summary['next_tier']))
                 <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
                     <p class="text-sm text-blue-700 dark:text-blue-300">
-                        Next tier <strong>{{ $summary['next_tier']['label'] }}</strong>: {{ number_format($summary['next_tier']['points_needed']) }} more points needed.
+                        Next tier <strong>{{ $summary['next_tier']['label'] }}</strong>: {{ $summary['next_tier']['note'] ?? 'Upgrade available.' }}
                     </p>
                 </div>
             @endif
