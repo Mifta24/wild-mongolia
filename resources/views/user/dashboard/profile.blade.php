@@ -65,6 +65,11 @@
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Membership Tier
                             </label>
+                            @php
+                                $isPaidActive = in_array($user->membership_tier, ['gold', 'platinum'], true)
+                                    && $user->membership_expires_at
+                                    && $user->membership_expires_at->isFuture();
+                            @endphp
                             <div class="flex items-center space-x-3">
                                 <span class="px-4 py-2 rounded-lg font-medium text-sm
                                     @if($user->membership_tier === 'silver') bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300
@@ -76,6 +81,17 @@
                                     {{ $user->points }} points
                                 </span>
                             </div>
+                            @if($user->membership_started_at || $user->membership_expires_at)
+                            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                @if($user->membership_started_at)
+                                    Started: {{ $user->membership_started_at->format('d M Y H:i') }} ·
+                                @endif
+                                @if($user->membership_expires_at)
+                                    Expires: {{ $user->membership_expires_at->format('d M Y H:i') }}
+                                    ({{ $isPaidActive ? 'active' : 'expired' }})
+                                @endif
+                            </p>
+                            @endif
                         </div>
                     </div>
 
