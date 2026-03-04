@@ -1,6 +1,24 @@
 <x-layouts.app>
     <section class="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            @if(session('success'))
+                <div class="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 dark:border-green-800 dark:bg-green-900/30 dark:text-green-300">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-800 dark:bg-red-900/30 dark:text-red-300">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            @if(session('info'))
+                <div class="mb-6 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800 dark:border-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                    {{ session('info') }}
+                </div>
+            @endif
+
             <div class="grid lg:grid-cols-2 gap-10 items-center">
                 <div>
                     <p class="text-sm uppercase tracking-wide text-primary font-semibold mb-2">Loyalty Program</p>
@@ -32,8 +50,7 @@
                                 <p class="font-semibold text-gray-900 dark:text-white">Silver</p>
                                 <span class="text-sm text-primary font-semibold">Free</span>
                             </div>
-                            <p class="text-sm text-gray-600 dark:text-gray-300">Point rewards for every transaction,
-                                with exclusive seasonal promos.</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Default tier for all users with 1x point multiplier and access to standard promos.</p>
                         </div>
                         <div
                             class="p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700">
@@ -41,8 +58,31 @@
                                 <p class="font-semibold text-gray-900 dark:text-white">Gold</p>
                                 <span class="text-sm text-primary font-semibold">THB 1,500 / year</span>
                             </div>
-                            <p class="text-sm text-gray-600 dark:text-gray-300">Fixed 8% discount for cars & tours,
-                                priority customer support, and flexible rescheduling.</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Paid annual subscription with 1.5x point multiplier, redemption bonus, and priority support.</p>
+                            @auth
+                                @php
+                                    /** @var \App\Models\User $authUser */
+                                    $authUser = auth()->user();
+                                    $activeGold = $authUser->membership_tier === 'gold'
+                                        && $authUser->membership_expires_at
+                                        && $authUser->membership_expires_at->isFuture();
+                                @endphp
+                                <form method="POST" action="{{ route('user.membership.subscribe') }}" class="mt-3">
+                                    @csrf
+                                    <input type="hidden" name="tier" value="gold">
+                                    <input type="hidden" name="action" value="{{ $activeGold ? 'renew' : 'subscribe' }}">
+                                    <button type="submit" class="w-full px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium">
+                                        {{ $activeGold ? 'Renew Gold (Pay with Stripe)' : 'Subscribe Gold (Pay with Stripe)' }}
+                                    </button>
+                                </form>
+                                @if($activeGold)
+                                    <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                        Active until {{ $authUser->membership_expires_at->format('d M Y H:i') }}
+                                    </p>
+                                @endif
+                            @else
+                                <p class="mt-3 text-xs text-gray-500 dark:text-gray-400">Login required to subscribe.</p>
+                            @endauth
                         </div>
                         <div
                             class="p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700">
@@ -50,8 +90,10 @@
                                 <p class="font-semibold text-gray-900 dark:text-white">Platinum</p>
                                 <span class="text-sm text-primary font-semibold">Custom (by request)</span>
                             </div>
-                            <p class="text-sm text-gray-600 dark:text-gray-300">Special corporate rates, dedicated
-                                account manager, and a 15-minute pickup SLA.</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Premium annual plan with 2x point multiplier, highest redemption bonus, and dedicated support.</p>
+                            <a href="{{ route('contact') }}" class="mt-3 inline-block text-sm text-teal-600 hover:text-teal-700 font-medium">
+                                Contact us for Platinum setup
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -96,6 +138,7 @@
                         <li>• New members receive 300 welcome points after registration.</li>
                         <li>• Points can be used at checkout for the next booking payment.</li>
                         <li>• All earned points expire at year-end (31 Dec, Thailand time).</li>
+                        <li>• Gold and Platinum plans are valid for 1 year from activation date.</li>
                     </ul>
                 </div>
                 <div class="p-5 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
