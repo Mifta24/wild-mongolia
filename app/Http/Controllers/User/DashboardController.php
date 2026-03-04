@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Enums\MembershipTier;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use App\Services\CouponService;
 use App\Services\StripePaymentService;
 
 class DashboardController extends Controller
@@ -17,6 +20,7 @@ class DashboardController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
+        $user->syncMembershipStatus();
 
         $stats = [
             'total_bookings' => $user->bookings()->count(),
@@ -159,6 +163,7 @@ class DashboardController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
+        $user->syncMembershipStatus();
 
         $pointHistory = $user->pointLedgers()
             ->orderBy('created_at', 'desc')
@@ -176,19 +181,56 @@ class DashboardController extends Controller
     /**
      * Display user's coupons
      */
-    public function coupons()
+    public function coupons(Request $request)
     {
         /** @var User $user */
         $user = Auth::user();
+        $user->syncMembershipStatus();
 
-        $availableCoupons = $user->availableCoupons()->get();
+        $source = (string) $request->input('source', 'all');
 
-        $usedCoupons = $user->coupons()
+        $applySourceFilter = function ($query) use ($source) {
+            if ($source === 'welcome') {
+                $query->where('coupons.code', 'like', 'WELCOME-%');
+                return;
+            }
+
+            if ($source === 'membership') {
+                $query->where(function ($subQuery) {
+                    $subQuery->where('coupons.code', 'like', 'GOLDNEW-%')
+                        ->orWhere('coupons.code', 'like', 'GOLDRNW-%')
+                        ->orWhere('coupons.code', 'like', 'PLATINUM_NEW-%')
+                        ->orWhere('coupons.code', 'like', 'PLATINUM_RNW-%');
+                });
+                return;
+            }
+
+            if ($source === 'general') {
+                $query->where('coupons.code', 'not like', 'WELCOME-%')
+                    ->where('coupons.code', 'not like', 'GOLDNEW-%')
+                    ->where('coupons.code', 'not like', 'GOLDRNW-%')
+                    ->where('coupons.code', 'not like', 'PLATINUM_NEW-%')
+                    ->where('coupons.code', 'not like', 'PLATINUM_RNW-%');
+            }
+        };
+
+        $availableCouponsQuery = $user->availableCoupons();
+        if (in_array($source, ['welcome', 'membership', 'general'], true)) {
+            $applySourceFilter($availableCouponsQuery);
+        }
+        $availableCoupons = $availableCouponsQuery->get();
+
+        $usedCouponsQuery = $user->coupons()
             ->wherePivot('usage_count', '>', 0)
-            ->orderBy('user_coupons.last_used_at', 'desc')
-            ->get();
+            ->orderBy('user_coupons.last_used_at', 'desc');
 
-        return view('user.dashboard.coupons', compact('availableCoupons', 'usedCoupons'));
+        if (in_array($source, ['welcome', 'membership', 'general'], true)) {
+            $applySourceFilter($usedCouponsQuery);
+        }
+
+        $usedCoupons = $usedCouponsQuery->get();
+
+        return view('user.dashboard.coupons', compact('availableCoupons', 'usedCoupons', 'source'));
     }
 
     /**
@@ -198,7 +240,124 @@ class DashboardController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
+        $user->syncMembershipStatus();
         return view('user.dashboard.profile', compact('user'));
+    }
+
+    public function subscribeMembership(Request $request)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        $user->syncMembershipStatus();
+
+        $validated = $request->validate([
+            'tier' => 'required|in:gold,platinum',
+            'action' => 'nullable|in:subscribe,renew',
+        ]);
+
+        $tier = MembershipTier::from($validated['tier']);
+
+        if ($tier === MembershipTier::PLATINUM) {
+            return back()->with('info', 'Platinum is a custom plan. Please contact support for activation.');
+        }
+
+        try {
+            $session = app(StripePaymentService::class)
+                ->createMembershipCheckoutSession($user, $tier, $validated['action'] ?? 'subscribe');
+
+            return redirect($session->url);
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return back()->with('error', 'Unable to initiate membership payment. Please try again.');
+        }
+    }
+
+    public function membershipSuccess(Request $request)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        $user->syncMembershipStatus();
+
+        $request->validate([
+            'session_id' => 'required|string',
+        ]);
+
+        try {
+            $session = app(StripePaymentService::class)
+                ->retrieveCheckoutSession($request->string('session_id')->toString());
+
+            if (($session->payment_status ?? null) !== 'paid') {
+                return redirect()->route('membership')->with('error', 'Membership payment is not completed yet.');
+            }
+
+            if (data_get($session, 'metadata.purpose') !== 'membership_subscription') {
+                return redirect()->route('membership')->with('error', 'Invalid membership payment session.');
+            }
+
+            if ((string) data_get($session, 'metadata.user_id') !== (string) $user->id) {
+                return redirect()->route('membership')->with('error', 'This payment session does not belong to your account.');
+            }
+
+            $alreadyProcessed = DB::table('membership_payments')
+                ->where('stripe_checkout_session_id', (string) $session->id)
+                ->exists();
+
+            if ($alreadyProcessed) {
+                return redirect()->route('membership')->with('success', 'Membership payment already processed successfully.');
+            }
+
+            $tier = MembershipTier::from((string) data_get($session, 'metadata.tier', MembershipTier::SILVER->value));
+            $action = (string) data_get($session, 'metadata.action', 'subscribe');
+
+            if (!$tier->isPaidPlan()) {
+                return redirect()->route('membership')->with('error', 'Invalid membership tier for subscription.');
+            }
+
+            $startsAt = now(config('app.timezone'));
+
+            if (
+                $action === 'renew'
+                && $user->membership_tier === $tier->value
+                && $user->membership_expires_at
+                && $user->membership_expires_at->isFuture()
+            ) {
+                $startsAt = $user->membership_expires_at->copy()->addSecond();
+            }
+
+            DB::transaction(function () use ($user, $tier, $action, $session, $startsAt) {
+                $user->activateMembership($tier, $startsAt);
+
+                DB::table('membership_payments')->insert([
+                    'user_id' => $user->id,
+                    'tier' => $tier->value,
+                    'action' => $action,
+                    'stripe_checkout_session_id' => (string) $session->id,
+                    'stripe_payment_intent_id' => (string) ($session->payment_intent ?? ''),
+                    'amount_thb' => (int) (((int) ($session->amount_total ?? 0)) / 100),
+                    'processed_at' => now(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            });
+
+            if ($tier === MembershipTier::GOLD) {
+                app(CouponService::class)->issueGoldMembershipCoupon($user->fresh(), $action);
+            }
+
+            return redirect()->route('membership')->with(
+                'success',
+                sprintf(
+                    '%s activated successfully. Valid until %s.',
+                    $tier->label(),
+                    optional($user->fresh()->membership_expires_at)?->format('d M Y H:i')
+                )
+            );
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return redirect()->route('membership')->with('error', 'Unable to verify membership payment. Please contact support.');
+        }
     }
 
     /**
