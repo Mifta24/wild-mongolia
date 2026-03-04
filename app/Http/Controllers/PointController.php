@@ -23,6 +23,7 @@ class PointController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
+        $user->syncMembershipStatus();
         $summary = $this->pointService->getUserPointSummary($user);
 
         $recentTransactions = $user->pointLedgers()
@@ -108,7 +109,7 @@ class PointController extends Controller
                 'current_balance' => $user->points,
                 'max_redeemable_points' => min($user->points, (int)$request->amount),
                 'discount_per_100_points' => 100,
-                'tier_multiplier' => \App\Enums\MembershipTier::from($user->membership_tier ?? 'silver')->getPointMultiplier(),
+                'tier_multiplier' => $user->membershipTier()->getPointMultiplier(),
             ],
         ]);
     }
