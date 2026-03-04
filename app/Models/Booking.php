@@ -116,6 +116,10 @@ class Booking extends Model
     protected static function booted()
     {
         static::creating(function ($booking) {
+            if (! empty($booking->booking_code)) {
+                return;
+            }
+
             // Generate Booking Code: TRV-TAHUNBULANTANGGAL-RANDOM
             // Contoh: TRV-20260119-A1B2
             $booking->booking_code = 'TRV-' . now()->format('Ymd') . '-' . strtoupper(Str::random(4));
