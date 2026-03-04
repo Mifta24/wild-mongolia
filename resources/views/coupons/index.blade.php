@@ -23,12 +23,33 @@
                             <option value="tour" @selected(request('service_type')==='tour')>Tour</option>
                         </select>
                     </div>
+                    <input type="hidden" name="source" value="{{ request('source', 'all') }}">
                     <div class="md:col-span-2 flex items-end gap-2">
                         <button class="px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700">Apply Filter</button>
                         <a href="{{ route('coupons.index') }}" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded">Reset</a>
                         <a href="{{ route('coupons.history') }}" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">My Usage History</a>
                     </div>
                 </form>
+
+                <div class="mt-3 flex flex-wrap items-center gap-2">
+                    <span class="text-xs text-gray-500 mr-1">Filter source:</span>
+                    <a href="{{ route('coupons.index', ['amount' => request('amount'), 'service_type' => request('service_type'), 'source' => 'all']) }}"
+                       class="px-3 py-1.5 rounded-full text-sm {{ request('source', 'all') === 'all' ? 'bg-teal-600 text-white' : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300' }}">
+                        All
+                    </a>
+                    <a href="{{ route('coupons.index', ['amount' => request('amount'), 'service_type' => request('service_type'), 'source' => 'welcome']) }}"
+                       class="px-3 py-1.5 rounded-full text-sm {{ request('source') === 'welcome' ? 'bg-teal-600 text-white' : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300' }}">
+                        Welcome Bonus
+                    </a>
+                    <a href="{{ route('coupons.index', ['amount' => request('amount'), 'service_type' => request('service_type'), 'source' => 'membership']) }}"
+                       class="px-3 py-1.5 rounded-full text-sm {{ request('source') === 'membership' ? 'bg-teal-600 text-white' : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300' }}">
+                        Membership Bonus
+                    </a>
+                    <a href="{{ route('coupons.index', ['amount' => request('amount'), 'service_type' => request('service_type'), 'source' => 'general']) }}"
+                       class="px-3 py-1.5 rounded-full text-sm {{ request('source') === 'general' ? 'bg-teal-600 text-white' : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300' }}">
+                        General Coupon
+                    </a>
+                </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -36,7 +57,10 @@
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700">
                         <div class="flex items-start justify-between mb-2">
                             <h3 class="font-semibold text-gray-900 dark:text-white">{{ $coupon['name'] }}</h3>
-                            <span class="text-xs px-2 py-1 rounded bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-300">{{ strtoupper($coupon['type']) }}</span>
+                            <div class="flex flex-col items-end gap-1">
+                                <span class="text-xs px-2 py-1 rounded bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-300">{{ strtoupper($coupon['type']) }}</span>
+                                <span class="text-xs px-2 py-1 rounded bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300">{{ $coupon['source_label'] ?? 'General Coupon' }}</span>
+                            </div>
                         </div>
                         <p class="text-sm text-gray-600 dark:text-gray-300 mb-3">{{ $coupon['description'] ?: '-' }}</p>
                         <div class="space-y-1 text-sm mb-3">
