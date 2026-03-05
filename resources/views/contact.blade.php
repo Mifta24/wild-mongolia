@@ -79,14 +79,26 @@
 
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Send us a Message</h2>
-                    <form action="#" method="POST">
+
+                    @if (session('success'))
+                        <div
+                            class="mb-6 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    <form action="{{ route('contact.send') }}" method="POST">
+                        @csrf
                         <div class="space-y-4">
                             <div>
                                 <label for="name"
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300">Full Name</label>
                                 <input type="text" id="name" name="name"
                                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-teal-500 focus:ring-teal-500"
-                                    placeholder="John Doe">
+                                    value="{{ old('name') }}" placeholder="John Doe">
+                                @error('name')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <div>
@@ -95,7 +107,10 @@
                                     Address</label>
                                 <input type="email" id="email" name="email"
                                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-teal-500 focus:ring-teal-500"
-                                    placeholder="john@example.com">
+                                    value="{{ old('email') }}" placeholder="john@example.com">
+                                @error('email')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <div>
@@ -104,7 +119,10 @@
                                     ID</label>
                                 <input type="text" id="subject" name="subject"
                                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-teal-500 focus:ring-teal-500"
-                                    placeholder="e.g. Booking #12345">
+                                    value="{{ old('subject') }}" placeholder="e.g. Booking #12345">
+                                @error('subject')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <div>
@@ -112,7 +130,10 @@
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300">Message</label>
                                 <textarea id="message" name="message" rows="4"
                                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-teal-500 focus:ring-teal-500"
-                                    placeholder="How can we help you?"></textarea>
+                                    placeholder="How can we help you?">{{ old('message') }}</textarea>
+                                @error('message')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <button type="submit"

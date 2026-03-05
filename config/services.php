@@ -57,5 +57,9 @@ return [
         'official_account_id' => env('LINE_OFFICIAL_ACCOUNT_ID'),
     ],
 
+    'support' => [
+        'email' => env('SUPPORT_EMAIL', env('MAIL_FROM_ADDRESS')),
+    ],
+
 
 ];

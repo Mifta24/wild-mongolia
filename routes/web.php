@@ -40,6 +40,7 @@ Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallba
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.send');
 Route::get('/faq', [FaqController::class, 'index'])->name('faq');
 Route::get('/terms', [TermsController::class, 'index'])->name('terms');
 Route::view('/cars', 'cars')->name('cars');
