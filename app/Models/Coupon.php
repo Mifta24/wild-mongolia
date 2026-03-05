@@ -50,8 +50,8 @@ class Coupon extends Model
             return false;
         }
 
-        $now = Carbon::now();
-        if ($now->lt($this->valid_from) || $now->gt($this->valid_until)) {
+        $today = Carbon::now(config('app.timezone'))->startOfDay();
+        if ($today->lt($this->valid_from->copy()->startOfDay()) || $today->gt($this->valid_until->copy()->startOfDay())) {
             return false;
         }
 

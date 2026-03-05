@@ -196,8 +196,8 @@ class CouponService
         string $source = null
     ): array {
         $query = Coupon::where('is_active', true)
-            ->where('valid_from', '<=', now())
-            ->where('valid_until', '>=', now())
+            ->whereDate('valid_from', '<=', now(config('app.timezone'))->toDateString())
+            ->whereDate('valid_until', '>=', now(config('app.timezone'))->toDateString())
             ->where(function($q) use ($orderAmount) {
                 $q->whereNull('min_purchase')
                   ->orWhere('min_purchase', '<=', $orderAmount);

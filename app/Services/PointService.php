@@ -76,6 +76,62 @@ class PointService
     }
 
     /**
+     * Award cashback points after successful membership purchase or renewal.
+     */
+    public function awardMembershipCashback(
+        User $user,
+        MembershipTier $tier,
+        string $action = 'subscribe',
+        ?string $sessionId = null
+    ): ?PointLedger {
+        if (!$tier->isPaidPlan()) {
+            return null;
+        }
+
+        $cashbackPoints = $tier->getCashbackPoints();
+
+        if ($cashbackPoints <= 0) {
+            return null;
+        }
+
+        $description = sprintf(
+            'Membership cashback for %s (%s)%s',
+            $tier->label(),
+            $action,
+            $sessionId ? ' [session:' . $sessionId . ']' : ''
+        );
+
+        return DB::transaction(function () use ($user, $cashbackPoints, $description) {
+            $existingLedger = PointLedger::query()
+                ->where('user_id', $user->id)
+                ->where('type', 'earned')
+                ->where('source', 'membership_cashback')
+                ->where('description', $description)
+                ->first();
+
+            if ($existingLedger) {
+                return $existingLedger;
+            }
+
+            $lockedUser = User::query()
+                ->whereKey($user->id)
+                ->lockForUpdate()
+                ->first();
+
+            if (!$lockedUser) {
+                return null;
+            }
+
+            return $lockedUser->addPoints(
+                $cashbackPoints,
+                'membership_cashback',
+                null,
+                $description
+            );
+        });
+    }
+
+    /**
      * Redeem points for discount
      */
     public function redeemPoints(User $user, int $points): float

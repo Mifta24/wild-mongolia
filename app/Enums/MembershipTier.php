@@ -39,8 +39,22 @@ enum MembershipTier: string
         return match($this) {
             self::SILVER => 0,
             self::GOLD => 1500,
-            self::PLATINUM => null,
+            self::PLATINUM => 3500,
         };
+    }
+
+    /**
+     * Cashback points granted after successful membership payment.
+     */
+    public function getCashbackPoints(): int
+    {
+        if (!$this->isPaidPlan()) {
+            return 0;
+        }
+
+        $price = $this->getYearlyPriceThb() ?? 0;
+
+        return (int) floor($price * 0.10);
     }
 
     /**

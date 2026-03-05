@@ -108,11 +108,23 @@
                                     </span>
                                     @endif
                                     <div>
+                                        @php
+                                            $sourceLabel = match ((string) $transaction->source) {
+                                                'booking' => 'Booking Reward',
+                                                'booking_discount' => 'Booking Redemption',
+                                                'booking_refund' => 'Booking Refund Adjustment',
+                                                'membership_cashback' => 'Membership Cashback',
+                                                'signup_bonus' => 'Welcome Bonus',
+                                                'admin_adjustment' => 'Admin Adjustment',
+                                                'expiry' => 'Points Expiry',
+                                                default => ucfirst(str_replace('_', ' ', (string) $transaction->source)),
+                                            };
+                                        @endphp
                                         <p class="font-medium text-gray-900 dark:text-white">
                                             {{ ucfirst($transaction->type) }} Points
                                         </p>
                                         <p class="text-sm text-gray-600 dark:text-gray-400">
-                                            {{ $transaction->description ?? ucfirst($transaction->source) }}
+                                            {{ $transaction->description ?? $sourceLabel }}
                                         </p>
                                     </div>
                                 </div>
@@ -132,7 +144,12 @@
                                 </div>
                             </div>
                             <div class="ml-4 text-right">
-                                <p class="text-lg font-bold @if($transaction->type === 'earned') text-green-600 dark:text-green-400 @else text-red-600 dark:text-red-400 @endif">
+                                @php
+                                    $pointsColorClass = $transaction->type === 'earned'
+                                        ? 'text-green-600 dark:text-green-400'
+                                        : 'text-red-600 dark:text-red-400';
+                                @endphp
+                                <p class="text-lg font-bold {{ $pointsColorClass }}">
                                     {{ $transaction->type === 'earned' ? '+' : '' }}{{ number_format($transaction->points) }}
                                 </p>
                                 <p class="text-xs text-gray-500 dark:text-gray-400">

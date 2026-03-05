@@ -37,6 +37,10 @@ class Booking extends Model
         'adult_pax',
         'child_pax',
         'total_price',
+        'original_price',
+        'discount_info',
+        'points_used',
+        'coupon_id',
         'add_ons_total',
         'currency',
         'status',
@@ -61,6 +65,9 @@ class Booking extends Model
     protected $casts = [
         'service_date' => 'date',
         'total_price' => 'decimal:2',
+        'original_price' => 'decimal:2',
+        'discount_info' => 'array',
+        'points_used' => 'integer',
         'add_ons_total' => 'decimal:2',
         'selected_add_ons' => 'array',
         'refund_amount' => 'decimal:2',
@@ -85,6 +92,11 @@ class Booking extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function coupon()
+    {
+        return $this->belongsTo(Coupon::class);
     }
 
     public function review()

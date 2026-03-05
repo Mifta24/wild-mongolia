@@ -61,10 +61,22 @@
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                             @forelse($transactions as $trx)
+                                @php
+                                    $sourceLabel = match ((string) $trx->source) {
+                                        'booking' => 'Booking Reward',
+                                        'booking_discount' => 'Booking Redemption',
+                                        'booking_refund' => 'Booking Refund Adjustment',
+                                        'membership_cashback' => 'Membership Cashback',
+                                        'signup_bonus' => 'Welcome Bonus',
+                                        'admin_adjustment' => 'Admin Adjustment',
+                                        'expiry' => 'Points Expiry',
+                                        default => ucfirst(str_replace('_', ' ', (string) $trx->source)),
+                                    };
+                                @endphp
                                 <tr>
                                     <td class="px-4 py-3">{{ $trx->created_at->format('d M Y H:i') }}</td>
                                     <td class="px-4 py-3">{{ ucfirst($trx->type) }}</td>
-                                    <td class="px-4 py-3">{{ $trx->source ?? '-' }}</td>
+                                    <td class="px-4 py-3">{{ $sourceLabel ?: '-' }}</td>
                                     <td class="px-4 py-3">{{ $trx->description ?? '-' }}</td>
                                     <td class="px-4 py-3">
                                         @if($trx->expires_at)

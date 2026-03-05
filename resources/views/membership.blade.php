@@ -88,12 +88,33 @@
                             class="p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700">
                             <div class="flex items-center justify-between mb-2">
                                 <p class="font-semibold text-gray-900 dark:text-white">Platinum</p>
-                                <span class="text-sm text-primary font-semibold">Custom (by request)</span>
+                                <span class="text-sm text-primary font-semibold">THB 3,500 / year</span>
                             </div>
                             <p class="text-sm text-gray-600 dark:text-gray-300">Premium annual plan with 2x point multiplier, highest redemption bonus, and dedicated support.</p>
-                            <a href="{{ route('contact') }}" class="mt-3 inline-block text-sm text-teal-600 hover:text-teal-700 font-medium">
-                                Contact us for Platinum setup
-                            </a>
+                            @auth
+                                @php
+                                    /** @var \App\Models\User $authUser */
+                                    $authUser = auth()->user();
+                                    $activePlatinum = $authUser->membership_tier === 'platinum'
+                                        && $authUser->membership_expires_at
+                                        && $authUser->membership_expires_at->isFuture();
+                                @endphp
+                                <form method="POST" action="{{ route('user.membership.subscribe') }}" class="mt-3">
+                                    @csrf
+                                    <input type="hidden" name="tier" value="platinum">
+                                    <input type="hidden" name="action" value="{{ $activePlatinum ? 'renew' : 'subscribe' }}">
+                                    <button type="submit" class="w-full px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium">
+                                        {{ $activePlatinum ? 'Renew Platinum (Pay with Stripe)' : 'Subscribe Platinum (Pay with Stripe)' }}
+                                    </button>
+                                </form>
+                                @if($activePlatinum)
+                                    <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                        Active until {{ $authUser->membership_expires_at->format('d M Y H:i') }}
+                                    </p>
+                                @endif
+                            @else
+                                <p class="mt-3 text-xs text-gray-500 dark:text-gray-400">Login required to subscribe.</p>
+                            @endauth
                         </div>
                     </div>
                 </div>

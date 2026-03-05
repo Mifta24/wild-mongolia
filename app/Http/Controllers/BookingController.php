@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\InventorySlot;
 use App\Models\Product;
+use App\Models\User;
 use App\Http\Requests\StoreBookingRequest;
 use App\Http\Requests\UpdateBookingRequest;
+use App\Services\CouponService;
+use App\Services\PointService;
 use App\Services\StripePaymentService;
 use BaconQrCode\Renderer\GDLibRenderer;
 use BaconQrCode\Writer;
@@ -285,7 +288,39 @@ class BookingController extends Controller
             abort(403);
         }
 
-        return view('bookings.payment', compact('booking'));
+        $baseAmount = (float) ($booking->original_price ?? $booking->total_price);
+        $discountInfo = is_array($booking->discount_info) ? $booking->discount_info : [];
+        $availableCoupons = [];
+        $availablePoints = 0;
+        $pointRedeemMultiplier = 1.0;
+
+        /** @var User|null $user */
+        $user = Auth::user();
+        if ($user && $booking->user_id === $user->id) {
+            $user->syncMembershipStatus();
+            $availablePoints = (int) $user->points;
+
+            $pointRedeemMultiplier = match ($user->membershipTier()->value) {
+                'gold' => 1.10,
+                'platinum' => 1.20,
+                default => 1.0,
+            };
+
+            $availableCoupons = app(CouponService::class)->getAvailableCoupons(
+                $user,
+                $baseAmount,
+                (string) $booking->service_type
+            );
+        }
+
+        return view('bookings.payment', compact(
+            'booking',
+            'baseAmount',
+            'discountInfo',
+            'availableCoupons',
+            'availablePoints',
+            'pointRedeemMultiplier'
+        ));
     }
 
     /**
@@ -304,17 +339,124 @@ class BookingController extends Controller
             return redirect()->route('booking.success', $booking->id);
         }
 
+        /** @var User|null $user */
+        $user = Auth::user();
+        if (!$user || $booking->user_id !== $user->id) {
+            abort(403);
+        }
+
         $request->validate([
             'payment_method' => 'required|in:credit_card',
+            'points_to_use' => 'nullable|integer|min:0',
+            'coupon_code' => 'nullable|string|max:50',
         ]);
 
-        try {
-            $stripeService = app(StripePaymentService::class);
-            $session = $stripeService->createCheckoutSession($booking);
+        $discountInfo = is_array($booking->discount_info) ? $booking->discount_info : [];
+        $discountLocked = (bool) data_get($discountInfo, 'discount_locked', false);
+        $baseAmount = (float) ($booking->original_price ?? $booking->total_price);
 
+        $coupon = null;
+        $couponDiscount = (float) data_get($discountInfo, 'coupon_discount', 0);
+        $pointsRequested = (int) data_get($discountInfo, 'points_used', 0);
+        $pointsDiscount = (float) data_get($discountInfo, 'points_discount', 0);
+
+        if (!$discountLocked) {
+            $pointsRequested = (int) $request->integer('points_to_use', 0);
+            $pointsRequested = max(0, min($pointsRequested, (int) $user->points));
+
+            $couponCode = Str::upper(trim((string) $request->input('coupon_code', '')));
+
+            if ($couponCode !== '') {
+                $couponValidation = app(CouponService::class)->validateCoupon(
+                    $couponCode,
+                    $user,
+                    $baseAmount,
+                    (string) $booking->service_type
+                );
+
+                if (!($couponValidation['valid'] ?? false)) {
+                    return back()->withInput()->with('error', (string) ($couponValidation['message'] ?? 'Coupon is invalid.'));
+                }
+
+                $coupon = $couponValidation['coupon'] ?? null;
+                $couponDiscount = (float) ($couponValidation['discount'] ?? 0);
+            } else {
+                $couponDiscount = 0;
+            }
+
+            $amountAfterCoupon = max(0, $baseAmount - $couponDiscount);
+            $pointsDiscount = 0;
+            if ($pointsRequested > 0) {
+                $pointsDiscount = app(PointService::class)->redeemPoints($user, $pointsRequested);
+                $pointsDiscount = min($pointsDiscount, $amountAfterCoupon);
+            }
+        }
+
+        $finalAmount = max(0, $baseAmount - $couponDiscount - $pointsDiscount);
+
+        if ($discountLocked && $finalAmount <= 0) {
             $booking->update([
-                'stripe_checkout_session_id' => $session->id,
+                'payment_status' => 'paid',
+                'status' => $booking->status === 'pending' ? 'confirmed' : $booking->status,
+                'paid_at' => $booking->paid_at ?? now(),
             ]);
+
+            return redirect()->route('booking.success', $booking->id);
+        }
+
+        try {
+            $session = null;
+            if ($finalAmount > 0) {
+                $stripeService = app(StripePaymentService::class);
+                $bookingForStripe = clone $booking;
+                $bookingForStripe->total_price = $finalAmount;
+                $session = $stripeService->createCheckoutSession($bookingForStripe);
+            }
+
+            DB::transaction(function () use ($booking, $user, $coupon, $pointsRequested, $finalAmount, $baseAmount, $couponDiscount, $pointsDiscount, $session, $discountLocked) {
+                if (!$discountLocked) {
+                    if ($coupon) {
+                        app(CouponService::class)->applyCoupon($coupon, $user, $booking);
+                    }
+
+                    if ($pointsRequested > 0) {
+                        app(PointService::class)->usePointsForBooking($user, $pointsRequested, $booking);
+                    }
+                }
+
+                $newDiscountInfo = [
+                    'coupon_code' => $coupon ? (string) $coupon->code : (string) data_get($booking->discount_info, 'coupon_code', ''),
+                    'coupon_discount' => $couponDiscount,
+                    'points_used' => $pointsRequested,
+                    'points_discount' => $pointsDiscount,
+                    'discount_locked' => true,
+                    'calculated_at' => now()->toDateTimeString(),
+                ];
+
+                $updatePayload = [
+                    'original_price' => $baseAmount,
+                    'coupon_id' => $coupon?->id ?? $booking->coupon_id,
+                    'points_used' => $pointsRequested,
+                    'discount_info' => $newDiscountInfo,
+                    'total_price' => $finalAmount,
+                ];
+
+                if ($session) {
+                    $updatePayload['stripe_checkout_session_id'] = $session->id;
+                }
+
+                if ($finalAmount <= 0) {
+                    $updatePayload['payment_status'] = 'paid';
+                    $updatePayload['status'] = $booking->status === 'pending' ? 'confirmed' : $booking->status;
+                    $updatePayload['paid_at'] = $booking->paid_at ?? now();
+                }
+
+                $booking->update($updatePayload);
+            });
+
+            if ($finalAmount <= 0) {
+                return redirect()->route('booking.success', $booking->id);
+            }
 
             return redirect($session->url);
         } catch (\Throwable $exception) {

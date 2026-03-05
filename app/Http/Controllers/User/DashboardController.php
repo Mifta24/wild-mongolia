@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Services\CouponService;
+use App\Services\PointService;
 use App\Services\StripePaymentService;
 
 class DashboardController extends Controller
@@ -257,10 +258,6 @@ class DashboardController extends Controller
 
         $tier = MembershipTier::from($validated['tier']);
 
-        if ($tier === MembershipTier::PLATINUM) {
-            return back()->with('info', 'Platinum is a custom plan. Please contact support for activation.');
-        }
-
         try {
             $session = app(StripePaymentService::class)
                 ->createMembershipCheckoutSession($user, $tier, $validated['action'] ?? 'subscribe');
@@ -343,7 +340,16 @@ class DashboardController extends Controller
 
             if ($tier === MembershipTier::GOLD) {
                 app(CouponService::class)->issueGoldMembershipCoupon($user->fresh(), $action);
+            } elseif ($tier === MembershipTier::PLATINUM) {
+                app(CouponService::class)->issuePlatinumMembershipCoupon($user->fresh(), $action);
             }
+
+            app(PointService::class)->awardMembershipCashback(
+                $user->fresh(),
+                $tier,
+                $action,
+                (string) $session->id
+            );
 
             return redirect()->route('membership')->with(
                 'success',

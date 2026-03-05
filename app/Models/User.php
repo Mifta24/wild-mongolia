@@ -159,8 +159,8 @@ class User extends Authenticatable
     {
         return $this->coupons()
             ->where('is_active', true)
-            ->where('valid_from', '<=', now())
-            ->where('valid_until', '>=', now())
+            ->whereDate('valid_from', '<=', now(config('app.timezone'))->toDateString())
+            ->whereDate('valid_until', '>=', now(config('app.timezone'))->toDateString())
             ->whereRaw('(user_coupons.usage_count < coupons.usage_per_user OR coupons.usage_per_user IS NULL)');
     }
 
