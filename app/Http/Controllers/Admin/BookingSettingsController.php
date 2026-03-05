@@ -8,6 +8,23 @@ use Illuminate\Support\Facades\Cache;
 
 class BookingSettingsController extends Controller
 {
+    public function index()
+    {
+        $daysBefore = (int) Cache::get(
+            'booking.check_in_window.days_before',
+            config('booking.check_in_window.days_before', 1)
+        );
+        $daysAfter = (int) Cache::get(
+            'booking.check_in_window.days_after',
+            config('booking.check_in_window.days_after', 1)
+        );
+
+        return view('admin.settings.index', [
+            'daysBefore' => $daysBefore,
+            'daysAfter' => $daysAfter,
+        ]);
+    }
+
     public function editCheckInWindow()
     {
         return view('admin.settings.checkin-window', [

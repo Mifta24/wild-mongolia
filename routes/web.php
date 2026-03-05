@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\InventorySlotController as AdminInventorySlotCont
 use App\Http\Controllers\Admin\BookingSettingsController as AdminBookingSettingsController;
 use App\Http\Controllers\Admin\VendorController as AdminVendorController;
 use App\Http\Controllers\Admin\DispatchAssignmentController as AdminDispatchAssignmentController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\User\ReviewController as UserReviewController;
 use App\Http\Controllers\PointController;
@@ -139,6 +140,8 @@ Route::middleware('auth')->group(function () {
 // Admin Routes
 Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profile', [AdminProfileController::class, 'edit'])->name('profile');
+    Route::patch('/profile', [AdminProfileController::class, 'update'])->name('profile.update');
 
     // Booking Routes
     Route::get('/bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
@@ -150,6 +153,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::post('/bookings/check-in/{token}', [AdminBookingController::class, 'processCheckInByToken'])->name('bookings.checkin.process');
 
     // Booking Settings
+    Route::get('/settings', [AdminBookingSettingsController::class, 'index'])->name('settings.index');
     Route::get('/settings/checkin-window', [AdminBookingSettingsController::class, 'editCheckInWindow'])->name('settings.checkin-window.edit');
     Route::put('/settings/checkin-window', [AdminBookingSettingsController::class, 'updateCheckInWindow'])->name('settings.checkin-window.update');
     Route::delete('/settings/checkin-window', [AdminBookingSettingsController::class, 'resetCheckInWindow'])->name('settings.checkin-window.reset');
@@ -167,6 +171,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::resource('customers', AdminCustomerController::class)->parameters([
         'customers' => 'user'
     ]);
+    Route::patch('/customers/{user}/reactivate', [AdminCustomerController::class, 'reactivate'])->name('customers.reactivate');
 
     // Vendors
     Route::resource('vendors', AdminVendorController::class)->except(['show']);

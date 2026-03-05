@@ -50,7 +50,7 @@ test('email verification status is unchanged when the email address is unchanged
     $this->assertNotNull($user->refresh()->email_verified_at);
 });
 
-test('user can delete their account', function () {
+test('user can deactivate their account', function () {
     $user = User::factory()->create();
 
     $response = $this
@@ -61,13 +61,18 @@ test('user can delete their account', function () {
 
     $response
         ->assertSessionHasNoErrors()
-        ->assertRedirect('/');
+        ->assertRedirect(route('login'));
 
     $this->assertGuest();
-    $this->assertNull($user->fresh());
+
+    $user->refresh();
+    $this->assertNotNull($user);
+    $this->assertNotNull($user->deactivated_at);
+    $this->assertNotNull($user->scheduled_for_deletion_at);
+    $this->assertTrue($user->scheduled_for_deletion_at->isFuture());
 });
 
-test('correct password must be provided to delete account', function () {
+test('correct password must be provided to deactivate account', function () {
     $user = User::factory()->create();
 
     $response = $this
@@ -82,4 +87,6 @@ test('correct password must be provided to delete account', function () {
         ->assertRedirect('/profile');
 
     $this->assertNotNull($user->fresh());
+    $this->assertNull($user->fresh()->deactivated_at);
+    $this->assertNull($user->fresh()->scheduled_for_deletion_at);
 });

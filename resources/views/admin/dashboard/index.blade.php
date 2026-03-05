@@ -4,6 +4,46 @@
 
             <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">Dashboard Overview</h1>
 
+            @if ($deactivatedAccounts > 0)
+                <div class="mb-8 rounded-xl border border-amber-200 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 p-5">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div>
+                            <h2 class="text-lg font-semibold text-amber-900 dark:text-amber-200">Deactivated Accounts Monitoring</h2>
+                            <p class="text-sm text-amber-800 dark:text-amber-300 mt-1">
+                                {{ $deactivatedAccounts }} deactivated account(s) total, with {{ $accountsPendingDeletionSoon }} account(s) reaching permanent deletion in the next 7 days.
+                            </p>
+                        </div>
+                        <a href="{{ route('admin.customers.index', ['status' => 'deactivated']) }}"
+                            class="inline-flex items-center px-3 py-2 rounded-md bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium transition">
+                            Review Deactivated Accounts
+                        </a>
+                    </div>
+
+                    @if ($upcomingDeactivatedUsers->isNotEmpty())
+                        <div class="mt-4 overflow-x-auto">
+                            <table class="w-full text-sm text-left text-amber-900 dark:text-amber-200">
+                                <thead>
+                                    <tr class="text-xs uppercase text-amber-700 dark:text-amber-300">
+                                        <th class="py-2 pr-4">Name</th>
+                                        <th class="py-2 pr-4">Email</th>
+                                        <th class="py-2 pr-4">Deletion Deadline</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($upcomingDeactivatedUsers as $account)
+                                        <tr class="border-t border-amber-200 dark:border-amber-700/50">
+                                            <td class="py-2 pr-4 font-medium">{{ $account->name }}</td>
+                                            <td class="py-2 pr-4">{{ $account->email }}</td>
+                                            <td class="py-2 pr-4">{{ $account->scheduled_for_deletion_at?->format('d M Y H:i') }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+                </div>
+            @endif
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border-l-4 border-teal-500">

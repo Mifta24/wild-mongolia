@@ -11,3 +11,4 @@ Artisan::command('inspire', function () {
 // Schedule tasks
 Schedule::command('points:expire')->daily();
 Schedule::command('coupons:deactivate-expired')->daily();
+Schedule::command('users:purge-deactivated')->daily();

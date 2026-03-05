@@ -38,7 +38,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * Delete the user's account.
+     * Deactivate the user's account and schedule permanent deletion.
      */
     public function destroy(Request $request): RedirectResponse
     {
@@ -48,13 +48,19 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
-        Auth::logout();
+        $user->forceFill([
+            'deactivated_at' => now(config('app.timezone')),
+            'scheduled_for_deletion_at' => now(config('app.timezone'))->addMonths(3),
+        ])->save();
 
-        $user->delete();
+        Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return Redirect::to('/');
+        return Redirect::route('login')->with(
+            'status',
+            'Your account has been deactivated. Sign in again within 3 months to reactivate it automatically.'
+        );
     }
 }

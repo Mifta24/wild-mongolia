@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -47,6 +48,26 @@ class LoginRequest extends FormRequest
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
             ]);
+        }
+
+        $user = Auth::user();
+
+        if ($user instanceof User && !is_null($user->scheduled_for_deletion_at)) {
+            if ($user->scheduled_for_deletion_at->isPast()) {
+                Auth::logout();
+                $user->delete();
+
+                throw ValidationException::withMessages([
+                    'email' => 'This account was permanently deleted after 3 months without reactivation.',
+                ]);
+            }
+
+            $user->forceFill([
+                'deactivated_at' => null,
+                'scheduled_for_deletion_at' => null,
+            ])->save();
+
+            $this->session()->flash('status', 'Your account has been reactivated successfully.');
         }
 
         RateLimiter::clear($this->throttleKey());

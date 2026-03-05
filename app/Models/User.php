@@ -30,6 +30,8 @@ class User extends Authenticatable
         'password',
         'google_id',
         'email_verified_at',
+        'deactivated_at',
+        'scheduled_for_deletion_at',
         'phone',
         'points',
         'lifetime_points',
@@ -57,6 +59,8 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'deactivated_at' => 'datetime',
+            'scheduled_for_deletion_at' => 'datetime',
             'password' => 'hashed',
             'points' => 'integer',
             'lifetime_points' => 'integer',

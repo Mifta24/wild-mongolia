@@ -13,6 +13,16 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         $query = User::role('user');
+        $status = $request->get('status', 'active');
+
+        if ($status === 'deactivated') {
+            $query->whereNotNull('deactivated_at');
+        } elseif ($status === 'all') {
+            // Keep all user accounts.
+        } else {
+            $query->whereNull('deactivated_at');
+            $status = 'active';
+        }
 
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
@@ -23,7 +33,27 @@ class CustomerController extends Controller
 
         $customers = $query->orderByDesc('created_at')->paginate(15)->withQueryString();
 
-        return view('admin.customers.index', compact('customers'));
+        $counts = [
+            'active' => User::role('user')->whereNull('deactivated_at')->count(),
+            'deactivated' => User::role('user')->whereNotNull('deactivated_at')->count(),
+            'all' => User::role('user')->count(),
+        ];
+
+        return view('admin.customers.index', compact('customers', 'status', 'counts'));
+    }
+
+    public function reactivate(User $user)
+    {
+        if (!$user->hasRole('user')) {
+            return redirect()->route('admin.customers.index')->with('status', 'Cannot reactivate non-customer user');
+        }
+
+        $user->forceFill([
+            'deactivated_at' => null,
+            'scheduled_for_deletion_at' => null,
+        ])->save();
+
+        return back()->with('status', 'Customer account reactivated');
     }
 
     public function create()
