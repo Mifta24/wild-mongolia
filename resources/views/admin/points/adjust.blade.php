@@ -26,12 +26,12 @@
             <form method="POST" action="{{ route('admin.points.adjust', $user) }}" class="space-y-4">
                 @csrf
                 <div>
-                    <label class="block text-sm font-medium mb-1">Points (+ tambah / - kurangi)</label>
-                    <input type="number" name="points" value="{{ old('points') }}" required class="w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white" placeholder="contoh: 100 atau -100">
+                    <label class="block text-sm font-medium mb-1">Points (+ add / - subtract)</label>
+                    <input type="number" name="points" value="{{ old('points') }}" required class="w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white" placeholder="example: 100 or -100">
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-1">Description</label>
-                    <input type="text" name="description" value="{{ old('description') }}" required class="w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white" placeholder="Alasan adjustment">
+                    <input type="text" name="description" value="{{ old('description') }}" required class="w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white" placeholder="Adjustment reason">
                 </div>
                 <button class="px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700">Submit Adjustment</button>
             </form>

@@ -292,7 +292,7 @@
     const imagePreview = document.getElementById('imagePreview');
     const urlPreview = document.getElementById('urlPreview');
 
-    // Preview untuk file upload
+    // Preview for uploaded file
     imageInput.addEventListener('change', function(e) {
         imagePreview.innerHTML = '';
         urlPreview.innerHTML = '';
@@ -307,7 +307,7 @@
         }
     });
 
-    // Preview untuk URL
+    // Preview for URL
     imageUrl.addEventListener('input', function(e) {
         urlPreview.innerHTML = '';
         imagePreview.innerHTML = '';
@@ -320,7 +320,7 @@
             };
             img.onerror = function() {
                 urlPreview.innerHTML =
-                    `<p class="text-red-600 dark:text-red-400 text-sm">URL gambar tidak valid</p>`;
+                    `<p class="text-red-600 dark:text-red-400 text-sm">Invalid image URL</p>`;
             };
             img.src = this.value;
         }
