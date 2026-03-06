@@ -43,6 +43,28 @@
                 <div
                     class="bg-gray-50 dark:bg-gray-800/70 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
                     <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Membership plans</h2>
+                    @auth
+                        @php
+                            /** @var \App\Models\User $authUser */
+                            $authUser = auth()->user();
+                            $currentTier = $authUser->membership_tier;
+                            $currentExpiry = $authUser->membership_expires_at;
+                            $renewalWindowDays = 14;
+
+                            $hasActivePaidMembership = in_array($currentTier, ['gold', 'platinum'], true)
+                                && $currentExpiry
+                                && $currentExpiry->isFuture();
+
+                            $activeGold = $hasActivePaidMembership && $currentTier === 'gold';
+                            $activePlatinum = $hasActivePaidMembership && $currentTier === 'platinum';
+
+                            $showRenewGold = $activeGold
+                                && $currentExpiry->lte(now(config('app.timezone'))->addDays($renewalWindowDays));
+
+                            $showRenewPlatinum = $activePlatinum
+                                && $currentExpiry->lte(now(config('app.timezone'))->addDays($renewalWindowDays));
+                        @endphp
+                    @endauth
                     <div class="space-y-4">
                         <div
                             class="p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700">
@@ -60,24 +82,38 @@
                             </div>
                             <p class="text-sm text-gray-600 dark:text-gray-300">Paid annual subscription with 1.5x point multiplier, redemption bonus, and priority support.</p>
                             @auth
-                                @php
-                                    /** @var \App\Models\User $authUser */
-                                    $authUser = auth()->user();
-                                    $activeGold = $authUser->membership_tier === 'gold'
-                                        && $authUser->membership_expires_at
-                                        && $authUser->membership_expires_at->isFuture();
-                                @endphp
-                                <form method="POST" action="{{ route('user.membership.subscribe') }}" class="mt-3">
-                                    @csrf
-                                    <input type="hidden" name="tier" value="gold">
-                                    <input type="hidden" name="action" value="{{ $activeGold ? 'renew' : 'subscribe' }}">
-                                    <button type="submit" class="w-full px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium">
-                                        {{ $activeGold ? 'Renew Gold (Pay with Stripe)' : 'Subscribe Gold (Pay with Stripe)' }}
-                                    </button>
-                                </form>
+                                @if(!$hasActivePaidMembership)
+                                    <form method="POST" action="{{ route('user.membership.subscribe') }}" class="mt-3">
+                                        @csrf
+                                        <input type="hidden" name="tier" value="gold">
+                                        <input type="hidden" name="action" value="subscribe">
+                                        <button type="submit" class="w-full px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium">
+                                            Subscribe Gold (Pay with Stripe)
+                                        </button>
+                                    </form>
+                                @elseif($showRenewGold)
+                                    <form method="POST" action="{{ route('user.membership.subscribe') }}" class="mt-3">
+                                        @csrf
+                                        <input type="hidden" name="tier" value="gold">
+                                        <input type="hidden" name="action" value="renew">
+                                        <button type="submit" class="w-full px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium">
+                                            Renew Gold (Pay with Stripe)
+                                        </button>
+                                    </form>
+                                @endif
+
                                 @if($activeGold)
                                     <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                                        Active until {{ $authUser->membership_expires_at->format('d M Y H:i') }}
+                                        Active until {{ $currentExpiry->format('d M Y H:i') }}
+                                    </p>
+                                    @if(!$showRenewGold)
+                                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                            Renewal button will appear {{ $renewalWindowDays }} days before expiry.
+                                        </p>
+                                    @endif
+                                @elseif($hasActivePaidMembership)
+                                    <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                        Hidden while {{ ucfirst($currentTier) }} membership is still active.
                                     </p>
                                 @endif
                             @else
@@ -92,24 +128,38 @@
                             </div>
                             <p class="text-sm text-gray-600 dark:text-gray-300">Premium annual plan with 2x point multiplier, highest redemption bonus, and dedicated support.</p>
                             @auth
-                                @php
-                                    /** @var \App\Models\User $authUser */
-                                    $authUser = auth()->user();
-                                    $activePlatinum = $authUser->membership_tier === 'platinum'
-                                        && $authUser->membership_expires_at
-                                        && $authUser->membership_expires_at->isFuture();
-                                @endphp
-                                <form method="POST" action="{{ route('user.membership.subscribe') }}" class="mt-3">
-                                    @csrf
-                                    <input type="hidden" name="tier" value="platinum">
-                                    <input type="hidden" name="action" value="{{ $activePlatinum ? 'renew' : 'subscribe' }}">
-                                    <button type="submit" class="w-full px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium">
-                                        {{ $activePlatinum ? 'Renew Platinum (Pay with Stripe)' : 'Subscribe Platinum (Pay with Stripe)' }}
-                                    </button>
-                                </form>
+                                @if(!$hasActivePaidMembership)
+                                    <form method="POST" action="{{ route('user.membership.subscribe') }}" class="mt-3">
+                                        @csrf
+                                        <input type="hidden" name="tier" value="platinum">
+                                        <input type="hidden" name="action" value="subscribe">
+                                        <button type="submit" class="w-full px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium">
+                                            Subscribe Platinum (Pay with Stripe)
+                                        </button>
+                                    </form>
+                                @elseif($showRenewPlatinum)
+                                    <form method="POST" action="{{ route('user.membership.subscribe') }}" class="mt-3">
+                                        @csrf
+                                        <input type="hidden" name="tier" value="platinum">
+                                        <input type="hidden" name="action" value="renew">
+                                        <button type="submit" class="w-full px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium">
+                                            Renew Platinum (Pay with Stripe)
+                                        </button>
+                                    </form>
+                                @endif
+
                                 @if($activePlatinum)
                                     <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                                        Active until {{ $authUser->membership_expires_at->format('d M Y H:i') }}
+                                        Active until {{ $currentExpiry->format('d M Y H:i') }}
+                                    </p>
+                                    @if(!$showRenewPlatinum)
+                                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                            Renewal button will appear {{ $renewalWindowDays }} days before expiry.
+                                        </p>
+                                    @endif
+                                @elseif($hasActivePaidMembership)
+                                    <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                        Hidden while {{ ucfirst($currentTier) }} membership is still active.
                                     </p>
                                 @endif
                             @else
