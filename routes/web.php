@@ -44,6 +44,7 @@ Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.send');
 Route::get('/faq', [FaqController::class, 'index'])->name('faq');
 Route::get('/terms', [TermsController::class, 'index'])->name('terms');
+Route::view('/privacy', 'privacy')->name('privacy');
 Route::view('/cars', 'cars')->name('cars');
 Route::view('/tours', 'tours')->name('tours');
 Route::view('/membership', 'membership')->name('membership');
