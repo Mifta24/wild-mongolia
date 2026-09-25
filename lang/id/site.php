@@ -2,6 +2,7 @@
 
 return [
     'home' => 'Beranda',
+    'vivan' => 'VIVAN Tours',
     'tours' => 'Tur',
     'cars' => 'Mobil',
     'membership' => 'Keanggotaan',
@@ -13,9 +14,9 @@ return [
     'search' => 'Cari',
     'search_placeholder' => 'Cari tur, mis. berkuda, Gobi, pemburu elang...',
     'eyebrow' => 'Temukan Mongolia yang belum pernah Anda lihat.',
-    'sub' => 'Tur Andalan',
-    'desc' => ['Daratan tanpa batas, langit terbuka, dan kehangatan orang-orang yang Anda temui.', 'Rasakan perjalanan yang hanya bisa ditemukan di sini,', 'di jantung Mongolia.'],
-    'cta' => 'Jelajahi Tur Andalan',
+    'sub' => 'VIVAN Tours',
+    'desc' => ['Daratan tanpa batas, langit terbuka, dan kehangatan orang-orang yang Anda temui.', 'Bersama Wild Mongolia VIVAN Tours, rasakan perjalanan', 'yang hanya bisa ditemukan di sini, di jantung Mongolia.'],
+    'cta' => 'Jelajahi VIVAN Tours',
     'watch' => 'Tonton perjalanannya',
     'c1t' => 'Berkuda di Padang Rumput',
     'c1l' => 'TUR BERKUDA',

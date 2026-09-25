@@ -17,6 +17,7 @@
 
             <div class="hidden md:flex space-x-5 lg:space-x-9 items-center">
                 <a href="{{ route('home') }}" class="{{ $linkBase }} {{ $transparent ? 'text-white/95 hover:text-white' : 'hover:text-primary dark:hover:text-teal-400' }} {{ request()->routeIs('home') ? 'border-b-2 border-amber-300 pb-1' : '' }}">{{ __('site.home') }}</a>
+                <a href="{{ route('search.tours') }}" class="{{ $linkBase }} {{ $transparent ? 'text-white/95 hover:text-white' : 'hover:text-primary dark:hover:text-teal-400' }} {{ request()->routeIs('search.tours') ? 'border-b-2 border-amber-300 pb-1' : '' }}">{{ __('site.vivan') }}</a>
                 <a href="{{ route('tours') }}" class="{{ $linkBase }} {{ $transparent ? 'text-white/95 hover:text-white' : 'hover:text-primary dark:hover:text-teal-400' }} {{ request()->routeIs('tours') ? 'border-b-2 border-amber-300 pb-1' : '' }}">{{ __('site.tours') }}</a>
                 <a href="{{ route('cars') }}" class="{{ $linkBase }} {{ $transparent ? 'text-white/95 hover:text-white' : 'hover:text-primary dark:hover:text-teal-400' }} {{ request()->routeIs('cars') ? 'border-b-2 border-amber-300 pb-1' : '' }}">{{ __('site.cars') }}</a>
                 <a href="{{ route('membership') }}" class="{{ $linkBase }} {{ $transparent ? 'text-white/95 hover:text-white' : 'hover:text-primary dark:hover:text-teal-400' }} {{ request()->routeIs('membership') ? 'border-b-2 border-amber-300 pb-1' : '' }}">{{ __('site.membership') }}</a>
@@ -186,6 +187,8 @@
                     class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-teal-400 transition">{{ __('site.home') }}</a>
                 <a href="{{ route('cars') }}"
                     class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-teal-400 transition">{{ __('site.cars') }}</a>
+                <a href="{{ route('search.tours') }}"
+                    class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-teal-400 transition">{{ __('site.vivan') }}</a>
                 <a href="{{ route('tours') }}"
                     class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-teal-400 transition">{{ __('site.tours') }}</a>
                 <a href="{{ route('membership') }}"

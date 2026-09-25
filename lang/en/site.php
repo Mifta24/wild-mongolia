@@ -2,6 +2,7 @@
 
 return [
     'home' => 'Home',
+    'vivan' => 'VIVAN Tours',
     'tours' => 'Tours',
     'cars' => 'Cars',
     'membership' => 'Membership',
@@ -13,9 +14,9 @@ return [
     'search' => 'Search',
     'search_placeholder' => 'Search tours, e.g. horse riding, Gobi, eagle hunters...',
     'eyebrow' => 'Discover the Mongolia you have never seen.',
-    'sub' => 'Signature Tours',
-    'desc' => ['Endless land, open skies, and the warmth of the people you meet.', 'Experience a journey that can only be found here,', 'in the heart of Mongolia.'],
-    'cta' => 'Explore Signature Tours',
+    'sub' => 'VIVAN Tours',
+    'desc' => ['Endless land, open skies, and the warmth of the people you meet.', 'With Wild Mongolia VIVAN Tours, experience a journey', 'that can only be found here, in the heart of Mongolia.'],
+    'cta' => 'Explore VIVAN Tours',
     'watch' => 'Watch the journey',
     'c1t' => 'Ride Across the Grasslands',
     'c1l' => 'HORSE RIDING TOUR',
