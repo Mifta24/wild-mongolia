@@ -24,8 +24,8 @@
                     </button>
                     <div x-show="selected === 1" x-collapse class="px-6 pb-4">
                         <p class="text-gray-600 dark:text-gray-400">Our driver will be waiting at the arrival gate
-                            holding a sign with your name. For Suvarnabhumi Airport (BKK), the meeting point is usually
-                            near Gate 3. Detailed instructions will be sent to your email after booking.</p>
+                            holding a sign with your name. For Chinggis Khaan International Airport (UBN), the meeting point is usually
+                            in the arrivals hall. Detailed instructions will be sent to your email after booking.</p>
                     </div>
                 </div>
 

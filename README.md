@@ -1,6 +1,6 @@
-# Thai Travel
+# Wild Mongolia
 
-A web application for Thailand travel services (car transfers + tours) with an admin panel, membership, points/coupons, Stripe payment, and real-time support chat.
+A web application for Mongolia travel services (car transfers + tours) with an admin panel, membership, points/coupons, Stripe payment, and real-time support chat.
 
 ## Stack
 
@@ -97,7 +97,7 @@ MAIL_USERNAME=your-email
 MAIL_PASSWORD=your-password
 MAIL_ENCRYPTION=ssl
 MAIL_FROM_ADDRESS=your-email
-MAIL_FROM_NAME="Thai Travel"
+MAIL_FROM_NAME="Wild Mongolia"
 SUPPORT_EMAIL=your-support-email
 
 # Stripe
@@ -134,7 +134,7 @@ stripe listen --forward-to http://127.0.0.1:8000/webhooks/stripe
 Set server cron:
 
 ```bash
-* * * * * cd /path/to/thai-travel && php artisan schedule:run >> /dev/null 2>&1
+* * * * * cd /path/to/wild-mongolia && php artisan schedule:run >> /dev/null 2>&1
 ```
 
 Scheduled tasks:

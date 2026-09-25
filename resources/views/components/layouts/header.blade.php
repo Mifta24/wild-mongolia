@@ -3,8 +3,8 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16 items-center">
             <a href="{{ route('home') }}" class="flex-shrink-0 flex items-center">
-                <span class="text-2xl font-bold text-primary dark:text-teal-400">Thai<span
-                        class="text-secondary">Travel</span></span>
+                <span class="text-2xl font-bold text-primary dark:text-teal-400">Wild<span
+                        class="text-secondary">Mongolia</span></span>
             </a>
 
             <div class="hidden md:flex space-x-8 items-center">

@@ -5,7 +5,7 @@
                 <div>
                     <p class="text-sm uppercase tracking-wide text-primary font-semibold mb-2">Premium Transfers</p>
                     <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">Car rental & private
-                        driver in Thailand</h1>
+                        driver in Mongolia</h1>
                     <p class="text-gray-600 dark:text-gray-300 mb-6">Licensed fleet, experienced drivers, transparent
                         pricing. Ideal for airport transfers, city tours, or business trips.</p>
                     <div class="flex flex-wrap gap-3 mb-6">
@@ -64,7 +64,7 @@
 
     <section class="bg-gray-50 dark:bg-gray-900">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">Why book with ThaiTravel?</h2>
+            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">Why book with Wild Mongolia?</h2>
             <div class="grid md:grid-cols-3 gap-6">
                 <div
                     class="p-5 rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm">

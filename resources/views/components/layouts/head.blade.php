@@ -3,7 +3,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Thai Travel') }}</title>
+    <title>{{ config('app.name', 'Wild Mongolia') }}</title>
 
     <!-- Dark Mode Script - Must be before any content to prevent flash -->
     <script>

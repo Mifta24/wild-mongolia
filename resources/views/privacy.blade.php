@@ -6,7 +6,7 @@
 
             <div class="space-y-6 text-gray-700 dark:text-gray-300 leading-relaxed">
                 <p>
-                    ThaiTravel is committed to protecting your personal data. This page explains what information we collect,
+                    Wild Mongolia is committed to protecting your personal data. This page explains what information we collect,
                     how we use it, and how we protect it.
                 </p>
 

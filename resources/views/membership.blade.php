@@ -22,7 +22,7 @@
             <div class="grid lg:grid-cols-2 gap-10 items-center">
                 <div>
                     <p class="text-sm uppercase tracking-wide text-primary font-semibold mb-2">Loyalty Program</p>
-                    <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">Membership ThaiTravel
+                    <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">Membership Wild Mongolia
                     </h1>
                     <p class="text-gray-600 dark:text-gray-300 mb-6">Get exclusive benefits for business trips
                         and regular vacations: special pricing, priority support, and vehicle upgrades.</p>
@@ -208,7 +208,7 @@
                         <li>• 1 point = THB 1 discount.</li>
                         <li>• New members receive 300 welcome points after registration.</li>
                         <li>• Points can be used at checkout for the next booking payment.</li>
-                        <li>• All earned points expire at year-end (31 Dec, Thailand time).</li>
+                        <li>• All earned points expire at year-end (31 Dec, Mongolia time).</li>
                         <li>• Gold and Platinum plans are valid for 1 year from activation date.</li>
                     </ul>
                 </div>

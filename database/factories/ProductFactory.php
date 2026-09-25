@@ -43,10 +43,10 @@ class ProductFactory extends Factory
             'max_passengers' => $type === 'car' ? $this->faker->numberBetween(3, 10) : null,
             'max_luggage' => $type === 'car' ? $this->faker->numberBetween(2, 8) : null,
 
-            'destination' => $type === 'tour' ? $this->faker->randomElement(['Bangkok', 'Phuket', 'Chiang Mai', 'Ayutthaya']) : null,
+            'destination' => $type === 'tour' ? $this->faker->randomElement(['Ulaanbaatar', 'Gobi Desert', 'Terelj', 'Kharkhorin']) : null,
             'duration' => $type === 'tour' ? $this->faker->randomElement(['2 Hours', '4 Hours', '8 Hours', 'Full Day']) : null,
             'category' => $type === 'tour' ? $this->faker->randomElement(['culture', 'food', 'sea', 'nature']) : null,
-            'language' => $type === 'tour' ? $this->faker->randomElement(['english', 'thai', 'chinese']) : 'english',
+            'language' => $type === 'tour' ? $this->faker->randomElement(['english', 'mongolian', 'chinese']) : 'english',
             'includes_lunch' => $type === 'tour' ? $this->faker->boolean(45) : false,
             'includes_pickup' => $type === 'tour' ? $this->faker->boolean(70) : false,
 

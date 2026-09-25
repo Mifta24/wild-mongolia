@@ -2,7 +2,7 @@
     <div class="relative min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <!-- Background Image with Overlay -->
         <div class="absolute inset-0 w-full h-full bg-center bg-cover"
-            style="background-image: url('https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=2039&auto=format&fit=crop');">
+            style="background-image: url('{{ asset('images/hero.jpg') }}');">
             <span class="w-full h-full absolute opacity-50 bg-black dark:opacity-70"></span>
         </div>
 
@@ -11,7 +11,7 @@
             <!-- Logo/Title Section -->
             <div class="text-center mb-8">
                 <h1 class="text-4xl font-bold text-white drop-shadow-lg mb-2">
-                    Join thaiTravel Club
+                    Join Wild Mongolia Club
                 </h1>
                 <p class="text-gray-200 drop-shadow-md">
                     Create an account and get <span class="font-bold text-yellow-400">300 Points</span> instantly!

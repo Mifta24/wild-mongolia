@@ -12,7 +12,7 @@ class ContactFormTest extends TestCase
     {
         Mail::fake();
 
-        config()->set('services.support.email', 'support@thaitravel.com');
+        config()->set('services.support.email', 'support@wildmongolia.com');
 
         $response = $this->post(route('contact.send'), [
             'name' => 'John Doe',

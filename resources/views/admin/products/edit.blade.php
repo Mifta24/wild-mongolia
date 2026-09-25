@@ -85,7 +85,7 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Destination</label>
                     <input type="text" name="destination" value="{{ old('destination', $product->destination) }}"
                         class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-teal-500 focus:border-teal-500"
-                        :required="type === 'tour'" placeholder="Bangkok / Phuket / Chiang Mai">
+                        :required="type === 'tour'" placeholder="Ulaanbaatar / Gobi / Terelj">
                     @error('destination')
                         <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
                     @enderror

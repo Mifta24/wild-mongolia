@@ -4,7 +4,7 @@
 
             <div class="text-center mb-12">
                 <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Get in Touch</h1>
-                <p class="mt-4 text-gray-600 dark:text-gray-400">We are here to help make your trip to Thailand
+                <p class="mt-4 text-gray-600 dark:text-gray-400">We are here to help make your trip to Mongolia
                     unforgettable.</p>
             </div>
 
@@ -29,8 +29,8 @@
                             </div>
                             <div>
                                 <h3 class="text-lg font-medium text-gray-900 dark:text-white">Office Address</h3>
-                                <p class="mt-1 text-gray-600 dark:text-gray-400">123 Sukhumvit Road,
-                                    Watthana,<br>Bangkok 10110, Thailand</p>
+                                <p class="mt-1 text-gray-600 dark:text-gray-400">Peace Avenue,
+                                    Sukhbaatar District,<br>Ulaanbaatar 14200, Mongolia</p>
                             </div>
                         </div>
 
@@ -67,7 +67,7 @@
                             </div>
                             <div>
                                 <h3 class="text-lg font-medium text-gray-900 dark:text-white">Email</h3>
-                                <p class="mt-1 text-gray-600 dark:text-gray-400">support@thaitravel.com</p>
+                                <p class="mt-1 text-gray-600 dark:text-gray-400">support@wildmongolia.com</p>
                             </div>
                         </div>
                     </div>

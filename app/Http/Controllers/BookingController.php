@@ -60,10 +60,10 @@ class BookingController extends Controller
             $serviceSubtype = 'private_tour';
         }
 
-        $destination = $request->query('destination', 'Bangkok');
+        $destination = $request->query('destination', 'Ulaanbaatar');
         $experienceType = $request->query('experience_type', 'temples');
         $productId = $request->query('product_id');
-        $productName = $request->query('product', $serviceType === 'car' ? 'Standard Sedan' : 'Bangkok Highlights Tour');
+        $productName = $request->query('product', $serviceType === 'car' ? 'Standard Sedan' : 'Ulaanbaatar Highlights Tour');
         $basePrice = $request->query('price', $serviceType === 'car' ? 1000 : 2500);
 
         if ($productId) {

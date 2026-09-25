@@ -3,7 +3,7 @@
         <div class="max-w-3xl mx-auto px-4">
             <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-xl overflow-hidden">
                 <div class="bg-teal-600 text-white px-6 py-5">
-                    <p class="text-xs uppercase tracking-wider opacity-80">Thailand Travel Voucher</p>
+                    <p class="text-xs uppercase tracking-wider opacity-80">Wild Mongolia Travel Voucher</p>
                     <h1 class="text-2xl font-bold mt-1">{{ $booking->product_name }}</h1>
                 </div>
 

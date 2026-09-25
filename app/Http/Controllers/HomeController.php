@@ -70,7 +70,7 @@ class HomeController extends Controller
      */
     public function searchTours(Request $request)
     {
-        $destination = $request->input('destination', 'bangkok');
+        $destination = $request->input('destination', 'ulaanbaatar');
         $experienceType = $request->input('experience_type', '');
 
         // Filter parameters

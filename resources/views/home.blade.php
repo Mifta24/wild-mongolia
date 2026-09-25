@@ -1,7 +1,7 @@
 <x-layouts.app>
     <div class="relative pt-16 pb-32 flex content-center items-center justify-center min-h-[85vh]">
         <div class="absolute top-0 w-full h-full bg-center bg-cover"
-            style="background-image: url('https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=2039&auto=format&fit=crop');">
+            style="background-image: url('{{ asset('images/hero.jpg') }}');">
             <span class="w-full h-full absolute opacity-50 bg-black dark:opacity-70"></span>
         </div>
 
@@ -9,7 +9,7 @@
             <div class="items-center flex flex-wrap">
                 <div class="w-full lg:w-8/12 px-4 ml-auto mr-auto text-center">
                     <h1 class="text-white font-bold text-4xl md:text-5xl lg:text-6xl drop-shadow-lg">
-                        Experience Thailand <br> Like Never Before
+                        Experience Mongolia <br> Like Never Before
                     </h1>
                     <p class="mt-4 text-lg text-gray-200 drop-shadow-md">
                         Premium Airport Transfers, City Tours, and Exclusive Experiences.
@@ -30,7 +30,7 @@
                         :class="activeTab === 'tours' ? 'border-primary text-primary dark:text-teal-400 border-b-2' :
                             'text-gray-500 hover:text-gray-700 dark:text-gray-400'"
                         class="w-1/2 py-4 text-center font-semibold transition bg-gray-50 dark:bg-gray-900 hover:bg-white dark:hover:bg-gray-800">
-                        thailand Tours & Activities
+                        Mongolia Tours & Activities
                     </button>
                 </div>
 
@@ -78,17 +78,17 @@
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Destination</label>
                             <select name="destination"
                                 class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-primary focus:border-primary">
-                                <option value="bangkok">Bangkok</option>
-                                <option value="phuket">Phuket</option>
-                                <option value="chiang_mai">Chiang Mai</option>
-                                <option value="pattaya">Pattaya</option>
+                                <option value="ulaanbaatar">Ulaanbaatar</option>
+                                <option value="gobi">Gobi Desert</option>
+                                <option value="terelj">Terelj National Park</option>
+                                <option value="kharkhorin">Kharkhorin</option>
                             </select>
                         </div>
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Experience
                                 Type</label>
                             <input type="text" name="experience_type"
-                                placeholder="Temples, Food, Elephant Sanctuary..."
+                                placeholder="Nomad Life, Horse Riding, Eagle Hunters..."
                                 class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-primary focus:border-primary">
                         </div>
                         <div class="md:col-span-1 flex items-end">
@@ -165,9 +165,9 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div class="bg-white dark:bg-gray-900 rounded-xl shadow-lg overflow-hidden group">
                     <div class="relative h-48 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1508009603885-50cf7c579365?q=80&w=1949&auto=format&fit=crop"
+                        <img src="{{ asset('images/gobi.jpg') }}"
                             class="w-full h-full object-cover transition transform group-hover:scale-110"
-                            alt="Bangkok Temple">
+                            alt="Gobi Desert dunes">
                         <div
                             class="absolute top-2 right-2 bg-white/90 px-2 py-1 rounded text-xs font-bold text-gray-800">
                             Day Tour</div>
@@ -177,10 +177,10 @@
                             <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span> <span
                                 class="text-gray-400 dark:text-gray-500">(120)</span>
                         </div>
-                        <h3 class="text-lg font-bold mb-2 line-clamp-2 hover:text-primary cursor-pointer">Grand Palace
+                        <h3 class="text-lg font-bold mb-2 line-clamp-2 hover:text-primary cursor-pointer">Gobi Desert Dunes
                             &
-                            Emerald Buddha Tour</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Duration: 4 Hours • English Guide</p>
+                            Camel Trek</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Duration: 2 Days • English Guide</p>
                         <div class="flex justify-between items-center">
                             <span class="text-gray-400 text-sm line-through">THB 1,500</span>
                             <span class="text-xl font-bold text-primary">THB 1,200</span>
@@ -190,9 +190,9 @@
 
                 <div class="bg-white dark:bg-gray-900 rounded-xl shadow-lg overflow-hidden group">
                     <div class="relative h-48 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=1938&auto=format&fit=crop"
+                        <img src="{{ asset('images/eagle.jpg') }}"
                             class="w-full h-full object-cover transition transform group-hover:scale-110"
-                            alt="Elephant">
+                            alt="Eagle hunter">
                         <div
                             class="absolute top-2 right-2 bg-white/90 px-2 py-1 rounded text-xs font-bold text-gray-800">
                             Nature</div>
@@ -203,10 +203,10 @@
                                 class="text-gray-300">★</span>
                             <span class="text-gray-400 dark:text-gray-500">(85)</span>
                         </div>
-                        <h3 class="text-lg font-bold mb-2 line-clamp-2 hover:text-primary cursor-pointer">Ethical
-                            Elephant
-                            Sanctuary Visit</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Duration: 6 Hours • Lunch Included</p>
+                        <h3 class="text-lg font-bold mb-2 line-clamp-2 hover:text-primary cursor-pointer">Eagle Hunter
+                            Family
+                            Homestay</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Duration: 1 Day • Lunch Included</p>
                         <div class="flex justify-between items-center">
                             <span class="text-xl font-bold text-primary">THB 2,500</span>
                         </div>
@@ -219,7 +219,7 @@
     <section class="py-16 bg-gradient-to-r from-teal-600 to-teal-800 text-white">
         <div class="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
             <div class="md:w-1/2 mb-8 md:mb-0">
-                <h2 class="text-3xl font-bold mb-4">Join thaiTravel Club</h2>
+                <h2 class="text-3xl font-bold mb-4">Join Wild Mongolia Club</h2>
                 <p class="text-teal-100 text-lg mb-6">Create an account today and get <span
                         class="font-bold text-yellow-400">300 Points</span> instantly! Collect points on every ride and
                     unlock exclusive discounts.</p>

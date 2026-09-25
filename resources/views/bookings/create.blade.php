@@ -114,7 +114,7 @@
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
                                     <select x-model="type" @change="syncSubtype()" name="service_type" class="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700" required>
                                         <option value="car">Private Car / Transfer</option>
-                                        <option value="tour">Thailand Tours & Activities</option>
+                                        <option value="tour">Mongolia Tours & Activities</option>
                                     </select>
                                 </div>
 
@@ -132,9 +132,9 @@
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Destination</label>
                                         <select name="destination" class="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700" :required="type === 'tour'">
-                                            <option value="Bangkok" @selected(($destination ?? old('destination')) === 'Bangkok')>Bangkok</option>
-                                            <option value="Phuket & Krabi" @selected(($destination ?? old('destination')) === 'Phuket & Krabi')>Phuket & Krabi</option>
-                                            <option value="Chiang Mai" @selected(($destination ?? old('destination')) === 'Chiang Mai')>Chiang Mai</option>
+                                            <option value="Ulaanbaatar" @selected(($destination ?? old('destination')) === 'Ulaanbaatar')>Ulaanbaatar</option>
+                                            <option value="Gobi Desert" @selected(($destination ?? old('destination')) === 'Gobi Desert')>Gobi Desert</option>
+                                            <option value="Terelj" @selected(($destination ?? old('destination')) === 'Terelj')>Terelj National Park</option>
                                         </select>
                                     </div>
                                     <div>

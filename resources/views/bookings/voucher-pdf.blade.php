@@ -92,7 +92,7 @@
 <body>
     <div class="card">
         <div class="header">
-            <small>Thailand Travel Voucher</small>
+            <small>Wild Mongolia Travel Voucher</small>
             <h1>{{ $booking->product_name }}</h1>
         </div>
         <div class="content">

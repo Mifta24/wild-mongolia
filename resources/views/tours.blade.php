@@ -6,9 +6,9 @@
                     <p class="text-sm uppercase tracking-wide text-primary font-semibold mb-2">Curated Experiences</p>
                     <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">Curated tour packages
                         in
-                        Thailand</h1>
-                    <p class="text-gray-600 dark:text-gray-300 mb-6">From Bangkok street food, Phuket island hopping,
-                        to hidden gems in Chiang Mai. All include transport and licensed guides.</p>
+                        Mongolia</h1>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6">From Ulaanbaatar city highlights, Gobi desert camel treks,
+                        to nomad stays in Terelj. All include transport and licensed guides.</p>
                     <div class="flex flex-wrap gap-3 mb-6">
                         <span class="px-3 py-2 bg-teal-50 text-primary rounded-full text-sm">Family friendly</span>
                         <span class="px-3 py-2 bg-teal-50 text-primary rounded-full text-sm">Private & small group</span>
@@ -30,31 +30,31 @@
                         <div class="flex items-start gap-4">
                             <div
                                 class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold">
-                                BK</div>
+                                UB</div>
                             <div>
-                                <p class="font-semibold text-gray-900 dark:text-white">Bangkok</p>
-                                <p class="text-sm text-gray-600 dark:text-gray-300">Street food tour, Grand Palace,
-                                    cruise Chao Phraya.</p>
+                                <p class="font-semibold text-gray-900 dark:text-white">Ulaanbaatar</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Gandan Monastery, Sukhbaatar Square,
+                                    Chinggis Khaan Museum.</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-4">
                             <div
                                 class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold">
-                                PK</div>
+                                GB</div>
                             <div>
-                                <p class="font-semibold text-gray-900 dark:text-white">Phuket & Krabi</p>
-                                <p class="text-sm text-gray-600 dark:text-gray-300">Island hopping Phi Phi, sunset
-                                    catamaran, snorkeling.</p>
+                                <p class="font-semibold text-gray-900 dark:text-white">Gobi Desert</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Khongoryn Els dunes, camel trek,
+                                    Flaming Cliffs.</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-4">
                             <div
                                 class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold">
-                                CM</div>
+                                TR</div>
                             <div>
-                                <p class="font-semibold text-gray-900 dark:text-white">Chiang Mai</p>
-                                <p class="text-sm text-gray-600 dark:text-gray-300">Ethical elephant sanctuary, temple
-                                    hopping, night market.</p>
+                                <p class="font-semibold text-gray-900 dark:text-white">Terelj National Park</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Ger camp stays, horse riding,
+                                    Turtle Rock hiking.</p>
                             </div>
                         </div>
                     </div>
@@ -65,7 +65,7 @@
 
     <section class="bg-gray-50 dark:bg-gray-900">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">Why tour with ThaiTravel?</h2>
+            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">Why tour with Wild Mongolia?</h2>
             <div class="grid md:grid-cols-3 gap-6">
                 <div
                     class="p-5 rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm">

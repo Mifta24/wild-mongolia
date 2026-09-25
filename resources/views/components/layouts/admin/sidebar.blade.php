@@ -8,7 +8,7 @@
 
     <div
         class="flex items-center justify-center h-16 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <span class="text-2xl font-bold text-gray-900 dark:text-white">thai<span
+        <span class="text-2xl font-bold text-gray-900 dark:text-white">Wild<span
                 class="text-yellow-500">Admin</span></span>
     </div>
 

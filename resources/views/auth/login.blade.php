@@ -2,7 +2,7 @@
     <div class="relative min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <!-- Background Image with Overlay -->
         <div class="absolute inset-0 w-full h-full bg-center bg-cover"
-            style="background-image: url('https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=2039&auto=format&fit=crop');">
+            style="background-image: url('{{ asset('images/hero.jpg') }}');">
             <span class="w-full h-full absolute opacity-50 bg-black dark:opacity-70"></span>
         </div>
 
@@ -14,7 +14,7 @@
                     Welcome Back
                 </h1>
                 <p class="text-gray-200 drop-shadow-md">
-                    Sign in to continue your Thailand adventure
+                    Sign in to continue your Mongolian adventure
                 </p>
             </div>
 

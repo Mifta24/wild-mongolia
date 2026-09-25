@@ -63,7 +63,7 @@
 
                     <section>
                         <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">5. Liability</h2>
-                        <p>thai Travel acts as an agent for third-party operators (unless specified as an "Original
+                        <p>Wild Mongolia acts as an agent for third-party operators (unless specified as an "Original
                             Tour"). We are not liable for any loss, damage, accident, or delay caused by third-party
                             service providers, though we will assist in resolving any issues to the best of our ability.
                         </p>
