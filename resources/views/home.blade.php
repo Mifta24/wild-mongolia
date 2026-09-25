@@ -1,23 +1,97 @@
 <x-layouts.app>
-    <div class="relative pt-16 pb-32 flex content-center items-center justify-center min-h-[85vh]">
-        <div class="absolute top-0 w-full h-full bg-center bg-cover"
-            style="background-image: url('{{ asset('images/hero.jpg') }}');">
-            <span class="w-full h-full absolute opacity-25 bg-black dark:opacity-60"></span>
+    <div class="relative pt-24 pb-8 flex flex-col justify-between min-h-[92vh] overflow-hidden">
+        <div class="absolute inset-0 bg-cover bg-[70%_center] md:bg-center"
+            style="background-image: url('{{ asset('images/wild-mongolia2.png') }}');">
+            <span class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/15 to-transparent"></span>
+            <span class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent"></span>
         </div>
 
-        <div class="container relative mx-auto px-4">
-            <div class="items-center flex flex-wrap">
-                <div class="w-full lg:w-8/12 px-4 ml-auto mr-auto text-center">
-                    <h1 class="text-white font-bold text-4xl md:text-5xl lg:text-6xl drop-shadow-lg">
-                        Experience Mongolia <br> Like Never Before
-                    </h1>
-                    <p class="mt-4 text-lg text-gray-200 drop-shadow-md">
-                        Premium Airport Transfers, City Tours, and Exclusive Experiences.
-                    </p>
+        <div class="container relative mx-auto px-4 md:px-8 flex-1 flex items-center">
+            <div class="max-w-2xl text-white drop-shadow-lg py-10">
+                <p class="font-serif text-lg md:text-2xl tracking-[0.2em] mb-2">Discover the real Mongolia you've never seen</p>
+                <h1 class="font-serif font-bold text-5xl md:text-7xl lg:text-8xl leading-none">Wild Mongolia</h1>
+                <p class="mt-2 text-4xl md:text-6xl text-amber-200 -rotate-3 origin-left" style="font-family: 'Dancing Script', cursive;">Signature Tours</p>
+                <p class="mt-6 max-w-md text-sm md:text-base text-white/90 leading-relaxed">
+                    Endless land, open skies, and the warmth of the people you meet.
+                    Experience a journey that can only be found here, in the heart of Mongolia.
+                </p>
+                <div class="mt-8 flex flex-wrap items-center gap-4">
+                    <a href="{{ route('search.tours') }}"
+                        class="inline-flex items-center gap-2 bg-gradient-to-r from-amber-200 to-amber-400 text-gray-900 font-semibold px-8 py-3.5 rounded-full shadow-xl hover:brightness-105 transition">
+                        Explore Tours <span>&rarr;</span>
+                    </a>
+                    <a href="#book" class="inline-flex items-center gap-3 text-white/90 hover:text-white text-sm">
+                        <span class="h-10 w-10 rounded-full border border-white/70 flex items-center justify-center">&#9654;</span>
+                        Book a car or tour
+                    </a>
                 </div>
             </div>
+        </div>
 
-            <div class="mt-12 bg-white dark:bg-gray-800 rounded-xl shadow-2xl overflow-hidden max-w-4xl mx-auto border border-gray-100 dark:border-gray-700"
+        <div class="container relative mx-auto px-4 md:px-8 mt-6">
+            <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
+                <a href="{{ route('search.tours') }}"
+                    class="group relative h-36 md:h-44 rounded-xl overflow-hidden shadow-xl ring-1 ring-white/20">
+                    <img src="{{ asset('images/wild-mongolia2.png') }}" alt="Grassland Riding"
+                        class="absolute inset-0 w-full h-full object-cover object-[75%_45%] transition duration-500 group-hover:scale-110">
+                    <span class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></span>
+                    <span class="absolute bottom-3 left-4 right-12 text-white">
+                        <span class="block font-serif text-sm md:text-base leading-tight">Grassland Riding</span>
+                        <span class="block text-[10px] tracking-widest uppercase text-white/70 mt-1">Horse Riding Tour</span>
+                    </span>
+                    <span class="absolute bottom-3 right-3 h-8 w-8 rounded-full border border-white/70 text-white flex items-center justify-center group-hover:bg-white group-hover:text-gray-900 transition">&rarr;</span>
+                </a>
+                <a href="{{ route('search.tours') }}"
+                    class="group relative h-36 md:h-44 rounded-xl overflow-hidden shadow-xl ring-1 ring-white/20">
+                    <img src="{{ asset('images/wild-mongolia2.png') }}" alt="Starry Night Camp"
+                        class="absolute inset-0 w-full h-full object-cover object-[92%_62%] scale-[2.2] transition duration-500 group-hover:scale-110">
+                    <span class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></span>
+                    <span class="absolute bottom-3 left-4 right-12 text-white">
+                        <span class="block font-serif text-sm md:text-base leading-tight">Starry Night Camp</span>
+                        <span class="block text-[10px] tracking-widest uppercase text-white/70 mt-1">Star Camp Tour</span>
+                    </span>
+                    <span class="absolute bottom-3 right-3 h-8 w-8 rounded-full border border-white/70 text-white flex items-center justify-center group-hover:bg-white group-hover:text-gray-900 transition">&rarr;</span>
+                </a>
+                <a href="{{ route('search.tours') }}"
+                    class="group relative h-36 md:h-44 rounded-xl overflow-hidden shadow-xl ring-1 ring-white/20">
+                    <img src="{{ asset('images/hero.jpg') }}" alt="Breathtaking Landscapes"
+                        class="absolute inset-0 w-full h-full object-cover object-center transition duration-500 group-hover:scale-110">
+                    <span class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></span>
+                    <span class="absolute bottom-3 left-4 right-12 text-white">
+                        <span class="block font-serif text-sm md:text-base leading-tight">Breathtaking Landscapes</span>
+                        <span class="block text-[10px] tracking-widest uppercase text-white/70 mt-1">Nature Tour</span>
+                    </span>
+                    <span class="absolute bottom-3 right-3 h-8 w-8 rounded-full border border-white/70 text-white flex items-center justify-center group-hover:bg-white group-hover:text-gray-900 transition">&rarr;</span>
+                </a>
+                <a href="{{ route('search.tours') }}"
+                    class="group relative h-36 md:h-44 rounded-xl overflow-hidden shadow-xl ring-1 ring-white/20">
+                    <img src="{{ asset('images/eagle.jpg') }}" alt="Nomadic Life & Eagle Hunters"
+                        class="absolute inset-0 w-full h-full object-cover object-center transition duration-500 group-hover:scale-110">
+                    <span class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></span>
+                    <span class="absolute bottom-3 left-4 right-12 text-white">
+                        <span class="block font-serif text-sm md:text-base leading-tight">Nomadic Life & Eagle Hunters</span>
+                        <span class="block text-[10px] tracking-widest uppercase text-white/70 mt-1">Culture Tour</span>
+                    </span>
+                    <span class="absolute bottom-3 right-3 h-8 w-8 rounded-full border border-white/70 text-white flex items-center justify-center group-hover:bg-white group-hover:text-gray-900 transition">&rarr;</span>
+                </a>
+                <a href="{{ route('search.tours') }}"
+                    class="group relative h-36 md:h-44 rounded-xl overflow-hidden shadow-xl ring-1 ring-white/20">
+                    <img src="{{ asset('images/gobi.jpg') }}" alt="Desert & Hidden Places"
+                        class="absolute inset-0 w-full h-full object-cover object-center transition duration-500 group-hover:scale-110">
+                    <span class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></span>
+                    <span class="absolute bottom-3 left-4 right-12 text-white">
+                        <span class="block font-serif text-sm md:text-base leading-tight">Desert & Hidden Places</span>
+                        <span class="block text-[10px] tracking-widest uppercase text-white/70 mt-1">Adventure Tour</span>
+                    </span>
+                    <span class="absolute bottom-3 right-3 h-8 w-8 rounded-full border border-white/70 text-white flex items-center justify-center group-hover:bg-white group-hover:text-gray-900 transition">&rarr;</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <section id="book" class="relative -mt-0 py-12 bg-gray-50 dark:bg-gray-900">
+        <div class="container mx-auto px-4">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl overflow-hidden max-w-4xl mx-auto border border-gray-100 dark:border-gray-700"
                 x-data="{ activeTab: 'cars' }">
                 <div class="flex border-b border-gray-200 dark:border-gray-700">
                     <button @click="activeTab = 'cars'"
@@ -101,7 +175,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <section class="py-20 bg-white dark:bg-gray-900">
         <div class="container mx-auto px-4">
