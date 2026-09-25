@@ -2,6 +2,8 @@
 
 return [
     'home' => 'Нүүр',
+    'nav_experience' => 'Туршлага',
+    'charm' => 'Монголын сүр сэлт',
     'vivan' => 'VIVAN аялал',
     'tours' => 'Аялал',
     'cars' => 'Машин',

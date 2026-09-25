@@ -8,18 +8,20 @@
 
         <div class="container max-w-none relative mx-auto px-6 lg:px-16 flex-1 flex items-center">
             <div class="max-w-3xl text-white drop-shadow-lg py-8">
-                <p class="font-serif text-lg md:text-2xl tracking-[0.08em]">{{ __('site.eyebrow') }}</p>
+                <p class="font-serif text-lg md:text-3xl tracking-[0.08em]">{{ __('site.eyebrow') }}</p>
                 <h1 style="font-family: 'Playfair Display', serif" class="mt-2 font-bold text-6xl md:text-8xl lg:text-[7rem] leading-[1.05] tracking-tight">Wild Mongolia</h1>
-                <div class="relative inline-block -mt-1 -rotate-3 origin-left">
-                    <span class="font-script text-5xl md:text-7xl text-amber-200">{{ __('site.sub') }}</span>
-                    <span class="block h-[3px] -mt-1 w-[95%] rounded-full bg-gradient-to-r from-amber-300 to-transparent"></span>
+                <div class="relative inline-block -mt-2 -rotate-3 origin-left pb-4">
+                    <span class="font-script text-6xl md:text-8xl text-amber-200">{{ __('site.sub') }}</span>
+                    <svg class="absolute left-0 bottom-0 w-[92%] h-5 text-amber-300" viewBox="0 0 400 20" preserveAspectRatio="none" fill="none" aria-hidden="true">
+                        <path d="M2 16C90 6 230 4 398 7" stroke="currentColor" stroke-width="4" stroke-linecap="round" />
+                    </svg>
                 </div>
-                <p class="font-serif mt-6 max-w-lg text-sm md:text-base text-white/95 leading-loose">
+                <p class="font-serif mt-6 max-w-xl text-sm md:text-lg text-white/95 leading-loose">
                     {!! implode('<br>', array_map('e', __('site.desc'))) !!}
                 </p>
                 <div class="mt-7 flex flex-wrap items-center gap-6">
                     <a href="{{ route('search.tours') }}"
-                        class="font-serif inline-flex items-center gap-3 bg-gradient-to-r from-amber-100 to-amber-300 text-gray-900 font-semibold text-lg px-10 py-4 rounded-full shadow-xl hover:brightness-105 transition">
+                        class="font-serif inline-flex items-center gap-3 bg-gradient-to-r from-amber-100 to-amber-300 text-gray-900 font-semibold text-xl px-12 py-4 rounded-full shadow-xl hover:brightness-105 transition">
                         {{ __('site.cta') }} <span>&rarr;</span>
                     </a>
                     @php
@@ -29,8 +31,8 @@
                     @endphp
                     <div x-data="{ videoOpen: false }" class="contents">
                         <button type="button" @if ($videoId) @click="videoOpen = true" @else onclick="document.getElementById('book').scrollIntoView({behavior: 'smooth'})" @endif
-                            class="font-serif inline-flex items-center gap-3 text-white text-sm">
-                            <span class="h-12 w-12 rounded-full border-2 border-white/80 flex items-center justify-center hover:bg-white/20 transition">&#9654;</span>
+                            class="font-serif inline-flex items-center gap-3 text-white text-base">
+                            <span class="h-14 w-14 rounded-full border-2 border-white/80 flex items-center justify-center hover:bg-white/20 transition">&#9654;</span>
                             {{ __('site.watch') }}
                         </button>
                         @if ($videoId)
@@ -51,10 +53,15 @@
             </div>
         </div>
 
-        <div class="hidden lg:block absolute right-10 top-[42%] -rotate-[8deg] text-center text-white pointer-events-none">
-            <div class="border-2 border-dashed border-white/70 rounded-[45%_55%_50%_50%/55%_45%_55%_45%] px-8 py-6">
-                <p class="text-4xl leading-tight" style="font-family: 'Dancing Script', cursive;">Feel<br>Real Mongolia</p>
-                <p class="mt-1 text-[10px] tracking-[0.25em]">NATURE · PEOPLE · CULTURE</p>
+        <div class="hidden lg:block absolute right-8 top-[40%] -rotate-[8deg] text-center text-white pointer-events-none w-[300px] h-[210px]">
+            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 300 210" fill="none" aria-hidden="true">
+                <path d="M30 60 C40 30 90 20 120 32 C150 14 200 12 235 30 C270 40 292 70 280 100 C292 130 270 165 240 170 C215 190 170 196 140 182 C110 196 60 190 40 160 C15 140 20 95 30 60Z"
+                    stroke="white" stroke-opacity=".85" stroke-width="1.5" />
+            </svg>
+            <div class="relative pt-11">
+                <p class="text-4xl leading-[1.1]" style="font-family: 'Dancing Script', cursive;">Feel<br>Real Mongolia</p>
+                <p class="mt-2 text-[10px] tracking-[0.25em]">NATURE · PEOPLE · CULTURE</p>
+                <p class="mt-2 text-xl" style="filter: grayscale(1) brightness(10)">🐎🐎 ⛺</p>
             </div>
         </div>
 
@@ -204,7 +211,7 @@
         </div>
     </section>
 
-    <section class="py-20 bg-white dark:bg-gray-900">
+    <section id="charm" class="py-20 bg-white dark:bg-gray-900 scroll-mt-24">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
                 <div class="p-6 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition">

@@ -7,11 +7,5 @@ html[lang="ja"] .font-serif {
 }
 
 .font-script {
-    font-family: "Dancing Script", cursive;
-}
-
-html[lang="ja"] .font-script,
-html[lang="mn"] .font-script {
-    font-family: "Noto Serif JP", "Playfair Display", serif;
-    font-style: italic;
+    font-family: "Kaushan Script", "Dancing Script", cursive;
 }

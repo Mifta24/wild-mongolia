@@ -2,6 +2,8 @@
 
 return [
     'home' => 'Home',
+    'nav_experience' => 'Experiences',
+    'charm' => 'Mongolia\'s Charm',
     'vivan' => 'VIVAN Tours',
     'tours' => 'Tours',
     'cars' => 'Cars',

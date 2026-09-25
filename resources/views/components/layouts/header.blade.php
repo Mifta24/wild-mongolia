@@ -1,6 +1,8 @@
 @props(['transparent' => false])
 @php
-    $linkBase = 'transition text-sm tracking-wide ';
+    $linkBase = 'transition tracking-wide whitespace-nowrap ' . ($transparent ? 'text-sm xl:text-[15px] 2xl:text-base' : 'text-sm');
+    $localeCode = app()->getLocale();
+    $localeShort = ['ja' => 'JP'][$localeCode] ?? strtoupper($localeCode);
 @endphp
 <nav x-data="{ scrolled: false, searchOpen: false }" @keydown.escape.window="searchOpen = false" @scroll.window="scrolled = window.scrollY > 40"
     @if ($transparent)
@@ -10,19 +12,29 @@
     class="sticky top-0 w-full z-50 transition-all duration-300 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-sm border-b border-gray-200 dark:border-gray-800"
     @endif>
     <div class="{{ $transparent ? 'max-w-none px-4 sm:px-6 lg:px-10' : 'max-w-7xl px-4 sm:px-6 lg:px-8' }} mx-auto">
-        <div class="flex justify-between {{ $transparent ? 'h-24' : 'h-16' }} items-center">
+        <div class="flex justify-between {{ $transparent ? 'h-28' : 'h-16' }} items-center">
             <a href="{{ route('home') }}" class="flex-shrink-0 flex items-center">
                 <x-brand-logo :light="$transparent" />
             </a>
 
-            <div class="hidden md:flex space-x-5 lg:space-x-9 items-center">
+            <div class="hidden md:flex items-center {{ $transparent ? 'space-x-4 xl:space-x-6 2xl:space-x-10' : 'space-x-5 lg:space-x-9' }}">
+                @if ($transparent)
                 <a href="{{ route('home') }}" class="{{ $linkBase }} {{ $transparent ? 'text-white/95 hover:text-white' : 'hover:text-primary dark:hover:text-teal-400' }} {{ request()->routeIs('home') ? 'border-b-2 border-amber-300 pb-1' : '' }}">{{ __('site.home') }}</a>
-                <a href="{{ route('search.tours') }}" class="{{ $linkBase }} {{ $transparent ? 'text-white/95 hover:text-white' : 'hover:text-primary dark:hover:text-teal-400' }} {{ request()->routeIs('search.tours') ? 'border-b-2 border-amber-300 pb-1' : '' }}">{{ __('site.vivan') }}</a>
+                <a href="{{ route('search.tours') }}" class="{{ $linkBase }} {{ $transparent ? 'text-white/95 hover:text-white' : 'hover:text-primary dark:hover:text-teal-400' }} {{ false ? 'border-b-2 border-amber-300 pb-1' : '' }}">{{ __('site.vivan') }}</a>
                 <a href="{{ route('tours') }}" class="{{ $linkBase }} {{ $transparent ? 'text-white/95 hover:text-white' : 'hover:text-primary dark:hover:text-teal-400' }} {{ request()->routeIs('tours') ? 'border-b-2 border-amber-300 pb-1' : '' }}">{{ __('site.tours') }}</a>
+                <a href="{{ route('search.tours', ['experience_type' => 'nomad']) }}" class="{{ $linkBase }} {{ $transparent ? 'text-white/95 hover:text-white' : 'hover:text-primary dark:hover:text-teal-400' }} {{ false ? 'border-b-2 border-amber-300 pb-1' : '' }}">{{ __('site.nav_experience') }}</a>
+                <a href="{{ route('home') }}#charm" class="{{ $linkBase }} {{ $transparent ? 'text-white/95 hover:text-white' : 'hover:text-primary dark:hover:text-teal-400' }} {{ false ? 'border-b-2 border-amber-300 pb-1' : '' }}">{{ __('site.charm') }}</a>
+                <a href="{{ route('faq') }}" class="{{ $linkBase }} {{ $transparent ? 'text-white/95 hover:text-white' : 'hover:text-primary dark:hover:text-teal-400' }} {{ request()->routeIs('faq') ? 'border-b-2 border-amber-300 pb-1' : '' }}">{{ __('site.travel_info') }}</a>
+                <a href="{{ route('contact') }}" class="{{ $linkBase }} {{ $transparent ? 'text-white/95 hover:text-white' : 'hover:text-primary dark:hover:text-teal-400' }} {{ request()->routeIs('contact') ? 'border-b-2 border-amber-300 pb-1' : '' }}">{{ __('site.contact') }}</a>
+                @else
+                <a href="{{ route('home') }}" class="{{ $linkBase }} {{ $transparent ? 'text-white/95 hover:text-white' : 'hover:text-primary dark:hover:text-teal-400' }} {{ request()->routeIs('home') ? 'border-b-2 border-amber-300 pb-1' : '' }}">{{ __('site.home') }}</a>
+                <a href="{{ route('search.tours') }}" class="{{ $linkBase }} {{ $transparent ? 'text-white/95 hover:text-white' : 'hover:text-primary dark:hover:text-teal-400' }} {{ false ? 'border-b-2 border-amber-300 pb-1' : '' }}">{{ __('site.vivan') }}</a>
                 <a href="{{ route('cars') }}" class="{{ $linkBase }} {{ $transparent ? 'text-white/95 hover:text-white' : 'hover:text-primary dark:hover:text-teal-400' }} {{ request()->routeIs('cars') ? 'border-b-2 border-amber-300 pb-1' : '' }}">{{ __('site.cars') }}</a>
+                <a href="{{ route('tours') }}" class="{{ $linkBase }} {{ $transparent ? 'text-white/95 hover:text-white' : 'hover:text-primary dark:hover:text-teal-400' }} {{ request()->routeIs('tours') ? 'border-b-2 border-amber-300 pb-1' : '' }}">{{ __('site.tours') }}</a>
                 <a href="{{ route('membership') }}" class="{{ $linkBase }} {{ $transparent ? 'text-white/95 hover:text-white' : 'hover:text-primary dark:hover:text-teal-400' }} {{ request()->routeIs('membership') ? 'border-b-2 border-amber-300 pb-1' : '' }}">{{ __('site.membership') }}</a>
                 <a href="{{ route('faq') }}" class="{{ $linkBase }} {{ $transparent ? 'text-white/95 hover:text-white' : 'hover:text-primary dark:hover:text-teal-400' }} {{ request()->routeIs('faq') ? 'border-b-2 border-amber-300 pb-1' : '' }}">{{ __('site.travel_info') }}</a>
                 <a href="{{ route('contact') }}" class="{{ $linkBase }} {{ $transparent ? 'text-white/95 hover:text-white' : 'hover:text-primary dark:hover:text-teal-400' }} {{ request()->routeIs('contact') ? 'border-b-2 border-amber-300 pb-1' : '' }}">{{ __('site.contact') }}</a>
+                @endif
 
                 <button @click="toggleTheme()"
                     class="{{ $transparent ? 'hidden' : '' }} p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition">
@@ -49,7 +61,7 @@
                     <div class="hidden lg:flex items-center gap-2 relative" x-data="{ open: false }" @click.away="open = false">
                         <button type="button" @click="open = !open" class="flex items-center gap-2 text-sm hover:text-amber-200 transition" aria-label="{{ __('site.language') }}">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 21a9 9 0 100-18 9 9 0 000 18zM3.6 9h16.8M3.6 15h16.8M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg>
-                            <span>{{ strtoupper(app()->getLocale()) }}</span> <span>&#8964;</span>
+                            <span>{{ $localeShort }}</span> <span>&#8964;</span>
                         </button>
                         <div x-show="open" x-cloak x-transition
                             class="absolute right-0 top-full mt-3 w-44 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 shadow-xl border border-gray-100 dark:border-gray-700 py-1">
@@ -61,7 +73,7 @@
                     </div>
                 @endif
                 <a href="{{ route('contact') }}"
-                    class=" hidden lg:inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-200 to-amber-400 text-gray-900 text-sm font-semibold px-5 py-2.5 shadow hover:brightness-105 transition">
+                    class="hidden 2xl:inline-flex shrink-0 whitespace-nowrap items-center gap-2 rounded-full bg-gradient-to-r from-amber-200 to-amber-400 text-gray-900 text-sm font-semibold px-4 xl:px-5 py-2.5 shadow hover:brightness-105 transition">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 8l9 6 9-6M5 5h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z"/></svg>
                     {{ __('site.consult') }} &rarr;
                 </a>

@@ -2,6 +2,8 @@
 
 return [
     'home' => 'ホーム',
+    'nav_experience' => '体験',
+    'charm' => 'モンゴルの魅力',
     'vivan' => 'VIVANツアー',
     'tours' => 'ツアー',
     'cars' => 'レンタカー',

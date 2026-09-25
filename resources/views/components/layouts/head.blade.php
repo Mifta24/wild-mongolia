@@ -17,7 +17,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-    <link href="https://fonts.bunny.net/css?family=playfair-display:500,700|dancing-script:600|noto-serif-jp:400,500,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=playfair-display:500,700|dancing-script:600|kaushan-script:400|noto-serif-jp:400,500,700&display=swap" rel="stylesheet" />
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])

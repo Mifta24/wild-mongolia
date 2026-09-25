@@ -2,6 +2,8 @@
 
 return [
     'home' => 'Beranda',
+    'nav_experience' => 'Pengalaman',
+    'charm' => 'Pesona Mongolia',
     'vivan' => 'VIVAN Tours',
     'tours' => 'Tur',
     'cars' => 'Mobil',
