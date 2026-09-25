@@ -1,7 +1,7 @@
 User: 1. Service Overview
 1.1 Concept
 
-Provide end-to-end services for transportation (cars) and tourism (tours/experiences) required after arriving in Thailand, covering the entire flow from search → booking → payment → on-the-day support.
+Provide end-to-end services for transportation (cars) and tourism (tours/experiences) required after arriving in Mongolia, covering the entire flow from search → booking → payment → on-the-day support.
 
 Designed for small-scale operations, the system adopts a semi-automated inventory and dispatch model with an admin panel, while leaving room for future full automation.
 
@@ -131,7 +131,7 @@ Emergency contact (phone number and business hours)
 
 Email + password
 
-Social login: Google / Apple (priority), LINE (strong for Thailand)
+Social login: Google / Apple (priority), LINE (strong for Asian markets)
 
 5.2 Points
 

@@ -2,7 +2,7 @@
 
 ## ✅ Implementation Complete!
 
-All features for the Points & Coupons System have been successfully implemented for the Thai Travel application.
+All features for the Points & Coupons System have been successfully implemented for the Wild Mongolia application.
 
 ## Files Created/Modified
 
@@ -109,7 +109,7 @@ php artisan db:seed --class=CouponSeeder
 ### 3. Set Up Cron for Scheduled Tasks
 Add to server crontab:
 ```bash
-* * * * * cd /path-to-thai-travel && php artisan schedule:run >> /dev/null 2>&1
+* * * * * cd /path-to-wild-mongolia && php artisan schedule:run >> /dev/null 2>&1
 ```
 
 ### 4. Test Commands Manually

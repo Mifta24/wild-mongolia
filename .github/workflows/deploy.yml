@@ -1,4 +1,4 @@
-# name: Auto Deploy Thai Travel 🚀
+# name: Auto Deploy Wild Mongolia 🚀
 
 # on:
 #   push:
@@ -28,7 +28,7 @@
 #           script_stop: true # Berhenti kalau ada error di tengah jalan
 #           script: |
 #             # 1. Masuk ke folder project
-#             cd /var/www/vhosts/fts.biz.id/thai-travel.fts.biz.id
+#             cd /var/www/vhosts/fts.biz.id/wild-mongolia.fts.biz.id
 
 #             # 2. Tarik kode terbaru
 #             git pull origin main
