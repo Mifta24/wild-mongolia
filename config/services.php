@@ -62,4 +62,7 @@ return [
     ],
 
 
+
+    'hero_video' => env('HERO_VIDEO_URL'),
+
 ];

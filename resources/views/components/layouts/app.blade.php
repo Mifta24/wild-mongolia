@@ -22,13 +22,14 @@
     }" x-init="$watch('darkMode', val => val ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark'));
     if (darkMode) document.documentElement.classList.add('dark');">
 
-    <x-layouts.header />
+    <x-layouts.header :transparent="$transparentNav" />
 
     <main>
         {{ $slot }}
     </main>
 
     <x-layouts.footer />
+
 
 </body>
 

@@ -39,6 +39,12 @@ Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 
 // Public Routes
+Route::get('/lang/{locale}', function (string $locale) {
+    abort_unless(array_key_exists($locale, config('app.available_locales')), 404);
+    session(['locale' => $locale]);
+
+    return redirect()->back();
+})->name('lang.switch');
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.send');

@@ -15,6 +15,7 @@ export default {
             fontFamily: {
                 sans: ["Figtree", ...defaultTheme.fontFamily.sans],
                 serif: ["Playfair Display", ...defaultTheme.fontFamily.serif],
+                jp: ["Noto Serif JP", "serif"],
             },
             colors: {
                 primary: "#0F766E",

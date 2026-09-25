@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html[lang="ja"] .font-serif {
+    font-family: "Noto Serif JP", "Playfair Display", serif;
+}
+
+.font-script {
+    font-family: "Dancing Script", cursive;
+}
+
+html[lang="ja"] .font-script,
+html[lang="mn"] .font-script {
+    font-family: "Noto Serif JP", "Playfair Display", serif;
+    font-style: italic;
+}
