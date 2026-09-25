@@ -16,7 +16,7 @@ class PointService
      */
     public function calculateBookingPoints(Booking $booking): int
     {
-        // Base: 1 point per 100 THB spent
+        // Base: 1 point per 100 MNT spent
         $basePoints = (int) floor($booking->total_price / 100);
 
         if ($booking->user) {
@@ -142,7 +142,7 @@ class PointService
             throw new \Exception('Insufficient points');
         }
 
-        // 100 points = 100 THB discount
+        // 100 points = 100 MNT discount
         $discount = $points;
 
         // Apply tier bonus

@@ -61,7 +61,7 @@ class BookingController extends Controller
         }
 
         $destination = $request->query('destination', 'Ulaanbaatar');
-        $experienceType = $request->query('experience_type', 'temples');
+        $experienceType = $request->query('experience_type', 'monasteries');
         $productId = $request->query('product_id');
         $productName = $request->query('product', $serviceType === 'car' ? 'Standard Sedan' : 'Ulaanbaatar Highlights Tour');
         $basePrice = $request->query('price', $serviceType === 'car' ? 1000 : 2500);

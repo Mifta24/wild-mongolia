@@ -98,7 +98,7 @@ class CouponService
         if ($coupon->min_purchase && $orderAmount < $coupon->min_purchase) {
             return [
                 'valid' => false,
-                'message' => "Minimum purchase of ฿{$coupon->min_purchase} required"
+                'message' => "Minimum purchase of ₮{$coupon->min_purchase} required"
             ];
         }
 

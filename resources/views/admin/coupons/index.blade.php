@@ -31,7 +31,7 @@
                             <td class="px-4 py-3">{{ ucfirst($coupon->type) }}</td>
                             <td class="px-4 py-3">
                                 @if($coupon->type === 'fixed')
-                                    ฿{{ number_format($coupon->value, 2) }}
+                                    ₮{{ number_format($coupon->value, 2) }}
                                 @else
                                     {{ rtrim(rtrim(number_format($coupon->value,2),'0'),'.') }}%
                                 @endif

@@ -57,7 +57,7 @@
                         </div>
                         <div class="ml-4">
                             <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Revenue</p>
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white">THB
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">MNT
                                 {{ number_format($totalRevenue) }}</p>
                         </div>
                     </div>
@@ -139,7 +139,7 @@
                                         #{{ $booking->booking_code }}</td>
                                     <td class="px-6 py-4">{{ $booking->guest_name }}</td>
                                     <td class="px-6 py-4">{{ $booking->service_date->format('d M Y') }}</td>
-                                    <td class="px-6 py-4">THB {{ number_format($booking->total_price) }}</td>
+                                    <td class="px-6 py-4">MNT {{ number_format($booking->total_price) }}</td>
                                     <td class="px-6 py-4">
                                         @if ($booking->status == 'pending')
                                             <span

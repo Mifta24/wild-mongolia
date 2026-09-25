@@ -78,7 +78,7 @@
                             class="p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700">
                             <div class="flex items-center justify-between mb-2">
                                 <p class="font-semibold text-gray-900 dark:text-white">Gold</p>
-                                <span class="text-sm text-primary font-semibold">THB 1,500 / year</span>
+                                <span class="text-sm text-primary font-semibold">MNT 150,000 / year</span>
                             </div>
                             <p class="text-sm text-gray-600 dark:text-gray-300">Paid annual subscription with 1.5x point multiplier, redemption bonus, and priority support.</p>
                             @auth
@@ -124,7 +124,7 @@
                             class="p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700">
                             <div class="flex items-center justify-between mb-2">
                                 <p class="font-semibold text-gray-900 dark:text-white">Platinum</p>
-                                <span class="text-sm text-primary font-semibold">THB 3,500 / year</span>
+                                <span class="text-sm text-primary font-semibold">MNT 350,000 / year</span>
                             </div>
                             <p class="text-sm text-gray-600 dark:text-gray-300">Premium annual plan with 2x point multiplier, highest redemption bonus, and dedicated support.</p>
                             @auth
@@ -205,7 +205,7 @@
                 <div class="p-5 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
                     <p class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Points usage</p>
                     <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-1">
-                        <li>• 1 point = THB 1 discount.</li>
+                        <li>• 1 point = MNT 1 discount.</li>
                         <li>• New members receive 300 welcome points after registration.</li>
                         <li>• Points can be used at checkout for the next booking payment.</li>
                         <li>• All earned points expire at year-end (31 Dec, Mongolia time).</li>

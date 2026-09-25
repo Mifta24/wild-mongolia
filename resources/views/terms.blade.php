@@ -40,7 +40,7 @@
                         <ul class="list-disc pl-5 space-y-2 mt-2">
                             <li>We provide a complimentary waiting time of <strong>90 minutes</strong> from the actual
                                 flight landing time.</li>
-                            <li>Extended waiting time beyond 90 minutes will be charged at THB 300 per hour, subject to
+                            <li>Extended waiting time beyond 90 minutes will be charged at MNT 30,000 per hour, subject to
                                 driver availability.</li>
                         </ul>
 

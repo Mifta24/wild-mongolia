@@ -86,7 +86,7 @@
                                 <div class="inline-flex items-baseline bg-teal-100 dark:bg-teal-900 px-4 py-2 rounded-lg">
                                     <span class="text-3xl font-bold text-teal-600 dark:text-teal-400">
                                         @if($coupon->type === 'fixed')
-                                            THB {{ number_format($coupon->value) }}
+                                            MNT {{ number_format($coupon->value) }}
                                         @else
                                             {{ $coupon->value }}%
                                         @endif
@@ -114,10 +114,10 @@
                                     $couponDaysLeft = now()->startOfDay()->diffInDays($coupon->valid_until->copy()->startOfDay(), false);
                                 @endphp
                                 @if($coupon->min_purchase)
-                                <p>• Min. purchase: THB {{ number_format($coupon->min_purchase) }}</p>
+                                <p>• Min. purchase: MNT {{ number_format($coupon->min_purchase) }}</p>
                                 @endif
                                 @if($coupon->max_discount)
-                                <p>• Max. discount: THB {{ number_format($coupon->max_discount) }}</p>
+                                <p>• Max. discount: MNT {{ number_format($coupon->max_discount) }}</p>
                                 @endif
                                 @if($coupon->applicable_to !== 'all')
                                 <p>• Applicable to: {{ ucfirst($coupon->applicable_to) }} services only</p>

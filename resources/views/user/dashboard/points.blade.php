@@ -19,7 +19,7 @@
                     <div>
                         <p class="text-teal-100 text-sm font-medium mb-2">Available Points</p>
                         <p class="text-5xl font-bold">{{ number_format(Auth::user()->points) }}</p>
-                        <p class="text-teal-100 text-sm mt-2">Worth ~THB {{ number_format(Auth::user()->points) }} (1 point = THB 1)</p>
+                        <p class="text-teal-100 text-sm mt-2">Worth ~MNT {{ number_format(Auth::user()->points) }} (1 point = MNT 1)</p>
                     </div>
                     <div class="h-24 w-24 bg-white/20 rounded-full flex items-center justify-center">
                         <svg class="h-12 w-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,7 +58,7 @@
                         <svg class="h-5 w-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                         </svg>
-                        <span>Earn points from every paid booking (base: 1 point per THB 100, tier multiplier applies)</span>
+                        <span>Earn points from every paid booking (base: 1 point per MNT 100, tier multiplier applies)</span>
                     </li>
                     <li class="flex items-start">
                         <svg class="h-5 w-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
@@ -76,7 +76,7 @@
                         <svg class="h-5 w-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                         </svg>
-                        <span>1 point = THB 1 discount (tier bonus may increase redemption value)</span>
+                        <span>1 point = MNT 1 discount (tier bonus may increase redemption value)</span>
                     </li>
                 </ul>
             </div>

@@ -20,7 +20,7 @@ class ProductFactory extends Factory
         $type = $this->faker->randomElement(['car', 'tour']);
         $name = $type === 'car'
             ? $this->faker->randomElement(['Standard Sedan', 'Luxury Sedan', 'Family SUV', 'Minivan'])
-            : $this->faker->randomElement(['City Highlights Tour', 'Temple Discovery Tour', 'Food Experience Tour', 'Island Day Trip']);
+            : $this->faker->randomElement(['City Highlights Tour', 'Monastery Discovery Tour', 'Food Experience Tour', 'Steppe Day Trip']);
 
         $basePrice = $type === 'car'
             ? $this->faker->numberBetween(900, 3000)
@@ -54,7 +54,7 @@ class ProductFactory extends Factory
             'discounted_price' => $hasDiscount ? max(100, $basePrice - $this->faker->numberBetween(100, 400)) : null,
             'distance_price_per_km' => $type === 'car' ? $this->faker->numberBetween(18, 45) : null,
             'minimum_distance_price' => $type === 'car' ? $this->faker->numberBetween(600, 1300) : null,
-            'currency' => 'THB',
+            'currency' => 'MNT',
             'is_active' => true,
             'is_featured' => $this->faker->boolean(30),
             'total_reviews' => $this->faker->numberBetween(0, 800),

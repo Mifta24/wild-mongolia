@@ -65,7 +65,7 @@ class ProductController extends Controller
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
-        $validated['currency'] = $validated['currency'] ?? 'THB';
+        $validated['currency'] = $validated['currency'] ?? 'MNT';
         $validated['is_active'] = (bool) ($validated['is_active'] ?? false);
         $validated['is_featured'] = (bool) ($validated['is_featured'] ?? false);
         $validated['includes_lunch'] = (bool) ($validated['includes_lunch'] ?? false);
@@ -141,7 +141,7 @@ class ProductController extends Controller
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
-        $validated['currency'] = $validated['currency'] ?? $product->currency ?? 'THB';
+        $validated['currency'] = $validated['currency'] ?? $product->currency ?? 'MNT';
         $validated['is_active'] = (bool) ($validated['is_active'] ?? false);
         $validated['is_featured'] = (bool) ($validated['is_featured'] ?? false);
         $validated['includes_lunch'] = (bool) ($validated['includes_lunch'] ?? false);

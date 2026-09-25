@@ -120,7 +120,7 @@
                                     </td>
 
                                     <td class="px-6 py-4 font-mono">
-                                        THB {{ number_format($booking->total_price) }}
+                                        MNT {{ number_format($booking->total_price) }}
                                     </td>
 
                                     <td class="px-6 py-4">

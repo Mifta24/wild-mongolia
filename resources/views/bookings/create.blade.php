@@ -100,7 +100,7 @@
                                             (WhatsApp)</label>
                                         <input type="text" name="guest_phone"
                                             class="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700"
-                                            required placeholder="+66...">
+                                            required placeholder="+976...">
                                     </div>
                                 </div>
                             </div>
@@ -140,11 +140,11 @@
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Experience Type</label>
                                         <select name="experience_type" class="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700" :required="type === 'tour'">
-                                            <option value="temples" @selected(($experienceType ?? old('experience_type')) === 'temples')>Temples</option>
+                                            <option value="monasteries" @selected(($experienceType ?? old('experience_type')) === 'monasteries')>Monasteries</option>
                                             <option value="food" @selected(($experienceType ?? old('experience_type')) === 'food')>Food</option>
-                                            <option value="elephant_sanctuary" @selected(($experienceType ?? old('experience_type')) === 'elephant_sanctuary')>Elephant Sanctuary</option>
-                                            <option value="island_hopping" @selected(($experienceType ?? old('experience_type')) === 'island_hopping')>Island Hopping</option>
-                                            <option value="night_market" @selected(($experienceType ?? old('experience_type')) === 'night_market')>Night Market</option>
+                                            <option value="eagle_hunters" @selected(($experienceType ?? old('experience_type')) === 'eagle_hunters')>Eagle Hunters</option>
+                                            <option value="horse_riding" @selected(($experienceType ?? old('experience_type')) === 'horse_riding')>Horse Riding</option>
+                                            <option value="ger_stay" @selected(($experienceType ?? old('experience_type')) === 'ger_stay')>Ger Stay</option>
                                         </select>
                                     </div>
 
@@ -264,7 +264,7 @@
                                                             @endif
                                                         </div>
                                                     </div>
-                                                    <p class="text-sm font-semibold text-teal-600">THB {{ number_format((float) ($option['price'] ?? 0), 2) }}</p>
+                                                    <p class="text-sm font-semibold text-teal-600">MNT {{ number_format((float) ($option['price'] ?? 0), 2) }}</p>
                                                 </label>
                                             @endforeach
                                         </div>
@@ -293,7 +293,7 @@
 
                             <div class="flex justify-between mb-2 text-sm">
                                 <span class="text-gray-600 dark:text-gray-400">Price per unit</span>
-                                <span class="text-gray-900 dark:text-white">THB <span x-text="price"></span></span>
+                                <span class="text-gray-900 dark:text-white">MNT <span x-text="price"></span></span>
                             </div>
                             <div class="flex justify-between mb-4 text-sm">
                                 <span class="text-gray-600 dark:text-gray-400">Quantity</span>
@@ -302,13 +302,13 @@
 
                             <div class="flex justify-between mb-4 text-sm" x-show="addOnsTotal > 0">
                                 <span class="text-gray-600 dark:text-gray-400">Add-ons</span>
-                                <span class="text-gray-900 dark:text-white">THB <span x-text="addOnsTotal.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })"></span></span>
+                                <span class="text-gray-900 dark:text-white">MNT <span x-text="addOnsTotal.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })"></span></span>
                             </div>
 
                             <div
                                 class="pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center mb-6">
                                 <span class="text-lg font-bold text-gray-900 dark:text-white">Total</span>
-                                <span class="text-xl font-bold text-teal-600">THB <span
+                                <span class="text-xl font-bold text-teal-600">MNT <span
                                         x-text="total.toLocaleString()"></span></span>
                             </div>
 

@@ -24,8 +24,7 @@
         <div>
             <h4 class="text-white font-bold mb-4">Contact Us</h4>
             <ul class="space-y-2 text-sm">
-                <li>LINE: <a href="{{ route('contact') }}" class="hover:text-white transition">@wildmongolia</a></li>
-                <li>WhatsApp: <a href="https://wa.me/66812345678" class="hover:text-white transition" target="_blank" rel="noopener noreferrer">+66 81 234 5678</a></li>
+                <li>WhatsApp: <a href="https://wa.me/97699112345" class="hover:text-white transition" target="_blank" rel="noopener noreferrer">+976 9911 2345</a></li>
                 <li>Email: <a href="mailto:support@wildmongolia.com" class="hover:text-white transition">support@wildmongolia.com</a></li>
             </ul>
         </div>

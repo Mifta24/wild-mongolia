@@ -77,11 +77,11 @@
                     @if (($booking->add_ons_total ?? 0) > 0)
                         <div class="flex justify-between">
                             <span class="text-gray-500">Service Total</span>
-                            <span class="font-medium text-gray-900 dark:text-white">THB {{ number_format($baseAmount - $booking->add_ons_total, 2) }}</span>
+                            <span class="font-medium text-gray-900 dark:text-white">MNT {{ number_format($baseAmount - $booking->add_ons_total, 2) }}</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-500">Add-ons</span>
-                            <span class="font-medium text-gray-900 dark:text-white">THB {{ number_format($booking->add_ons_total, 2) }}</span>
+                            <span class="font-medium text-gray-900 dark:text-white">MNT {{ number_format($booking->add_ons_total, 2) }}</span>
                         </div>
                     @endif
 
@@ -90,7 +90,7 @@
                             <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Selected Add-ons</p>
                             <ul class="space-y-1 text-sm text-gray-700 dark:text-gray-300">
                                 @foreach($booking->selected_add_ons as $option)
-                                    <li>• {{ $option['name'] ?? '-' }} (THB {{ number_format((float) ($option['price'] ?? 0), 2) }})</li>
+                                    <li>• {{ $option['name'] ?? '-' }} (MNT {{ number_format((float) ($option['price'] ?? 0), 2) }})</li>
                                 @endforeach
                             </ul>
                         </div>
@@ -108,34 +108,34 @@
                     <div class="flex justify-between items-center">
                         <span class="text-lg font-bold text-gray-900 dark:text-white">Total Amount</span>
                         <div class="text-right">
-                            <span class="text-base text-gray-500 line-through" x-show="hasAnyDiscount()">THB <span x-text="formatMoney(baseAmount)"></span></span>
+                            <span class="text-base text-gray-500 line-through" x-show="hasAnyDiscount()">MNT <span x-text="formatMoney(baseAmount)"></span></span>
                             <span
                                 class="text-2xl font-bold text-teal-600 block transition duration-300"
                                 :class="flashPayable ? 'scale-105 text-emerald-600' : ''"
-                            >THB <span x-text="formatMoney(payableNow())"></span></span>
+                            >MNT <span x-text="formatMoney(payableNow())"></span></span>
                         </div>
                     </div>
 
                     <div class="mt-4 border-t border-gray-100 dark:border-gray-700 pt-4 space-y-2 text-sm" x-show="hasAnyDiscount()">
                         <div class="rounded-md bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 px-3 py-2" x-show="hasAnyDiscount()">
                             <p class="text-xs font-semibold text-green-700 dark:text-green-300">
-                                You save THB <span x-text="formatMoney(totalSavings())"></span>
+                                You save MNT <span x-text="formatMoney(totalSavings())"></span>
                             </p>
                         </div>
 
                         <div class="flex justify-between" x-show="appliedCouponDiscount > 0">
                             <span class="text-gray-500">Coupon Discount</span>
-                            <span class="font-medium text-green-600">- THB <span x-text="formatMoney(appliedCouponDiscount)"></span></span>
+                            <span class="font-medium text-green-600">- MNT <span x-text="formatMoney(appliedCouponDiscount)"></span></span>
                         </div>
 
                         <div class="flex justify-between" x-show="pointsDiscount() > 0">
                             <span class="text-gray-500">Points Discount (<span x-text="pointsToUse()"></span> pts)</span>
-                            <span class="font-medium text-green-600">- THB <span x-text="formatMoney(pointsDiscount())"></span></span>
+                            <span class="font-medium text-green-600">- MNT <span x-text="formatMoney(pointsDiscount())"></span></span>
                         </div>
 
                         <div class="flex justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
                             <span class="font-semibold text-gray-900 dark:text-white">Payable Now</span>
-                            <span class="font-bold text-teal-600">THB <span x-text="formatMoney(payableNow())"></span></span>
+                            <span class="font-bold text-teal-600">MNT <span x-text="formatMoney(payableNow())"></span></span>
                         </div>
                     </div>
                 </div>
@@ -208,7 +208,7 @@
                                             class="w-full text-left rounded-md border border-gray-200 dark:border-gray-600 px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50">
                                             <div class="flex justify-between gap-2">
                                                 <span class="font-medium text-gray-900 dark:text-white">{{ $coupon['code'] }}</span>
-                                                <span class="text-teal-600">{{ $coupon['type'] === 'fixed' ? 'THB ' . number_format((float) $coupon['value'], 2) : rtrim(rtrim(number_format((float) $coupon['value'], 2), '0'), '.') . '%' }}</span>
+                                                <span class="text-teal-600">{{ $coupon['type'] === 'fixed' ? 'MNT ' . number_format((float) $coupon['value'], 2) : rtrim(rtrim(number_format((float) $coupon['value'], 2), '0'), '.') . '%' }}</span>
                                             </div>
                                             <p class="text-xs text-gray-500 mt-1">{{ $coupon['name'] }}</p>
                                         </button>

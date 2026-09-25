@@ -74,10 +74,10 @@ class VendorOperationsSeeder extends Seeder
             ?? User::query()->orderBy('id')->value('id');
 
         $driverPool = [
-            ['name' => 'Driver Aek', 'phone' => '+66-81-000-1001', 'plate' => '1กข-1024'],
-            ['name' => 'Driver Mint', 'phone' => '+66-81-000-1002', 'plate' => '2กง-4409'],
-            ['name' => 'Driver Korn', 'phone' => '+66-81-000-1003', 'plate' => '3ขฉ-1188'],
-            ['name' => 'Driver Ploy', 'phone' => '+66-81-000-1004', 'plate' => '4คม-5521'],
+            ['name' => 'Driver Bat', 'phone' => '+976-9900-1001', 'plate' => '1024 УБА'],
+            ['name' => 'Driver Temuulen', 'phone' => '+976-9900-1002', 'plate' => '4409 УБЕ'],
+            ['name' => 'Driver Naran', 'phone' => '+976-9900-1003', 'plate' => '1188 УНМ'],
+            ['name' => 'Driver Sarnai', 'phone' => '+976-9900-1004', 'plate' => '5521 УБТ'],
         ];
 
         foreach ($bookings as $index => $booking) {
@@ -141,7 +141,7 @@ class VendorOperationsSeeder extends Seeder
                 'user_id' => $userId,
                 'guest_name' => 'Demo Customer ' . ($index + 1),
                 'guest_email' => 'demo.customer' . ($index + 1) . '@example.com',
-                'guest_phone' => '+66-80-100-20' . str_pad((string) $index, 2, '0', STR_PAD_LEFT),
+                'guest_phone' => '+976-9910-20' . str_pad((string) $index, 2, '0', STR_PAD_LEFT),
                 'service_type' => $product->type === 'tour' ? 'tour' : 'car',
                 'service_subtype' => $product->type === 'tour' ? 'day-tour' : 'airport-transfer',
                 'destination' => $product->destination ?? 'Ulaanbaatar',
@@ -160,7 +160,7 @@ class VendorOperationsSeeder extends Seeder
                 'child_pax' => $product->type === 'tour' ? 0 : null,
                 'total_price' => $baseTotal,
                 'add_ons_total' => 0,
-                'currency' => 'THB',
+                'currency' => 'MNT',
                 'status' => 'confirmed',
                 'payment_status' => 'paid',
                 'paid_at' => now()->subDay(),

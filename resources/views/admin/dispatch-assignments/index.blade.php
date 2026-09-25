@@ -63,7 +63,7 @@
                             <td class="px-6 py-4">
                                 <div class="font-medium text-gray-900 dark:text-white">#{{ $assignment->booking->booking_code }}</div>
                                 <div class="text-xs text-gray-500">{{ $assignment->booking->guest_name }}</div>
-                                <div class="text-xs text-gray-500">THB {{ number_format((float) $assignment->booking->total_price, 2) }}</div>
+                                <div class="text-xs text-gray-500">MNT {{ number_format((float) $assignment->booking->total_price, 2) }}</div>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="font-medium text-gray-900 dark:text-white">{{ $assignment->vendor->name }}</div>
@@ -76,8 +76,8 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="text-xs">Type: {{ ucfirst($assignment->commission_type) }}</div>
-                                <div class="text-xs">Commission: THB {{ number_format((float) $assignment->commission_amount, 2) }}</div>
-                                <div class="text-xs">Payout: THB {{ number_format((float) $assignment->vendor_payout_amount, 2) }}</div>
+                                <div class="text-xs">Commission: MNT {{ number_format((float) $assignment->commission_amount, 2) }}</div>
+                                <div class="text-xs">Payout: MNT {{ number_format((float) $assignment->vendor_payout_amount, 2) }}</div>
                             </td>
                             <td class="px-6 py-4">
                                 <span class="px-2 py-0.5 rounded text-xs bg-yellow-100 text-yellow-800">{{ ucfirst(str_replace('_', ' ', $assignment->settlement_status)) }}</span>

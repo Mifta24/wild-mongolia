@@ -109,7 +109,7 @@
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Detailed Itinerary</label>
             <textarea name="itinerary" rows="5"
                 class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-teal-500 focus:border-teal-500"
-                placeholder="One activity per line, e.g.&#10;08:00 Pickup at hotel&#10;09:30 Grand Palace&#10;12:00 Lunch">{{ old('itinerary') }}</textarea>
+                placeholder="One activity per line, e.g.&#10;08:00 Pickup at hotel&#10;09:30 Gandan Monastery&#10;12:00 Lunch">{{ old('itinerary') }}</textarea>
             @error('itinerary')
                 <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
             @enderror
@@ -140,7 +140,7 @@
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Meeting Point Name</label>
                 <input type="text" name="meeting_point_name" value="{{ old('meeting_point_name') }}"
                     class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-teal-500 focus:border-teal-500"
-                    placeholder="Suvarnabhumi Airport Gate 3">
+                    placeholder="Chinggis Khaan International Airport, Arrivals">
                 @error('meeting_point_name')
                     <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
                 @enderror
@@ -207,7 +207,7 @@
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Currency</label>
-                <input type="text" name="currency" value="{{ old('currency', 'THB') }}"
+                <input type="text" name="currency" value="{{ old('currency', 'MNT') }}"
                     class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-teal-500 focus:border-teal-500"
                     maxlength="3">
                 @error('currency')

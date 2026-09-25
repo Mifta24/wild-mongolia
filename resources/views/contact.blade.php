@@ -48,8 +48,8 @@
                             <div>
                                 <h3 class="text-lg font-medium text-gray-900 dark:text-white">Emergency Support (24/7)
                                 </h3>
-                                <p class="mt-1 text-gray-600 dark:text-gray-400">+66 81 234 5678</p>
-                                <p class="text-sm text-teal-600 dark:text-teal-400 mt-1">Available on WhatsApp & LINE
+                                <p class="mt-1 text-gray-600 dark:text-gray-400">+976 9911 2345</p>
+                                <p class="text-sm text-teal-600 dark:text-teal-400 mt-1">Available on WhatsApp
                                 </p>
                             </div>
                         </div>

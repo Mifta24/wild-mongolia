@@ -65,11 +65,11 @@
                         <p class="text-sm text-gray-600 dark:text-gray-300 mb-3">{{ $coupon['description'] ?: '-' }}</p>
                         <div class="space-y-1 text-sm mb-3">
                             <p><span class="text-gray-500">Code:</span> <span class="font-mono font-semibold">{{ $coupon['code'] }}</span></p>
-                            <p><span class="text-gray-500">Value:</span> {{ $coupon['type'] === 'fixed' ? 'THB '.number_format($coupon['value'],2) : rtrim(rtrim(number_format($coupon['value'],2), '0'), '.').'%' }}</p>
-                            <p><span class="text-gray-500">Min purchase:</span> {{ $coupon['min_purchase'] ? 'THB '.number_format($coupon['min_purchase'],2) : '-' }}</p>
+                            <p><span class="text-gray-500">Value:</span> {{ $coupon['type'] === 'fixed' ? 'MNT '.number_format($coupon['value'],2) : rtrim(rtrim(number_format($coupon['value'],2), '0'), '.').'%' }}</p>
+                            <p><span class="text-gray-500">Min purchase:</span> {{ $coupon['min_purchase'] ? 'MNT '.number_format($coupon['min_purchase'],2) : '-' }}</p>
                             <p><span class="text-gray-500">Valid until:</span> {{ $coupon['valid_until'] }}</p>
                             @if(!empty($coupon['discount_preview']))
-                                <p class="text-green-600"><span class="text-gray-500">Discount preview:</span> THB {{ number_format($coupon['discount_preview'],2) }}</p>
+                                <p class="text-green-600"><span class="text-gray-500">Discount preview:</span> MNT {{ number_format($coupon['discount_preview'],2) }}</p>
                             @endif
                         </div>
                     </div>

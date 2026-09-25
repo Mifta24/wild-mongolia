@@ -37,7 +37,7 @@ class StripePaymentService
             'line_items' => [[
                 'quantity' => 1,
                 'price_data' => [
-                    'currency' => strtolower($booking->currency ?? 'THB'),
+                    'currency' => strtolower($booking->currency ?? 'MNT'),
                     'unit_amount' => $this->toStripeAmount((float) $booking->total_price),
                     'product_data' => [
                         'name' => $booking->product_name,
@@ -72,7 +72,7 @@ class StripePaymentService
             'line_items' => [[
                 'quantity' => 1,
                 'price_data' => [
-                    'currency' => 'thb',
+                    'currency' => 'mnt',
                     'unit_amount' => $this->toStripeAmount((float) $priceThb),
                     'product_data' => [
                         'name' => $tier->label() . ' Subscription (1 Year)',

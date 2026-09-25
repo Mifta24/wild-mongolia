@@ -2,7 +2,7 @@
     <div class="relative pt-16 pb-32 flex content-center items-center justify-center min-h-[85vh]">
         <div class="absolute top-0 w-full h-full bg-center bg-cover"
             style="background-image: url('{{ asset('images/hero.jpg') }}');">
-            <span class="w-full h-full absolute opacity-50 bg-black dark:opacity-70"></span>
+            <span class="w-full h-full absolute opacity-25 bg-black dark:opacity-60"></span>
         </div>
 
         <div class="container relative mx-auto px-4">
@@ -52,7 +52,7 @@
                         <div class="md:col-span-1">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Pick-up
                                 Location</label>
-                            <input type="text" name="pickup_location" placeholder="e.g. Suvarnabhumi Airport"
+                            <input type="text" name="pickup_location" placeholder="e.g. Chinggis Khaan International Airport"
                                 class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-primary focus:border-primary">
                         </div>
                         <div class="md:col-span-1">
@@ -143,7 +143,7 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold mb-2">Seamless Payment</h3>
-                    <p class="text-gray-600 dark:text-gray-400">Pay securely in THB with Credit Card. Earn points for
+                    <p class="text-gray-600 dark:text-gray-400">Pay securely in MNT with Credit Card. Earn points for
                         every
                         booking to save on your next trip.</p>
                 </div>
@@ -182,8 +182,8 @@
                             Camel Trek</h3>
                         <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Duration: 2 Days • English Guide</p>
                         <div class="flex justify-between items-center">
-                            <span class="text-gray-400 text-sm line-through">THB 1,500</span>
-                            <span class="text-xl font-bold text-primary">THB 1,200</span>
+                            <span class="text-gray-400 text-sm line-through">MNT 150,000</span>
+                            <span class="text-xl font-bold text-primary">MNT 120,000</span>
                         </div>
                     </div>
                 </div>
@@ -208,7 +208,7 @@
                             Homestay</h3>
                         <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Duration: 1 Day • Lunch Included</p>
                         <div class="flex justify-between items-center">
-                            <span class="text-xl font-bold text-primary">THB 2,500</span>
+                            <span class="text-xl font-bold text-primary">MNT 250,000</span>
                         </div>
                     </div>
                 </div>

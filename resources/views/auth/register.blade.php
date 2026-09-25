@@ -3,7 +3,7 @@
         <!-- Background Image with Overlay -->
         <div class="absolute inset-0 w-full h-full bg-center bg-cover"
             style="background-image: url('{{ asset('images/hero.jpg') }}');">
-            <span class="w-full h-full absolute opacity-50 bg-black dark:opacity-70"></span>
+            <span class="w-full h-full absolute opacity-25 bg-black dark:opacity-60"></span>
         </div>
 
         <!-- Register Card -->

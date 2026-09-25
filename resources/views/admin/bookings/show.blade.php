@@ -108,7 +108,7 @@
                                 <h4 class="text-sm font-semibold mb-3">Selected Add-ons</h4>
                                 <ul class="text-sm space-y-2 text-gray-700 dark:text-gray-300">
                                     @foreach ($booking->selected_add_ons as $option)
-                                        <li><span class="font-medium">{{ $option['name'] ?? '-' }}</span> - THB {{ number_format((float) ($option['price'] ?? 0), 2) }}</li>
+                                        <li><span class="font-medium">{{ $option['name'] ?? '-' }}</span> - MNT {{ number_format((float) ($option['price'] ?? 0), 2) }}</li>
                                     @endforeach
                                 </ul>
                             </div>
@@ -122,20 +122,20 @@
 
                         <div class="flex justify-between items-center mb-2">
                             <span class="text-gray-600 dark:text-gray-400">Service Total</span>
-                            <span class="text-gray-900 dark:text-white">THB
+                            <span class="text-gray-900 dark:text-white">MNT
                                 {{ number_format($booking->total_price - ($booking->add_ons_total ?? 0), 2) }}</span>
                         </div>
                         @if(($booking->add_ons_total ?? 0) > 0)
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-gray-600 dark:text-gray-400">Add-ons</span>
-                                <span class="text-gray-900 dark:text-white">THB
+                                <span class="text-gray-900 dark:text-white">MNT
                                     {{ number_format($booking->add_ons_total, 2) }}</span>
                             </div>
                         @endif
                         <div
                             class="flex justify-between items-center mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
                             <span class="text-lg font-bold text-gray-900 dark:text-white">Total Paid</span>
-                            <span class="text-lg font-bold text-teal-600">THB
+                            <span class="text-lg font-bold text-teal-600">MNT
                                 {{ number_format($booking->total_price) }}</span>
                         </div>
 
@@ -278,7 +278,7 @@
                                         class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-medium text-gray-500 mb-1">Fixed Amount (THB)</label>
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Fixed Amount (MNT)</label>
                                     <input type="number" step="0.01" min="0" name="commission_flat_amount" id="commission_flat_amount"
                                         value="{{ old('commission_flat_amount', $assignment?->commission_flat_amount) }}"
                                         class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm">
@@ -310,7 +310,7 @@
 
                             @if ($assignment)
                                 <div class="text-xs text-gray-500">
-                                    Current commission: THB {{ number_format((float) $assignment->commission_amount, 2) }} | Vendor payout: THB {{ number_format((float) $assignment->vendor_payout_amount, 2) }}
+                                    Current commission: MNT {{ number_format((float) $assignment->commission_amount, 2) }} | Vendor payout: MNT {{ number_format((float) $assignment->vendor_payout_amount, 2) }}
                                 </div>
                             @endif
 

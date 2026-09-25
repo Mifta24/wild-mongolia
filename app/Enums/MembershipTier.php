@@ -32,14 +32,14 @@ enum MembershipTier: string
     }
 
     /**
-     * Yearly subscription price in THB. Null means custom pricing.
+     * Yearly subscription price in MNT. Null means custom pricing.
      */
     public function getYearlyPriceThb(): ?int
     {
         return match($this) {
             self::SILVER => 0,
-            self::GOLD => 1500,
-            self::PLATINUM => 3500,
+            self::GOLD => 150000,
+            self::PLATINUM => 350000,
         };
     }
 

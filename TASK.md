@@ -66,7 +66,7 @@ Tours
 
 Inputs: Area / Date / Number of participants
 
-Filters: Category (temples/food/sea/elephants, etc.), duration, language, price, rating
+Filters: Category (monasteries/food/nature/nomad life, etc.), duration, language, price, rating
 
 Display: Highlights, duration, meeting point, inclusions, availability
 
